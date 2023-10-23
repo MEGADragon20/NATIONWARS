@@ -8,6 +8,7 @@ class Suchspiel(arcade.Window):
         arcade.set_background_color((111,111,111)) 
         self.fields = arcade.SpriteList()
         self.buildings = arcade.SpriteList()
+        self.soldiers = arcade.SpriteList()
         self.players = []
         self.sidebar = []
         self.Dictionary = {}
@@ -22,6 +23,7 @@ class Suchspiel(arcade.Window):
 
         self.active = Field(x = 0, y = 0, typ = "grass")
         self.players.append(Player("Markus Söder", arcade.color.RED_DEVIL))
+        self.soldiers.append(Soldier(10,10,"markus"))
         self.buildings.append(self.fields[98].add_village("München", self.players[0])) 
         self.buildings.append(self.fields[99].add_mine(self.Dictionary, None)) 
         print(len(self.buildings))
@@ -44,7 +46,7 @@ class Suchspiel(arcade.Window):
                     a = i.klick()
                     for i in a:
                         self.sidebar.append(i)
-            
+                
             for i in self.buildings:
                 if arcade.check_for_collision(pseudosprite, i):
                     self.sidebar.clear()
@@ -61,6 +63,7 @@ class Suchspiel(arcade.Window):
     def on_draw(self):
         self.clear()
         self.fields.draw()
+        self.soldiers.draw()
         self.buildings.draw()
         for i in self.sidebar:
             i.draw()
@@ -152,6 +155,20 @@ class Field(arcade.Sprite):
         print("I knew")
                 
         
+class Entity(arcade.Sprite):
+    def __init__(self, typ,  x, y, health, damage, owner):
+        super().__init__("data/entities/" + typ + ".png", center_x = x, center_y = y)
+        self.x = x
+        self.y = y 
+        self.health = health
+        self.damage = damage
+
+class Soldier(Entity):
+    def __init__(self, x, y, owner):
+        super().__init__("soldier", x, y, 10, owner)
+        self.x = x
+        self.y = y
+        self.owner = owner
 
 class Building(arcade.Sprite):
     def __init__(self, x, y, typ):
