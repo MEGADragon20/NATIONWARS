@@ -1,5 +1,15 @@
 import arcade
 
+def mine(mine):
+    lvl = str(mine.lvl)
+    name = "Mine"
+    villagename = mine.village.name
+    color = mine.owner.color
+    content = []
+    content.append(arcade.Text(name, 800, 760, arcade.color.BLACK, 20))
+    content.append(arcade.Text(lvl, 950, 760, arcade.color.BLACK, 20))
+    content.append(arcade.Text(villagename, 800, 740, color, 16))
+
 def village(village):
     lvl = str(village.lvl)
     name = village.name

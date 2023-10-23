@@ -1,5 +1,5 @@
 import arcade, random as r, arcade.gui
-import reader, sidebar
+import reader, sidebar  
 
 
 class Suchspiel(arcade.Window):
@@ -186,6 +186,9 @@ class Mine(Building):
     
     def produce(self):
         self.owner.goods["stone"] += (self.lvl * self.village.lvl)
+    
+    def klick(self):
+        return sidebar.mine(self)
 
 
 class Player():
