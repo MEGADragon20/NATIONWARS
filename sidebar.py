@@ -1,5 +1,20 @@
 import arcade
 
+def entity(entity):
+    typ = entity.typ
+    ownername = entity.owner.name
+    color = entity.owner.color
+    health = entity.health
+    damage = entity.damage
+    content = []
+    content.append(arcade.Text(typ, 800, 760, arcade.color.BLACK, 20))
+    content.append(arcade.Text(ownername, 800, 760, color, 20))
+    content.append(arcade.Text(health, 950, 760, arcade.color.BLACK, 16))
+    content.append(arcade.Text(damage, 800, 740, arcade.color.BLACK, 20))
+    content.append(arcade.Text("damage", 820, 740, arcade.color.BLACK, 20))
+
+    return content
+
 def mine(mine):
     lvl = str(mine.lvl)
     name = "Mine"
@@ -36,5 +51,6 @@ def field(field):
         name = "Wiese"
     content = []
     content.append(arcade.Text(name, 800, 760, arcade.color.BLACK, 20))
+    content.append(arcade.Sprite("data/buttons/createVillage.png", center_x = 875, center_y= 400))
 
     return content

@@ -22,10 +22,12 @@ class Suchspiel(arcade.Window):
 
 
         self.active = Field(x = 0, y = 0, typ = "grass")
-        self.players.append(Player("Markus Söder", arcade.color.RED_DEVIL))
+        self.players.append(Player("Markus Söder", arcade.color.RED_DEVIL, "Conquerus"))
         self.entities.append(Soldier(32, 32, self.players[0]))
         self.buildings.append(self.fields[98].add_village("München", self.players[0])) 
-        self.buildings.append(self.fields[99].add_mine(self.Dictionary, None)) 
+        self.buildings.append(self.fields[99].add_mine(self.Dictionary, None))
+        self.buildings.append(self.fields[387].add_village("Berlin", self.players[0])) 
+        self.buildings.append(self.fields[386].add_mine(self.Dictionary, None)) 
 
 
     def on_key_press(self, symbol: int, modifiers: int):
@@ -95,56 +97,57 @@ class Field(arcade.Sprite):
     
     def add_mine(self, d, owner):
         if self.typ != "mountain":
-           raise(TypeError)
+            raise(TypeError)
         a, b = self.pos
         if (a + 1, b) in d:
-           if d[(a + 1, b)].buildings != []:
-               if d[(a + 1, b)].buildings[0].typ == "village":
-                   c = Mine(self.x, self.y, d[(a + 1, b)].buildings[0])
-                   self.buildings.append(c)
-                   return c
+            if d[(a + 1, b)].buildings != []:
+                if d[(a + 1, b)].buildings[0].typ == "village":
+                    c = Mine(self.x, self.y, d[(a + 1, b)].buildings[0])
+                    self.buildings.append(c)
+                    return c
         if (a, b + 1) in d:
-           if d[(a, b + 1)].buildings != []:
-               if d[(a, b + 1)].buildings[0].typ == "village":
-                   c = Mine(self.x, self.y, d[(a, b + 1)].buildings[0])
-                   self.buildings.append(c)
-                   return c
+            if d[(a, b + 1)].buildings != []:
+                if d[(a, b + 1)].buildings[0].typ == "village":
+                    c = Mine(self.x, self.y, d[(a, b + 1)].buildings[0])
+                    self.buildings.append(c)
+                    return c
         if (a - 1 , b) in d:
-           if d[(a - 1, b)].buildings != []:
-               if d[(a - 1, b)].buildings[0].typ == "village":
-                   c = Mine(self.x, self.y, d[(a - 1, b)].buildings[0])
-                   self.buildings.append(c)
-                   return c
+            if d[(a - 1, b)].buildings != []:
+                if d[(a - 1, b)].buildings[0].typ == "village":
+                    c = Mine(self.x, self.y, d[(a - 1, b)].buildings[0])
+                    self.buildings.append(c)
+                    return c
         if (a, b - 1) in d:
-           if d[(a, b - 1)].buildings != []:
-               if d[(a, b - 1)].buildings[0].typ == "village":
-                   c = Mine(self.x, self.y, d[(a, b - 1)].buildings[0])
-                   self.buildings.append(c)
-                   return c
+            if d[(a, b - 1)].buildings != []:
+                if d[(a, b - 1)].buildings[0].typ == "village":
+                    c = Mine(self.x, self.y, d[(a, b - 1)].buildings[0])
+                    self.buildings.append(c)
+                    return c
         if (a + 1, b + 1) in d:
-           if d[(a + 1, b + 1)].buildings != []:
-               if d[(a + 1, b + 1)].buildings[0].typ == "village":
-                   c = Mine(self.x, self.y, d[(a + 1, b + 1)].buildings[0])
-                   self.buildings.append(c)
-                   return c
+            if d[(a + 1, b + 1)].buildings != []:
+                if d[(a + 1, b + 1)].buildings[0].typ == "village":
+                    c = Mine(self.x, self.y, d[(a + 1, b + 1)].buildings[0])
+                    self.buildings.append(c)
+                    return c
         if (a - 1 , b - 1) in d:
-           if d[(a - 1, b - 1)].buildings != []:
-               if d[(a - 1, b - 1)].buildings[0].typ == "village":
-                   c = Mine(self.x, self.y, d[(a - 1, b - 1)].buildings[0])
-                   self.buildings.append(c)
-                   return c
+            if d[(a - 1, b - 1)].buildings != []:
+                if d[(a - 1, b - 1)].buildings[0].typ == "village":
+                    c = Mine(self.x, self.y, d[(a - 1, b - 1)].buildings[0])
+                    self.buildings.append(c)
+                    return c
         if (a - 1, b + 1) in d:
-           if d[(a - 1, b + 1)].buildings != []:
-               if d[(a - 1, b + 1)].buildings[0].typ == "village":
-                   c = Mine(self.x, self.y, d[(a - 1, b + 1)].buildings[0])
-                   self.buildings.append(c)
-                   return c
+            if d[(a - 1, b + 1)].buildings != []:
+                if d[(a - 1, b + 1)].buildings[0].typ == "village":
+                    c = Mine(self.x, self.y, d[(a - 1, b + 1)].buildings[0])
+                    self.buildings.append(c)
+                    return c
         if (a + 1 , b - 1) in d:
-           if d[(a + 1, b - 1)].buildings != []:
-               if d[(a + 1, b - 1)].buildings[0].typ == "village":
-                   c = Mine(self.x, self.y, d[(a + 1, b - 1)].buildings[0])
-                   self.buildings.append(c)
-                   return c
+            if d[(a + 1, b - 1)].buildings != []:
+                if d[(a + 1, b - 1)].buildings[0].typ == "village":
+                    c = Mine(self.x, self.y, d[(a + 1, b - 1)].buildings[0])
+                    self.buildings.append(c)
+                    return c
+        print("Fuckoff")
                
 # Add entities
     def add_soldier(self, owner):
@@ -207,11 +210,22 @@ class Mine(Building):
 
 
 class Player():
-    def __init__(self, name, color, goods: dict = {}):
+    def __init__(self, name, color, tribe, goods: dict = {}):
         self.name = name
         self.color = color
+        self.tribe = tribe
         self.goods = goods
+        self.startgoods()
 
+    def startgoods(self):
+        self.goods["stone"] = 0
+        self.goods["wood"] = 0
+        self.goods["coal"] = 0
+        self.goods["wheat"] = 0
+        self.goods["flour"] = 0
+        self.goods["iron"] = 0
+        self.goods["gold"] = 0
+        self.goods["swords"] = 0
 
 
 sp = Suchspiel(1000, 800, "NATIONWARS", 24, 24)
