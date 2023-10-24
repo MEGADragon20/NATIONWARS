@@ -10,6 +10,8 @@ def mine(mine):
     content.append(arcade.Text(lvl, 950, 760, arcade.color.BLACK, 20))
     content.append(arcade.Text(villagename, 800, 740, color, 16))
 
+    return content
+
 def village(village):
     lvl = str(village.lvl)
     name = village.name

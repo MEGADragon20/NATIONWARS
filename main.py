@@ -8,7 +8,7 @@ class Suchspiel(arcade.Window):
         arcade.set_background_color((111,111,111)) 
         self.fields = arcade.SpriteList()
         self.buildings = arcade.SpriteList()
-        self.soldiers = arcade.SpriteList()
+        self.entities = arcade.SpriteList()
         self.players = []
         self.sidebar = []
         self.Dictionary = {}
@@ -23,10 +23,9 @@ class Suchspiel(arcade.Window):
 
         self.active = Field(x = 0, y = 0, typ = "grass")
         self.players.append(Player("Markus Söder", arcade.color.RED_DEVIL))
-        self.soldiers.append(Soldier(10,10,"markus"))
+        self.entities.append(Soldier(32, 32, self.players[0]))
         self.buildings.append(self.fields[98].add_village("München", self.players[0])) 
         self.buildings.append(self.fields[99].add_mine(self.Dictionary, None)) 
-        print(len(self.buildings))
 
 
     def on_key_press(self, symbol: int, modifiers: int):
@@ -62,9 +61,9 @@ class Suchspiel(arcade.Window):
 
     def on_draw(self):
         self.clear()
-        self.fields.draw()
-        self.soldiers.draw()
+        self.fields.draw()  
         self.buildings.draw()
+        self.entities.draw()
         for i in self.sidebar:
             i.draw()
        
@@ -78,6 +77,7 @@ class Field(arcade.Sprite):
         self.typ = typ
         self.pos = (((self.x - 32)/32),((self.y - 32)/ 32))
         self.buildings = []
+        self.entities = []
     
     def select(self, f_dict, f_list, active):
         active.texture = arcade.load_texture("data/fields/" + active.typ + ".png")
@@ -86,7 +86,8 @@ class Field(arcade.Sprite):
     
     def klick(self):
         return sidebar.field(self)
-
+    
+# Add buildings
     def add_village(self, name, owner):
         a = Village(self.x, self.y, name, 1, owner)
         self.buildings.append(a) 
@@ -101,58 +102,54 @@ class Field(arcade.Sprite):
                if d[(a + 1, b)].buildings[0].typ == "village":
                    c = Mine(self.x, self.y, d[(a + 1, b)].buildings[0])
                    self.buildings.append(c)
-                   print("1")
                    return c
         if (a, b + 1) in d:
            if d[(a, b + 1)].buildings != []:
                if d[(a, b + 1)].buildings[0].typ == "village":
                    c = Mine(self.x, self.y, d[(a, b + 1)].buildings[0])
                    self.buildings.append(c)
-                   print("2")
                    return c
         if (a - 1 , b) in d:
            if d[(a - 1, b)].buildings != []:
                if d[(a - 1, b)].buildings[0].typ == "village":
                    c = Mine(self.x, self.y, d[(a - 1, b)].buildings[0])
                    self.buildings.append(c)
-                   print("3")
                    return c
         if (a, b - 1) in d:
            if d[(a, b - 1)].buildings != []:
                if d[(a, b - 1)].buildings[0].typ == "village":
                    c = Mine(self.x, self.y, d[(a, b - 1)].buildings[0])
                    self.buildings.append(c)
-                   print("4")
                    return c
         if (a + 1, b + 1) in d:
            if d[(a + 1, b + 1)].buildings != []:
                if d[(a + 1, b + 1)].buildings[0].typ == "village":
                    c = Mine(self.x, self.y, d[(a + 1, b + 1)].buildings[0])
                    self.buildings.append(c)
-                   print("5")
                    return c
         if (a - 1 , b - 1) in d:
            if d[(a - 1, b - 1)].buildings != []:
                if d[(a - 1, b - 1)].buildings[0].typ == "village":
                    c = Mine(self.x, self.y, d[(a - 1, b - 1)].buildings[0])
                    self.buildings.append(c)
-                   print(6)
                    return c
         if (a - 1, b + 1) in d:
            if d[(a - 1, b + 1)].buildings != []:
                if d[(a - 1, b + 1)].buildings[0].typ == "village":
                    c = Mine(self.x, self.y, d[(a - 1, b + 1)].buildings[0])
                    self.buildings.append(c)
-                   print(7)
                    return c
         if (a + 1 , b - 1) in d:
            if d[(a + 1, b - 1)].buildings != []:
                if d[(a + 1, b - 1)].buildings[0].typ == "village":
                    c = Mine(self.x, self.y, d[(a + 1, b - 1)].buildings[0])
                    self.buildings.append(c)
-                   print(8)
                    return c
-        print("I knew")
+               
+# Add entities
+    def add_soldier(self, owner):
+        pass
+        
                 
         
 class Entity(arcade.Sprite):
@@ -162,10 +159,11 @@ class Entity(arcade.Sprite):
         self.y = y 
         self.health = health
         self.damage = damage
+        self.owner = owner
 
 class Soldier(Entity):
     def __init__(self, x, y, owner):
-        super().__init__("soldier", x, y, 10, owner)
+        super().__init__("soldier", x, y, 10, 3, owner)
         self.x = x
         self.y = y
         self.owner = owner
