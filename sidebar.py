@@ -1,4 +1,11 @@
 import arcade
+import buttons
+
+def start():
+    content = []
+    content.append(buttons.Button("open_investigations", 8))
+
+    return content
 
 def entity(entity):
     typ = entity.typ
@@ -7,11 +14,11 @@ def entity(entity):
     health = entity.health
     damage = entity.damage
     content = []
-    content.append(arcade.Text(typ, 800, 760, arcade.color.BLACK, 20))
-    content.append(arcade.Text(ownername, 800, 760, color, 20))
-    content.append(arcade.Text(health, 950, 760, arcade.color.BLACK, 16))
-    content.append(arcade.Text(damage, 800, 740, arcade.color.BLACK, 20))
-    content.append(arcade.Text("damage", 820, 740, arcade.color.BLACK, 20))
+    content.append(buttons.Txt(typ, 800, 760, arcade.color.BLACK, 20))
+    content.append(buttons.Txt(ownername, 800, 760, color, 20))
+    content.append(buttons.Txt(health, 950, 760, arcade.color.BLACK, 16))
+    content.append(buttons.Txt(damage, 800, 740, arcade.color.BLACK, 20))
+    content.append(buttons.Txt("damage", 820, 740, arcade.color.BLACK, 20))
 
     return content
 
@@ -21,9 +28,9 @@ def mine(mine):
     villagename = mine.village.name
     color = mine.owner.color
     content = []
-    content.append(arcade.Text(name, 800, 760, arcade.color.BLACK, 20))
-    content.append(arcade.Text(lvl, 950, 760, arcade.color.BLACK, 20))
-    content.append(arcade.Text(villagename, 800, 740, color, 16))
+    content.append(buttons.Txt(name, 800, 760, arcade.color.BLACK, 20))
+    content.append(buttons.Txt(lvl, 950, 760, arcade.color.BLACK, 20))
+    content.append(buttons.Txt(villagename, 800, 740, color, 16))
 
     return content
 
@@ -33,9 +40,9 @@ def village(village):
     ownername = village.owner.name
     color = village.owner.color
     content = []
-    content.append(arcade.Text(name, 800, 760, arcade.color.BLACK, 20))
-    content.append(arcade.Text(lvl, 950, 760, arcade.color.BLACK, 20))
-    content.append(arcade.Text(ownername, 800, 740, color, 16))
+    content.append(buttons.Txt(name, 800, 760, arcade.color.BLACK, 20))
+    content.append(buttons.Txt(lvl, 950, 760, arcade.color.BLACK, 20))
+    content.append(buttons.Txt(ownername, 800, 740, color, 16))
 
     return content
 
@@ -50,7 +57,8 @@ def field(field):
     elif name == "grass":
         name = "Wiese"
     content = []
-    content.append(arcade.Text(name, 800, 760, arcade.color.BLACK, 20))
-    content.append(arcade.Sprite("data/buttons/createVillage.png", center_x = 875, center_y= 400))
+    content.append(buttons.Txt(name, 800, 760, arcade.color.BLACK, 20))
+    if field.buildings == [] and field.typ != "water":
+        content.append(buttons.Button("add_village", 7))
 
     return content
