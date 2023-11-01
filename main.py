@@ -47,7 +47,7 @@ class Suchspiel(arcade.Window):
                     kfields = True
                     self.active = i.select(self.Dictionary, self.fields, self.active)
                     self.sbar.clear()
-                    a = i.klick()
+                    a = i.klick(self.Dictionary)
                     for i in a:
                         self.sbar.append(i)
             
@@ -61,13 +61,16 @@ class Suchspiel(arcade.Window):
                         self.sbar.append(i)
             
             kbuttons = False
-            buttonlist = []
             for i in self.sbar:
                 if i.type == "Button":
                     if arcade.check_for_collision(pseudosprite, i):
                         kbuttons = True
                         if i.f == "add_village":
                             self.buildings.append(self.active.add_village("Hamburg", self.players[0]))
+                            self.sbar.clear()
+                            self.sbar = sidebar.start()
+                        elif i.f == "add_mine":
+                            self.buildings.append(self.active.add_mine(self.Dictionary, self.players[0]))
                             self.sbar.clear()
                             self.sbar = sidebar.start()
 
@@ -108,8 +111,8 @@ class Field(arcade.Sprite):
         self.texture = arcade.load_texture("data/fields/active/" + self.typ + ".png")
         return self
     
-    def klick(self):
-        return sidebar.field(self)
+    def klick(self, d):
+        return sidebar.field(self, d, None)
     
 # Add buildings
     def add_village(self, name, owner):
@@ -164,7 +167,42 @@ class Field(arcade.Sprite):
                 if d[(a + 1, b - 1)].buildings[0].typ == "village":
                     return (a + 1, b - 1)
 
-                
+# Others   
+    def test_for_village(self, d, owner):
+        a, b = self.pos
+        if (a + 1, b) in d:
+            if d[(a + 1, b)].buildings != []:
+                if d[(a + 1, b)].buildings[0].typ == "village":
+                    return True
+        if (a, b + 1) in d:
+            if d[(a, b + 1)].buildings != []:
+                if d[(a, b + 1)].buildings[0].typ == "village":
+                    return True
+        if (a - 1 , b) in d:
+            if d[(a - 1, b)].buildings != []:
+                if d[(a - 1, b)].buildings[0].typ == "village":
+                    return True
+        if (a, b - 1) in d:
+            if d[(a, b - 1)].buildings != []:
+                if d[(a, b - 1)].buildings[0].typ == "village":
+                    return True
+        if (a + 1, b + 1) in d:
+            if d[(a + 1, b + 1)].buildings != []:
+                if d[(a + 1, b + 1)].buildings[0].typ == "village":
+                    return True
+        if (a - 1 , b - 1) in d:
+            if d[(a - 1, b - 1)].buildings != []:
+                if d[(a - 1, b - 1)].buildings[0].typ == "village":
+                    return True
+        if (a - 1, b + 1) in d:
+            if d[(a - 1, b + 1)].buildings != []:
+                if d[(a - 1, b + 1)].buildings[0].typ == "village":
+                    return True
+        if (a + 1 , b - 1) in d:
+            if d[(a + 1, b - 1)].buildings != []:
+                if d[(a + 1, b - 1)].buildings[0].typ == "village":
+                    return True
+        return False
         
 class Entity(arcade.Sprite):
     def __init__(self, typ,  x, y, health, damage, owner):
@@ -244,11 +282,6 @@ class Button(arcade.Sprite):
         super().__init__("data/buttons/" + f + ".png", center_x = 890, center_y = h*84)
         self.f = f
         self.type = "Button"
-
-
-    def klick(self, field):
-        if self.f == "add_village":
-            field.add_village()
 
 class Txt(arcade.Text):
     def __init__(self, txt, x, y, color, size):

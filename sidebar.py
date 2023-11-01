@@ -46,7 +46,7 @@ def village(village):
 
     return content
 
-def field(field):
+def field(field, d, owner):
     name = field.typ
     if name == "mountain":
         name = "Berg"
@@ -60,5 +60,7 @@ def field(field):
     content.append(buttons.Txt(name, 800, 760, arcade.color.BLACK, 20))
     if field.buildings == [] and field.typ != "water":
         content.append(buttons.Button("add_village", 7))
+    if field.typ == "mountain" and field.test_for_village(d, owner) == True:
+        content.append(buttons.Button("add_mine", 6))
 
     return content
