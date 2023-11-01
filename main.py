@@ -69,10 +69,28 @@ class Suchspiel(arcade.Window):
                             self.buildings.append(self.active.add_village("Hamburg", self.players[0]))
                             self.sbar.clear()
                             self.sbar = sidebar.start()
-                        elif i.f == "add_mine":
-                            self.buildings.append(self.active.add_mine(self.Dictionary, self.players[0]))
+                        if i.f == "add_mine":
+                            e = self.active.add_mine(self.Dictionary, self.players[0])
+                            self.buildings.append(e)
                             self.sbar.clear()
-                            self.sbar = sidebar.start()
+                            self.sbar = sidebar.mine(e)
+                        if i.f == "upgrade_mine":
+                            for j in self.active.buildings:
+                                if j.typ == "mine":
+                                    j.lvl += 1
+                                    self.sbar.clear()
+                                    self.sbar = sidebar.mine(j)
+                        if i.f == "add_iron_mine":
+                            e = self.active.add_iron_mine(self.Dictionary, self.players[0])
+                            self.buildings.append(e)
+                            self.sbar.clear()
+                            self.sbar = sidebar.iron_mine(e)
+                        if i.f == "upgrade_iron_mine":
+                            for j in self.active.buildings:
+                                if j.typ == "iron_mine":
+                                    j.lvl += 1
+                                    self.sbar.clear()
+                                    self.sbar = sidebar.iron_mine(j)
 
             if kfields == False and kbuildings == False and kbuttons == False:
                 self.sbar.clear()
@@ -113,8 +131,7 @@ class Field(arcade.Sprite):
     
     def klick(self, d):
         return sidebar.field(self, d, None)
-    
-# Add buildings
+
     def add_village(self, name, owner):
         a = Village(self.x, self.y, name, 1, owner)
         self.buildings.append(a) 
@@ -125,6 +142,14 @@ class Field(arcade.Sprite):
             raise(TypeError)
         a,b = self.pos_for_village(d, owner)
         c = Mine(self.x, self.y, d[(a, b)].buildings[0])
+        self.buildings.append(c)
+        return c
+    
+    def add_iron_mine(self, d, owner):
+        if self.typ != "mountain":
+            raise(TypeError)
+        a,b = self.pos_for_village(d, owner)
+        c = Iron_Mine(self.x, self.y, d[(a, b)].buildings[0])
         self.buildings.append(c)
         return c
                
@@ -256,6 +281,21 @@ class Mine(Building):
     
     def klick(self):
         return sidebar.mine(self)
+
+class Iron_Mine(Building):
+    def __init__(self, x, y, village, lvl = 1):
+        super().__init__(x, y, "iron_mine")
+        self.x = x
+        self.y = y
+        self.village = village
+        self.owner = village.owner
+        self.lvl = lvl
+    
+    def produce(self):
+        self.owner.goods["iron"] += (self.lvl * self.village.lvl)
+    
+    def klick(self):
+        return sidebar.iron_mine(self)
 
 
 class Player():

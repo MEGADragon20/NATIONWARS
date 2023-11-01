@@ -31,6 +31,20 @@ def mine(mine):
     content.append(buttons.Txt(name, 800, 760, arcade.color.BLACK, 20))
     content.append(buttons.Txt(lvl, 950, 760, arcade.color.BLACK, 20))
     content.append(buttons.Txt(villagename, 800, 740, color, 16))
+    content.append(buttons.Button("upgrade_mine", 7))
+
+    return content
+
+def iron_mine(iron_mine):
+    lvl = str(iron_mine.lvl)
+    name = "Eisen Mine"
+    villagename = iron_mine.village.name
+    color = iron_mine.owner.color
+    content = []
+    content.append(buttons.Txt(name, 800, 760, arcade.color.BLACK, 20))
+    content.append(buttons.Txt(lvl, 950, 760, arcade.color.BLACK, 20))
+    content.append(buttons.Txt(villagename, 800, 740, color, 16))
+    content.append(buttons.Button("upgrade_iron_mine", 7))
 
     return content
 
@@ -61,6 +75,19 @@ def field(field, d, owner):
     if field.buildings == [] and field.typ != "water":
         content.append(buttons.Button("add_village", 7))
     if field.typ == "mountain" and field.test_for_village(d, owner) == True:
-        content.append(buttons.Button("add_mine", 6))
+        testermine = False
+        testerironmine = False
+        for i in field.buildings:  
+            if i.typ == "mine":
+                content.append(buttons.Button("upgrade_mine", 6))
+                testermine = True
+        if testermine == False:
+            content.append(buttons.Button("add_mine", 6))
+        for i in field.buildings:  
+            if i.typ == "iron_mine":
+                content.append(buttons.Button("upgrade_iron_mine", 5))
+                testerironmine = True
+        if testerironmine == False:
+            content.append(buttons.Button("add_iron_mine", 5))
 
     return content
