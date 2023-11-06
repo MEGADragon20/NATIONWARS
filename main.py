@@ -196,5 +196,5 @@ class Player():
 
 
 
-sp = Suchspiel(1000, 800, "NATIONWARS", 24, 24)
+sp = Suchspiel(1000, 800, "NATIONWARS", 48, 48)
 arcade.run()
