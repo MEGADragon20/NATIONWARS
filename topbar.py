@@ -33,7 +33,7 @@ def start(player):
     x_positions = [10, 90, 170, 250, 330, 410, 490, 570, 650, 730, 810]
 
     for i,j in zip(lis, range(len(lis))):
-        content.append(buttons.Txt(i, 10+80*(j-1), 800, arcade.color.BLACK))
+        content.append(buttons.Txt(i, 10+80*(j-1), 800, arcade.color.BLACK, 16))
 
     content.append(buttons.Img("data/icons/coin.png", 60, 816))  
     content.append(buttons.Img("data/icons/stone.png", 160, 816))
