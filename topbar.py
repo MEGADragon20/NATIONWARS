@@ -17,16 +17,10 @@ def start(player):
     lis = [num_coins, num_inpo, num_stone, num_wood, num_coal, num_wheat, num_flour, num_iron, num_gold, num_swords, num_bows]
     empty = []
     for i in lis:
-        test = False
-        if i == "100":
-            test = True
-            print(i)
         if len(i) == 1:
             i = "00" + i
         elif len(i) == 2:
             i = "0" + i
-        if test == True:
-            print(i)
         empty.append(i)
     lis = empty
     content = []
@@ -35,7 +29,7 @@ def start(player):
     for i,j in zip(lis, range(len(lis))):
         content.append(buttons.Txt(i, 10+80*(j-1), 800, arcade.color.BLACK, 16))
 
-    content.append(buttons.Img("data/icons/coin.png", 60, 816))  
-    content.append(buttons.Img("data/icons/stone.png", 160, 816))
-    content.append(buttons.Img("data/icons/wood.png", 210, 816))
+    content.append(buttons.Img("data/icons/coin.png", 60, 808))  
+    content.append(buttons.Img("data/icons/stone.png", 160, 808))
+    content.append(buttons.Img("data/icons/wood.png", 210, 808))
     return content 
