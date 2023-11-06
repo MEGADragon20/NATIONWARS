@@ -29,7 +29,7 @@ def start(player):
     for i,j in zip(lis, range(len(lis))):
         content.append(buttons.Txt(i, 10+80*(j-1), 800, arcade.color.BLACK, 16))
 
-    content.append(buttons.Img("data/icons/coin.png", 60, 808))  
-    content.append(buttons.Img("data/icons/stone.png", 160, 808))
-    content.append(buttons.Img("data/icons/wood.png", 210, 808))
+    content.append(buttons.Img("data/icons/coin.png", 65, 808))  
+    content.append(buttons.Img("data/icons/stone.png", 225, 808))
+    content.append(buttons.Img("data/icons/wood.png", 305, 808))
     return content 
