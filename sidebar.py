@@ -11,8 +11,8 @@ def entity(entity):
     typ = entity.typ
     ownername = entity.owner.name
     color = entity.owner.color
-    health = entity.health
-    damage = entity.damage
+    health = str(entity.health)
+    damage = str(entity.damage)
     content = []
     content.append(buttons.Txt(typ, 800, 760, arcade.color.BLACK, 20))
     content.append(buttons.Txt(ownername, 800, 760, color, 20))
