@@ -24,9 +24,11 @@ class Suchspiel(arcade.Window):
                 index += 1
 
 
+
+
         self.active = Field(x = 0, y = 0, typ = "grass")
         self.players.append(Player("Markus Söder", arcade.color.RED_DEVIL, "Conquerus"))
-        self.entities.append(Soldier(32, 32, self.players[0]))
+        self.entities.append(Soldier(self.Dictionary[(2,2)], self.players[0]))
         self.buildings.append(self.fields[98].add_village("München", self.players[0])) 
         self.buildings.append(self.fields[99].add_mine(self.Dictionary, None))
         self.buildings.append(self.fields[387].add_village("Berlin", self.players[0])) 
@@ -59,6 +61,15 @@ class Suchspiel(arcade.Window):
             for i in self.buildings:
                 if arcade.check_for_collision(pseudosprite, i):
                     kbuildings = True
+                    self.sbar.clear()
+                    a = i.klick()
+                    for i in a:
+                        self.sbar.append(i)
+            
+            kentities = False
+            for i in self.entities:
+                if arcade.check_for_collision(pseudosprite, i):
+                    kentities = True
                     self.sbar.clear()
                     a = i.klick()
                     for i in a:
@@ -107,7 +118,7 @@ class Suchspiel(arcade.Window):
                                     self.sbar.clear()
                                     self.sbar = sidebar.cabin(j)
 
-            if kfields == False and kbuildings == False and kbuttons == False:
+            if kfields == False and kbuildings == False and kbuttons == False and kentities == False:
                 self.sbar.clear()
                 a = sidebar.start()
                 for i in a:
@@ -258,20 +269,28 @@ class Field(arcade.Sprite):
         return False
         
 class Entity(arcade.Sprite):
-    def __init__(self, typ,  x, y, health, damage, owner):
-        super().__init__("data/entities/" + typ + ".png", center_x = x, center_y = y)
-        self.x = x
-        self.y = y 
+    def __init__(self, typ, field, health, damage, owner):
+        super().__init__("data/entities/" + typ + ".png", center_x = field.x, center_y = field.y)    
+        self.field = field
         self.health = health
         self.damage = damage
         self.owner = owner
+        self.klicked = False
+        self.typ = typ
+    
+    def klick(self):
+        return sidebar.entity(self)
+    def check_for_field(self):
+        x = self.field.x
+        y = self.field.y
+  
 
 class Soldier(Entity):
-    def __init__(self, x, y, owner):
-        super().__init__("soldier", x, y, 10, 3, owner)
-        self.x = x
-        self.y = y
+    def __init__(self, field, owner):
+        super().__init__("soldier", field, 10, 3, owner )
         self.owner = owner
+
+   
 
 class Building(arcade.Sprite):
     def __init__(self, x, y, typ):
