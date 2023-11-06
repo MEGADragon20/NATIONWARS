@@ -1,11 +1,18 @@
-if i.f == "add_cabin":
-                            e = self.active.add_cabin(self.Dictionary, self.players[0])
-                            self.buildings.append(e)
-                            self.sbar.clear()
-                            self.sbar = sidebar.cabin(e)
-                        if i.f == "upgrade_cabin":
-                            for j in self.active.buildings:
-                                if j.typ == "cabin":
-                                    j.lvl += 1
-                                    self.sbar.clear()
-                                    self.sbar = sidebar.cabin(j)
+lis = ["1", "23", "12", "100", "56", "3", "0", "44", "00"]
+print(lis)
+empty = []
+for i in lis:
+    print("##")
+    print(i)
+    if len(i) == 1:
+        i = "00" + i
+        print("->")
+        print(i)
+    elif len(i) == 2:
+        i = "0" + i
+        print("->")
+        print(i)
+    empty.append(i)
+lis = empty
+print("______________")
+print(lis)

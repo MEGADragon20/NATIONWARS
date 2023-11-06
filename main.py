@@ -1,5 +1,5 @@
 import arcade, random as r, arcade.gui
-import reader, sidebar, buttons 
+import reader, sidebar, topbar
 
 
 class Suchspiel(arcade.Window):
@@ -12,6 +12,8 @@ class Suchspiel(arcade.Window):
         self.players = []
         self.sbar = []
         self.sbar = sidebar.start()
+        self.tbar = []
+        
         self.Dictionary = {}
         index = 0
         for h in range(feld_h):
@@ -29,6 +31,8 @@ class Suchspiel(arcade.Window):
         self.buildings.append(self.fields[99].add_mine(self.Dictionary, None))
         self.buildings.append(self.fields[387].add_village("Berlin", self.players[0])) 
         self.buildings.append(self.fields[386].add_mine(self.Dictionary, None)) 
+        
+        self.tbar = topbar.start(self.players[0])
 
 
     def on_key_press(self, symbol: int, modifiers: int):
@@ -122,6 +126,11 @@ class Suchspiel(arcade.Window):
         self.entities.draw()
         for i in self.sbar:
             i.draw()
+        for i in self.tbar:
+            if i.type != "Txt":
+                i.draw(pixelated = True)
+            else:
+                i.draw()
        
 
 
@@ -337,6 +346,8 @@ class Player():
         self.name = name
         self.color = color
         self.tribe = tribe
+        self.coins = 100
+        self.investigationpoints = 0
         self.goods = goods
         self.startgoods()
 
@@ -349,6 +360,7 @@ class Player():
         self.goods["iron"] = 0
         self.goods["gold"] = 0
         self.goods["swords"] = 0
+        self.goods["bows"] = 0
 
 
 class Button(arcade.Sprite):
@@ -358,9 +370,14 @@ class Button(arcade.Sprite):
         self.type = "Button"
 
 class Txt(arcade.Text):
-    def __init__(self, txt, x, y, color, size):
-        super().__init__(txt, x, y, color, size)
+    def __init__(self, txt, x, y, color):
+        super().__init__(txt, x, y, color, font_name="data/fonts/minimalistic.ttf", font_size= 16)
         self.type = "Txt"
 
-sp = Suchspiel(1000, 800, "NATIONWARS", 24, 24)
+class Img(arcade.Sprite):
+    def __init__(self, file, x, y):
+        super().__init__(file, scale= 2, center_x = x, center_y = y)
+        self.type = "Img"
+
+sp = Suchspiel(1000, 840, "NATIONWARS", 24, 24)
 arcade.run()
