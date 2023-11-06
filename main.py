@@ -1,5 +1,5 @@
 import arcade, random as r, arcade.gui
-import reader, sidebar
+import reader, sidebar, topbar
 
 
 class Suchspiel(arcade.Window):
@@ -8,8 +8,12 @@ class Suchspiel(arcade.Window):
         arcade.set_background_color((111,111,111)) 
         self.fields = arcade.SpriteList()
         self.buildings = arcade.SpriteList()
+        self.entities = arcade.SpriteList()
         self.players = []
-        self.sidebar = []
+        self.sbar = []
+        self.sbar = sidebar.start()
+        self.tbar = []
+        
         self.Dictionary = {}
         index = 0
         for h in range(feld_h):
@@ -21,10 +25,14 @@ class Suchspiel(arcade.Window):
 
 
         self.active = Field(x = 0, y = 0, typ = "grass")
-        self.players.append(Player("Markus Söder", arcade.color.RED_DEVIL))
+        self.players.append(Player("Markus Söder", arcade.color.RED_DEVIL, "Conquerus"))
+        self.entities.append(Soldier(32, 32, self.players[0]))
         self.buildings.append(self.fields[98].add_village("München", self.players[0])) 
-        self.buildings.append(self.fields[99].add_mine(self.Dictionary, None)) 
-        print(len(self.buildings))
+        self.buildings.append(self.fields[99].add_mine(self.Dictionary, None))
+        self.buildings.append(self.fields[387].add_village("Berlin", self.players[0])) 
+        self.buildings.append(self.fields[386].add_mine(self.Dictionary, None)) 
+        
+        self.tbar = topbar.start(self.players[0])
 
 
     def on_key_press(self, symbol: int, modifiers: int):
@@ -37,20 +45,73 @@ class Suchspiel(arcade.Window):
         pseudosprite.center_y = y
         pseudosprite.set_hit_box([(1,1), (0,1), (0,0), (1,0)])
         if button == 1:
+            kfields = False
             for i in self.fields:
                 if arcade.check_for_collision(pseudosprite, i):
+                    kfields = True
                     self.active = i.select(self.Dictionary, self.fields, self.active)
-                    self.sidebar.clear()
-                    a = i.klick()
+                    self.sbar.clear()
+                    a = i.klick(self.Dictionary)
                     for i in a:
-                        self.sidebar.append(i)
+                        self.sbar.append(i)
             
+            kbuildings = False
             for i in self.buildings:
                 if arcade.check_for_collision(pseudosprite, i):
-                    self.sidebar.clear()
+                    kbuildings = True
+                    self.sbar.clear()
                     a = i.klick()
                     for i in a:
-                        self.sidebar.append(i)
+                        self.sbar.append(i)
+            
+            kbuttons = False
+            for i in self.sbar:
+                if i.type == "Button":
+                    if arcade.check_for_collision(pseudosprite, i):
+                        kbuttons = True
+                        if i.f == "add_village":
+                            self.buildings.append(self.active.add_village("Hamburg", self.players[0]))
+                            self.sbar.clear()
+                            self.sbar = sidebar.start()
+                        if i.f == "add_mine":
+                            e = self.active.add_mine(self.Dictionary, self.players[0])
+                            self.buildings.append(e)
+                            self.sbar.clear()
+                            self.sbar = sidebar.mine(e)
+                        if i.f == "upgrade_mine":
+                            for j in self.active.buildings:
+                                if j.typ == "mine":
+                                    j.lvl += 1
+                                    self.sbar.clear()
+                                    self.sbar = sidebar.mine(j)
+                        if i.f == "add_iron_mine":
+                            e = self.active.add_iron_mine(self.Dictionary, self.players[0])
+                            self.buildings.append(e)
+                            self.sbar.clear()
+                            self.sbar = sidebar.iron_mine(e)
+                        if i.f == "upgrade_iron_mine":
+                            for j in self.active.buildings:
+                                if j.typ == "iron_mine":
+                                    j.lvl += 1
+                                    self.sbar.clear()
+                                    self.sbar = sidebar.iron_mine(j)
+                        if i.f == "add_cabin":
+                            e = self.active.add_cabin(self.Dictionary, self.players[0])
+                            self.buildings.append(e)
+                            self.sbar.clear()
+                            self.sbar = sidebar.cabin(e)
+                        if i.f == "upgrade_cabin":
+                            for j in self.active.buildings:
+                                if j.typ == "cabin":
+                                    j.lvl += 1
+                                    self.sbar.clear()
+                                    self.sbar = sidebar.cabin(j)
+
+            if kfields == False and kbuildings == False and kbuttons == False:
+                self.sbar.clear()
+                a = sidebar.start()
+                for i in a:
+                    self.sbar.append(i)
 
 
         elif button == 2 or button == 4:
@@ -60,10 +121,16 @@ class Suchspiel(arcade.Window):
 
     def on_draw(self):
         self.clear()
-        self.fields.draw()
+        self.fields.draw()  
         self.buildings.draw()
-        for i in self.sidebar:
+        self.entities.draw()
+        for i in self.sbar:
             i.draw()
+        for i in self.tbar:
+            if i.type != "Txt":
+                i.draw(pixelated = True)
+            else:
+                i.draw()
        
 
 
@@ -75,14 +142,15 @@ class Field(arcade.Sprite):
         self.typ = typ
         self.pos = (((self.x - 32)/32),((self.y - 32)/ 32))
         self.buildings = []
+        self.entities = []
     
     def select(self, f_dict, f_list, active):
         active.texture = arcade.load_texture("data/fields/" + active.typ + ".png")
         self.texture = arcade.load_texture("data/fields/active/" + self.typ + ".png")
         return self
     
-    def klick(self):
-        return sidebar.field(self)
+    def klick(self, d):
+        return sidebar.field(self, d, None)
 
     def add_village(self, name, owner):
         a = Village(self.x, self.y, name, 1, owner)
@@ -91,67 +159,119 @@ class Field(arcade.Sprite):
     
     def add_mine(self, d, owner):
         if self.typ != "mountain":
-           raise(TypeError)
+            raise(TypeError)
+        a,b = self.pos_for_village(d, owner)
+        c = Mine(self.x, self.y, d[(a, b)].buildings[0])
+        self.buildings.append(c)
+        return c
+    
+    def add_iron_mine(self, d, owner):
+        if self.typ != "mountain":
+            raise(TypeError)
+        a,b = self.pos_for_village(d, owner)
+        c = Iron_Mine(self.x, self.y, d[(a, b)].buildings[0])
+        self.buildings.append(c)
+        return c
+    
+    def add_cabin(self, d, owner):
+        if self.typ != "forest":
+            raise(TypeError)
+        a,b = self.pos_for_village(d, owner)
+        c = Cabin(self.x, self.y, d[(a, b)].buildings[0])
+        self.buildings.append(c)
+        return c
+               
+# Add entities
+    def add_soldier(self, owner):
+        pass
+
+    def pos_for_village(self, d, owner):
         a, b = self.pos
         if (a + 1, b) in d:
-           if d[(a + 1, b)].buildings != []:
-               if d[(a + 1, b)].buildings[0].typ == "village":
-                   c = Mine(self.x, self.y, d[(a + 1, b)].buildings[0])
-                   self.buildings.append(c)
-                   print("1")
-                   return c
+            if d[(a + 1, b)].buildings != []:
+                if d[(a + 1, b)].buildings[0].typ == "village":
+                    return (a + 1, b)
         if (a, b + 1) in d:
-           if d[(a, b + 1)].buildings != []:
-               if d[(a, b + 1)].buildings[0].typ == "village":
-                   c = Mine(self.x, self.y, d[(a, b + 1)].buildings[0])
-                   self.buildings.append(c)
-                   print("2")
-                   return c
+            if d[(a, b + 1)].buildings != []:
+                if d[(a, b + 1)].buildings[0].typ == "village":
+                    return (a, b + 1)
         if (a - 1 , b) in d:
-           if d[(a - 1, b)].buildings != []:
-               if d[(a - 1, b)].buildings[0].typ == "village":
-                   c = Mine(self.x, self.y, d[(a - 1, b)].buildings[0])
-                   self.buildings.append(c)
-                   print("3")
-                   return c
+            if d[(a - 1, b)].buildings != []:
+                if d[(a - 1, b)].buildings[0].typ == "village":
+                    return (a - 1, b)
         if (a, b - 1) in d:
-           if d[(a, b - 1)].buildings != []:
-               if d[(a, b - 1)].buildings[0].typ == "village":
-                   c = Mine(self.x, self.y, d[(a, b - 1)].buildings[0])
-                   self.buildings.append(c)
-                   print("4")
-                   return c
+            if d[(a, b - 1)].buildings != []:
+                if d[(a, b - 1)].buildings[0].typ == "village":
+                    return (a, b - 1)
         if (a + 1, b + 1) in d:
-           if d[(a + 1, b + 1)].buildings != []:
-               if d[(a + 1, b + 1)].buildings[0].typ == "village":
-                   c = Mine(self.x, self.y, d[(a + 1, b + 1)].buildings[0])
-                   self.buildings.append(c)
-                   print("5")
-                   return c
+            if d[(a + 1, b + 1)].buildings != []:
+                if d[(a + 1, b + 1)].buildings[0].typ == "village":
+                    return (a + 1, b + 1)
         if (a - 1 , b - 1) in d:
-           if d[(a - 1, b - 1)].buildings != []:
-               if d[(a - 1, b - 1)].buildings[0].typ == "village":
-                   c = Mine(self.x, self.y, d[(a - 1, b - 1)].buildings[0])
-                   self.buildings.append(c)
-                   print(6)
-                   return c
+            if d[(a - 1, b - 1)].buildings != []:
+                if d[(a - 1, b - 1)].buildings[0].typ == "village":
+                    return (a - 1, b - 1)
         if (a - 1, b + 1) in d:
-           if d[(a - 1, b + 1)].buildings != []:
-               if d[(a - 1, b + 1)].buildings[0].typ == "village":
-                   c = Mine(self.x, self.y, d[(a - 1, b + 1)].buildings[0])
-                   self.buildings.append(c)
-                   print(7)
-                   return c
+            if d[(a - 1, b + 1)].buildings != []:
+                if d[(a - 1, b + 1)].buildings[0].typ == "village":
+                    return (a - 1, b + 1)
         if (a + 1 , b - 1) in d:
-           if d[(a + 1, b - 1)].buildings != []:
-               if d[(a + 1, b - 1)].buildings[0].typ == "village":
-                   c = Mine(self.x, self.y, d[(a + 1, b - 1)].buildings[0])
-                   self.buildings.append(c)
-                   print(8)
-                   return c
-        print("I knew")
-                
+            if d[(a + 1, b - 1)].buildings != []:
+                if d[(a + 1, b - 1)].buildings[0].typ == "village":
+                    return (a + 1, b - 1)
+
+# Others   
+    def test_for_village(self, d, owner):
+        a, b = self.pos
+        if (a + 1, b) in d:
+            if d[(a + 1, b)].buildings != []:
+                if d[(a + 1, b)].buildings[0].typ == "village":
+                    return True
+        if (a, b + 1) in d:
+            if d[(a, b + 1)].buildings != []:
+                if d[(a, b + 1)].buildings[0].typ == "village":
+                    return True
+        if (a - 1 , b) in d:
+            if d[(a - 1, b)].buildings != []:
+                if d[(a - 1, b)].buildings[0].typ == "village":
+                    return True
+        if (a, b - 1) in d:
+            if d[(a, b - 1)].buildings != []:
+                if d[(a, b - 1)].buildings[0].typ == "village":
+                    return True
+        if (a + 1, b + 1) in d:
+            if d[(a + 1, b + 1)].buildings != []:
+                if d[(a + 1, b + 1)].buildings[0].typ == "village":
+                    return True
+        if (a - 1 , b - 1) in d:
+            if d[(a - 1, b - 1)].buildings != []:
+                if d[(a - 1, b - 1)].buildings[0].typ == "village":
+                    return True
+        if (a - 1, b + 1) in d:
+            if d[(a - 1, b + 1)].buildings != []:
+                if d[(a - 1, b + 1)].buildings[0].typ == "village":
+                    return True
+        if (a + 1 , b - 1) in d:
+            if d[(a + 1, b - 1)].buildings != []:
+                if d[(a + 1, b - 1)].buildings[0].typ == "village":
+                    return True
+        return False
         
+class Entity(arcade.Sprite):
+    def __init__(self, typ,  x, y, health, damage, owner):
+        super().__init__("data/entities/" + typ + ".png", center_x = x, center_y = y)
+        self.x = x
+        self.y = y 
+        self.health = health
+        self.damage = damage
+        self.owner = owner
+
+class Soldier(Entity):
+    def __init__(self, x, y, owner):
+        super().__init__("soldier", x, y, 10, 3, owner)
+        self.x = x
+        self.y = y
+        self.owner = owner
 
 class Building(arcade.Sprite):
     def __init__(self, x, y, typ):
@@ -186,15 +306,78 @@ class Mine(Building):
     
     def produce(self):
         self.owner.goods["stone"] += (self.lvl * self.village.lvl)
+    
+    def klick(self):
+        return sidebar.mine(self)
 
+class Iron_Mine(Building):
+    def __init__(self, x, y, village, lvl = 1):
+        super().__init__(x, y, "iron_mine")
+        self.x = x
+        self.y = y
+        self.village = village
+        self.owner = village.owner
+        self.lvl = lvl
+    
+    def produce(self):
+        self.owner.goods["iron"] += (self.lvl * self.village.lvl)
+    
+    def klick(self):
+        return sidebar.iron_mine(self)
+
+
+class Cabin(Building):
+    def __init__(self, x, y, village, lvl = 1):
+        super().__init__(x, y, "cabin")
+        self.x = x
+        self.y = y
+        self.village = village
+        self.owner = village.owner
+        self.lvl = lvl
+    
+    def produce(self):
+        self.owner.goods["wood"] += (self.lvl * self.village.lvl)
+    
+    def klick(self):
+        return sidebar.cabin(self)
 
 class Player():
-    def __init__(self, name, color, goods: dict = {}):
+    def __init__(self, name, color, tribe, goods: dict = {}):
         self.name = name
         self.color = color
+        self.tribe = tribe
+        self.coins = 100
+        self.investigationpoints = 0
         self.goods = goods
+        self.startgoods()
+
+    def startgoods(self):
+        self.goods["stone"] = 0
+        self.goods["wood"] = 0
+        self.goods["coal"] = 0
+        self.goods["wheat"] = 0
+        self.goods["flour"] = 0
+        self.goods["iron"] = 0
+        self.goods["gold"] = 0
+        self.goods["swords"] = 0
+        self.goods["bows"] = 0
 
 
+class Button(arcade.Sprite):
+    def __init__(self, f, h):
+        super().__init__("data/buttons/" + f + ".png", center_x = 890, center_y = h*84)
+        self.f = f
+        self.type = "Button"
 
-sp = Suchspiel(1000, 800, "NATIONWARS", 48, 48)
+class Txt(arcade.Text):
+    def __init__(self, txt, x, y, color):
+        super().__init__(txt, x, y, color, font_name="data/fonts/minimalistic.ttf", font_size= 16)
+        self.type = "Txt"
+
+class Img(arcade.Sprite):
+    def __init__(self, file, x, y):
+        super().__init__(file, scale= 2, center_x = x, center_y = y)
+        self.type = "Img"
+
+sp = Suchspiel(1000, 840, "NATIONWARS", 24, 24)
 arcade.run()
