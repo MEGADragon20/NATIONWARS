@@ -83,6 +83,6 @@ for i in pixels:
 
 file.reverse()
 
-with open(f'C:/Users/ferna/OneDrive\Dokumente/GitHub/Programme/002_GEMISCHTE_AUFGABEN/10_arcade/NATIONWARS\data\worlds/' + eingabe + '.csv', "x") as f:
+with open(f'data\worlds/' + eingabe + '.csv', "x") as f:
     for i in file:
         f.write(str(i) + "\n")
