@@ -4,6 +4,7 @@ import buttons
 def start():
     content = []
     content.append(buttons.Button("open_investigations", 8))
+    content.append(buttons.Button("pass_turn", 1))
 
     return content
 
@@ -14,11 +15,11 @@ def entity(entity):
     health = str(entity.health)
     damage = str(entity.damage)
     content = []
-    content.append(buttons.Txt(typ, 800, 760, arcade.color.BLACK, 20))
-    content.append(buttons.Txt(ownername, 800, 760, color, 20))
-    content.append(buttons.Txt(health, 950, 760, arcade.color.BLACK, 16))
-    content.append(buttons.Txt(damage, 800, 740, arcade.color.BLACK, 20))
-    content.append(buttons.Txt("damage", 820, 740, arcade.color.BLACK, 20))
+    content.append(buttons.Txt(typ, 800, 760, arcade.color.BLACK, 20, True))
+    content.append(buttons.Txt(ownername, 800, 730, color, 16))
+    content.append(buttons.Txt(health, 950, 760, arcade.color.DARK_MOSS_GREEN, 16, True))
+    content.append(buttons.Txt(damage, 800, 700, arcade.color.RED, 16))
+    content.append(buttons.Txt("damage", 820, 700, arcade.color.BLACK, 16))
 
     return content
 

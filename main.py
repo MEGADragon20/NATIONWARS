@@ -5,11 +5,12 @@ import reader, sidebar, topbar
 class Suchspiel(arcade.Window):
     def __init__(self, breite, höhe, titel, feld_h, feld_b):
         super().__init__(breite, höhe, titel)
-        arcade.set_background_color((111,111,111)) 
+        arcade.set_background_color((155,155,155)) 
         self.fields = arcade.SpriteList()
         self.buildings = arcade.SpriteList()
         self.entities = arcade.SpriteList()
         self.players = []
+        self.turn = 1
         self.sbar = []
         self.sbar = sidebar.start()
         self.tbar = []
@@ -117,6 +118,13 @@ class Suchspiel(arcade.Window):
                                     j.lvl += 1
                                     self.sbar.clear()
                                     self.sbar = sidebar.cabin(j)
+                        if i.f == "pass_turn":
+                            self.produce()
+                            self.tbar = topbar.start(self.players[0])
+                            self.turn += 1/len(self.players)
+
+                        
+
 
             if kfields == False and kbuildings == False and kbuttons == False and kentities == False:
                 self.sbar.clear()
@@ -142,7 +150,38 @@ class Suchspiel(arcade.Window):
                 i.draw(pixelated = True)
             else:
                 i.draw()
-       
+    
+    def produce(self):
+        for i in self.buildings:
+            i.produce()
+    
+    def building_button_function(self, action):
+        action_mapping = {
+            "add_mine": (self.active.add_mine, sidebar.mine),
+            "upgrade_mine": ("mine",),
+            "add_iron_mine": (self.active.add_iron_mine, sidebar.iron_mine),
+            "upgrade_iron_mine": ("iron_mine",),
+            "add_cabin": (self.active.add_cabin, sidebar.cabin),
+            "upgrade_cabin": ("cabin",),
+        }
+
+        if action in action_mapping:
+            action_info = action_mapping[action]
+
+            if len(action_info) == 2:
+                add_function, sidebar_function = action_info
+                building = add_function(self.Dictionary, self.players[0])
+                self.sbar = sidebar_function(building)
+            else:
+                building_type = action_info[0]
+                for j in self.active.buildings:
+                    if j.typ == building_type:
+                        j.lvl += 1
+                        self.sbar.clear()
+                        self.sbar = getattr(sidebar, building_type)(j)
+                        break
+
+            self.buildings.append(building)
 
 
 class Field(arcade.Sprite):
@@ -287,7 +326,7 @@ class Entity(arcade.Sprite):
 
 class Soldier(Entity):
     def __init__(self, field, owner):
-        super().__init__("soldier", field, 10, 3, owner )
+        super().__init__("Soldier", field, 10, 3, owner )
         self.owner = owner
 
    
@@ -308,11 +347,11 @@ class Village(Building):
         self.lvl = lvl
         self.owner = owner
 
-    def levelup(self):
-        self.lvl += 1
-
     def klick(self):
         return sidebar.village(self)
+    
+    def produce(self):
+        self.owner.coins += r.randint(2, 10) * self.lvl
 
 class Mine(Building):
     def __init__(self, x, y, village, lvl = 1):
@@ -365,7 +404,7 @@ class Player():
         self.name = name
         self.color = color
         self.tribe = tribe
-        self.coins = 100
+        self.coins = 0
         self.investigationpoints = 0
         self.goods = goods
         self.startgoods()
@@ -385,12 +424,12 @@ class Player():
 class Button(arcade.Sprite):
     def __init__(self, f, h):
         super().__init__("data/buttons/" + f + ".png", center_x = 890, center_y = h*84)
-        self.f = f
+        self.f = f 
         self.type = "Button"
 
 class Txt(arcade.Text):
-    def __init__(self, txt, x, y, color):
-        super().__init__(txt, x, y, color, font_name="data/fonts/minimalistic.ttf", font_size= 16)
+    def __init__(self, txt, x, y, color, b = False):
+        super().__init__(txt, x, y, color, font_name="data/fonts/minimalistic.ttf", font_size = 16, bold = b)
         self.type = "Txt"
 
 class Img(arcade.Sprite):

@@ -40,13 +40,13 @@ skills.update({"Foresthuts": Knoten("Foresthuts", 3, ["Crops"], "j")})
 skills.update({"Bows": Knoten("Bows", 3, ["Weapons"], "j")})
 
 while True:
-    input=int(input(">>"))
-    if input== 1:
+    input = int(input(">>"))
+    if input == 1:
         skills["Tools"].add()
-    if input== 2:
+    if input == 2:
         skills["Mines"].add()
-    if input== 3:
+    if input == 3:
         skills["Smithing"].add()
-    if input== 4:
+    if input == 4:
         skills["Crops"].add()
     print(erforscht)

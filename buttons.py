@@ -11,8 +11,8 @@ class Button(arcade.Sprite):
             field.add_village()
     
 class Txt(arcade.Text):
-    def __init__(self, txt, x, y, color, size):
-        super().__init__(txt, x, y, color, font_name="data/fonts/minimalistic.ttf", font_size = size)
+    def __init__(self, txt, x, y, color, size, b = False):
+        super().__init__(txt, x, y, color, font_name="data/fonts/minimalistic.ttf", font_size = size, bold = b)
         self.type = "Txt"
 
 class Img(arcade.Sprite):
