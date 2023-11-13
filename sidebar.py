@@ -113,3 +113,22 @@ def field(field, d, owner):
             content.append(buttons.Button("add_cabin", 6))
 
     return content
+
+def investigationstree():
+    content = []
+    content.append(buttons.Button("open_it_productions", 8))
+
+    return content
+
+def open_it_productions():
+    content = []
+    content.append(buttons.Button("open_t_quarry", 8))
+
+    return content
+
+def open_t_quarry():
+    content = []
+    content.append(buttons.Txt("Quarry", 800, 760, arcade.color.BLACK, 20))
+    content.append(buttons.Button("investigate_quarry"), 1)
+
+    return content

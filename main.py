@@ -1,5 +1,9 @@
 import arcade, random as r, arcade.gui
-import reader, sidebar, topbar
+import reader, sidebar, topbar, tree
+
+erforscht={}
+skills={}
+
 
 
 class Suchspiel(arcade.Window):
@@ -118,6 +122,19 @@ class Suchspiel(arcade.Window):
                                     j.lvl += 1
                                     self.sbar.clear()
                                     self.sbar = sidebar.cabin(j)
+
+                        if i.f == "open_investigations":
+                            self.sbar.clear()
+                            self.sbar = sidebar.investigationstree()
+
+                        if i.f == "open_it_productions":
+                            self.sbar.clear()
+                            self.sbar = sidebar.open_it_productions()
+
+                        if i.f == "open_t_quarry":
+                            self.sbar.clear()
+                            self.sbar = sidebar.open_t_quarry()
+
                         if i.f == "pass_turn":
                             self.produce()
                             self.tbar = topbar.start(self.players[0])
@@ -155,34 +172,6 @@ class Suchspiel(arcade.Window):
         for i in self.buildings:
             i.produce()
     
-    def building_button_function(self, action):
-        action_mapping = {
-            "add_mine": (self.active.add_mine, sidebar.mine),
-            "upgrade_mine": ("mine",),
-            "add_iron_mine": (self.active.add_iron_mine, sidebar.iron_mine),
-            "upgrade_iron_mine": ("iron_mine",),
-            "add_cabin": (self.active.add_cabin, sidebar.cabin),
-            "upgrade_cabin": ("cabin",),
-        }
-
-        if action in action_mapping:
-            action_info = action_mapping[action]
-
-            if len(action_info) == 2:
-                add_function, sidebar_function = action_info
-                building = add_function(self.Dictionary, self.players[0])
-                self.sbar = sidebar_function(building)
-            else:
-                building_type = action_info[0]
-                for j in self.active.buildings:
-                    if j.typ == building_type:
-                        j.lvl += 1
-                        self.sbar.clear()
-                        self.sbar = getattr(sidebar, building_type)(j)
-                        break
-
-            self.buildings.append(building)
-
 
 class Field(arcade.Sprite):
     def __init__(self,  x, y, typ):
@@ -420,6 +409,46 @@ class Player():
         self.goods["swords"] = 0
         self.goods["bows"] = 0
 
+
+
+
+#Forschungsbaum
+
+def enthalten(list):
+    ergebnis=True
+    for n in list:
+        if n not in erforscht.keys():
+            ergebnis=False
+    return ergebnis   
+
+class Knoten:
+    def __init__(self, name, preis, parrents, civ):
+        self.name = name
+        self.preis = preis
+        self.parrents = parrents
+        self.civ = civ
+
+    def add(self,money,skills,enthalten):
+        if enthalten(self.parrents)==True:
+            if money >= self.preis:
+                if self.civ == "j":
+                    erforscht.update({self.name:self})
+                    print(self.name)
+                    return
+        print("error")
+
+skills.update({"Tools": Knoten("Tools", 1, [], "j")})
+skills.update({"Mines": Knoten("Mines", 2, ["Tools"], "j")})
+skills.update({"Crops": Knoten("Crops", 2, ["Tools"], "j")})
+skills.update({"Weapons": Knoten("Weapons", 2, ["Tools"], "j")})
+skills.update({"Smithing": Knoten("Smithing", 3, ["Mines"], "j")})
+skills.update({"IronMines": Knoten("IronMines", 3, ["Mines"], "j")})
+skills.update({"Farms": Knoten("Farms", 3, ["Crops"], "j")})
+skills.update({"Foresthuts": Knoten("Foresthuts", 3, ["Crops"], "j")})
+skills.update({"Bows": Knoten("Bows", 3, ["Weapons"], "j")})
+
+
+#klassen
 
 class Button(arcade.Sprite):
     def __init__(self, f, h):
