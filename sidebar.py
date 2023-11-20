@@ -129,6 +129,6 @@ def open_it_productions():
 def open_t_quarry():
     content = []
     content.append(buttons.Txt("Quarry", 800, 760, arcade.color.BLACK, 20))
-    content.append(buttons.Button("investigate_quarry"), 1)
+    content.append(buttons.Button("investigate_quarry", 1))
 
     return content

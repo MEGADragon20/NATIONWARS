@@ -1,8 +1,8 @@
 import arcade, random as r, arcade.gui
 import reader, sidebar, topbar, tree
 
-erforscht={}
-skills={}
+# Technologies
+t_quarry = False
 
 
 
@@ -128,17 +128,25 @@ class Suchspiel(arcade.Window):
                             self.sbar = sidebar.investigationstree()
 
                         if i.f == "open_it_productions":
-                            self.sbar.clear()
-                            self.sbar = sidebar.open_it_productions()
+                            if self.players[0].technologies["quarry"] != True:
+                                self.sbar.clear()
+                                self.sbar = sidebar.open_it_productions()
 
                         if i.f == "open_t_quarry":
+                            
+                                self.sbar.clear()
+                                self.sbar = sidebar.open_t_quarry()
+
+                        if i.f == "investigate_quarry.png":
                             self.sbar.clear()
-                            self.sbar = sidebar.open_t_quarry()
+                            self.players[0].technologies["quarry"] = True
+                            self.sbar = sidebar.investigationstree()
 
                         if i.f == "pass_turn":
                             self.produce()
                             self.tbar = topbar.start(self.players[0])
                             self.turn += 1/len(self.players)
+
 
                         
 
@@ -389,14 +397,16 @@ class Cabin(Building):
         return sidebar.cabin(self)
 
 class Player():
-    def __init__(self, name, color, tribe, goods: dict = {}):
+    def __init__(self, name, color, tribe, goods: dict = {}, technologies: dict = {}):
         self.name = name
         self.color = color
         self.tribe = tribe
         self.coins = 0
         self.investigationpoints = 0
         self.goods = goods
+        self.technologies = technologies
         self.startgoods()
+        self.startt()
 
     def startgoods(self):
         self.goods["stone"] = 0
@@ -409,6 +419,34 @@ class Player():
         self.goods["swords"] = 0
         self.goods["bows"] = 0
 
+    def startt(self):
+        self.technologies["quarry"] = False
+        # self.technologies[""] = False
+        # self.technologies[] = False
+        # self.technologies[] = False
+        # self.technologies[] = False
+        # self.technologies[] = False
+        # self.technologies[] = False
+        # self.technologies[] = False
+        # self.technologies[] = False
+        # self.technologies[] = False
+        # self.technologies[] = False
+        # self.technologies[] = False
+        # self.technologies[] = False
+        # self.technologies[] = False
+        # self.technologies[] = False
+        # self.technologies[] = False
+        # self.technologies[] = False
+        # self.technologies[] = False
+        # self.technologies[] = False
+        # self.technologies[] = False
+        # self.technologies[] = False
+        # self.technologies[] = False
+        # self.technologies[] = False
+        # self.technologies[] = False
+        # self.technologies[] = False
+        # self.technologies[] = False
+        # self.technologies[] = False
 
 
 
@@ -421,31 +459,8 @@ def enthalten(list):
             ergebnis=False
     return ergebnis   
 
-class Knoten:
-    def __init__(self, name, preis, parrents, civ):
-        self.name = name
-        self.preis = preis
-        self.parrents = parrents
-        self.civ = civ
 
-    def add(self,money,skills,enthalten):
-        if enthalten(self.parrents)==True:
-            if money >= self.preis:
-                if self.civ == "j":
-                    erforscht.update({self.name:self})
-                    print(self.name)
-                    return
-        print("error")
 
-skills.update({"Tools": Knoten("Tools", 1, [], "j")})
-skills.update({"Mines": Knoten("Mines", 2, ["Tools"], "j")})
-skills.update({"Crops": Knoten("Crops", 2, ["Tools"], "j")})
-skills.update({"Weapons": Knoten("Weapons", 2, ["Tools"], "j")})
-skills.update({"Smithing": Knoten("Smithing", 3, ["Mines"], "j")})
-skills.update({"IronMines": Knoten("IronMines", 3, ["Mines"], "j")})
-skills.update({"Farms": Knoten("Farms", 3, ["Crops"], "j")})
-skills.update({"Foresthuts": Knoten("Foresthuts", 3, ["Crops"], "j")})
-skills.update({"Bows": Knoten("Bows", 3, ["Weapons"], "j")})
 
 
 #klassen
