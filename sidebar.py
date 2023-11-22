@@ -120,10 +120,12 @@ def investigationstree():
 
     return content
 
-def open_it_productions():
+def open_it_productions(player):
     content = []
-    content.append(buttons.Button("open_t_quarry", 8))
-
+    if player.technologies["quarry"] != True:
+        content.append(buttons.Button("open_t_quarry", 8))
+    elif player.technologies["quarry"] == True:
+        content.append(buttons.Button("researched_t_quarry", 8)) # No f needed but for img
     return content
 
 def open_t_quarry():

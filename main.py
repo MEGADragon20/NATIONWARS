@@ -128,19 +128,20 @@ class Suchspiel(arcade.Window):
                             self.sbar = sidebar.investigationstree()
 
                         if i.f == "open_it_productions":
-                            if self.players[0].technologies["quarry"] != True:
-                                self.sbar.clear()
-                                self.sbar = sidebar.open_it_productions()
+                            self.sbar.clear()
+                            self.sbar = sidebar.open_it_productions(self.players[0])
 
                         if i.f == "open_t_quarry":
-                            
+                            if self.players[0].technologies["quarry"] != True:
                                 self.sbar.clear()
                                 self.sbar = sidebar.open_t_quarry()
-
-                        if i.f == "investigate_quarry.png":
+                                print("True")
+                            
+                        if i.f == "investigate_quarry":
                             self.sbar.clear()
                             self.players[0].technologies["quarry"] = True
                             self.sbar = sidebar.investigationstree()
+                            print("done")
 
                         if i.f == "pass_turn":
                             self.produce()
