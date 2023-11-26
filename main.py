@@ -35,9 +35,9 @@ class Suchspiel(arcade.Window):
         self.players.append(Player("Markus Söder", arcade.color.RED_DEVIL, "Conquerus"))
         self.entities.append(Soldier(self.Dictionary[(2,2)], self.players[0]))
         self.buildings.append(self.fields[98].add_village("München", self.players[0])) 
-        self.buildings.append(self.fields[99].add_mine(self.Dictionary, None))
+        self.buildings.append(self.fields[99].add_quarry(self.Dictionary, None))
         self.buildings.append(self.fields[387].add_village("Berlin", self.players[0])) 
-        self.buildings.append(self.fields[386].add_mine(self.Dictionary, None)) 
+        self.buildings.append(self.fields[386].add_quarry(self.Dictionary, None)) 
         
         self.tbar = topbar.start(self.players[0])
 
@@ -89,6 +89,17 @@ class Suchspiel(arcade.Window):
                             self.buildings.append(self.active.add_village("Hamburg", self.players[0]))
                             self.sbar.clear()
                             self.sbar = sidebar.start()
+                        if i.f == "add_quarry":
+                            e = self.active.add_quarry(self.Dictionary, self.players[0])
+                            self.buildings.append(e)
+                            self.sbar.clear()
+                            self.sbar = sidebar.quarry(e)
+                        if i.f == "upgrade_quarry":
+                            for j in self.active.buildings:
+                                if j.typ == "quarry":
+                                    j.lvl += 1
+                                    self.sbar.clear()
+                                    self.sbar = sidebar.quarry(j)
                         if i.f == "add_mine":
                             e = self.active.add_mine(self.Dictionary, self.players[0])
                             self.buildings.append(e)
@@ -100,17 +111,6 @@ class Suchspiel(arcade.Window):
                                     j.lvl += 1
                                     self.sbar.clear()
                                     self.sbar = sidebar.mine(j)
-                        if i.f == "add_iron_mine":
-                            e = self.active.add_iron_mine(self.Dictionary, self.players[0])
-                            self.buildings.append(e)
-                            self.sbar.clear()
-                            self.sbar = sidebar.iron_mine(e)
-                        if i.f == "upgrade_iron_mine":
-                            for j in self.active.buildings:
-                                if j.typ == "iron_mine":
-                                    j.lvl += 1
-                                    self.sbar.clear()
-                                    self.sbar = sidebar.iron_mine(j)
                         if i.f == "add_cabin":
                             e = self.active.add_cabin(self.Dictionary, self.players[0])
                             self.buildings.append(e)
@@ -135,13 +135,45 @@ class Suchspiel(arcade.Window):
                             if self.players[0].technologies["quarry"] != True:
                                 self.sbar.clear()
                                 self.sbar = sidebar.open_t_quarry()
-                                print("True")
                             
                         if i.f == "investigate_quarry":
                             self.sbar.clear()
                             self.players[0].technologies["quarry"] = True
                             self.sbar = sidebar.investigationstree()
-                            print("done")
+
+                        if i.f == "open_t_cabin":
+                            if self.players[0].technologies["cabin"] != True:
+                                self.sbar.clear()
+                                self.sbar = sidebar.open_t_cabin()
+                            
+                        if i.f == "investigate_cabin":
+                            self.sbar.clear()
+                            self.players[0].technologies["cabin"] = True
+                            self.sbar = sidebar.investigationstree()
+
+                        if i.f == "open_t_wheat_plot":
+                            if self.players[0].technologies["wheat_plot"] != True:
+                                self.sbar.clear()
+                                self.sbar = sidebar.open_t_wheat_plot()
+                            
+                        if i.f == "investigate_wheat_plot":
+                            self.sbar.clear()
+                            self.players[0].technologies["wheat_plot"] = True
+                            self.sbar = sidebar.investigationstree()
+
+                        if i.f == "open_t_pasture":
+                            if self.players[0].technologies["pasture"] != True:
+                                self.sbar.clear()
+                                self.sbar = sidebar.open_t_pasture()
+                            
+                        if i.f == "investigate_pasture":
+                            self.sbar.clear()
+                            self.players[0].technologies["pasture"] = True
+                            self.sbar = sidebar.investigationstree()
+
+
+
+
 
                         if i.f == "pass_turn":
                             self.produce()
@@ -205,19 +237,19 @@ class Field(arcade.Sprite):
         self.buildings.append(a) 
         return a
     
+    def add_quarry(self, d, owner):
+        if self.typ != "mountain":
+            raise(TypeError)
+        a,b = self.pos_for_village(d, owner)
+        c = Quarry(self.x, self.y, d[(a, b)].buildings[0])
+        self.buildings.append(c)
+        return c
+    
     def add_mine(self, d, owner):
         if self.typ != "mountain":
             raise(TypeError)
         a,b = self.pos_for_village(d, owner)
         c = Mine(self.x, self.y, d[(a, b)].buildings[0])
-        self.buildings.append(c)
-        return c
-    
-    def add_iron_mine(self, d, owner):
-        if self.typ != "mountain":
-            raise(TypeError)
-        a,b = self.pos_for_village(d, owner)
-        c = Iron_Mine(self.x, self.y, d[(a, b)].buildings[0])
         self.buildings.append(c)
         return c
     
@@ -351,9 +383,9 @@ class Village(Building):
     def produce(self):
         self.owner.coins += r.randint(2, 10) * self.lvl
 
-class Mine(Building):
+class Quarry(Building):
     def __init__(self, x, y, village, lvl = 1):
-        super().__init__(x, y, "mine")
+        super().__init__(x, y, "quarry")
         self.x = x
         self.y = y
         self.village = village
@@ -364,11 +396,11 @@ class Mine(Building):
         self.owner.goods["stone"] += (self.lvl * self.village.lvl)
     
     def klick(self):
-        return sidebar.mine(self)
+        return sidebar.quarry(self)
 
-class Iron_Mine(Building):
+class Mine(Building):
     def __init__(self, x, y, village, lvl = 1):
-        super().__init__(x, y, "iron_mine")
+        super().__init__(x, y, "mine")
         self.x = x
         self.y = y
         self.village = village
@@ -379,7 +411,7 @@ class Iron_Mine(Building):
         self.owner.goods["iron"] += (self.lvl * self.village.lvl)
     
     def klick(self):
-        return sidebar.iron_mine(self)
+        return sidebar.mine(self)
 
 
 class Cabin(Building):
@@ -422,10 +454,10 @@ class Player():
 
     def startt(self):
         self.technologies["quarry"] = False
-        # self.technologies[""] = False
-        # self.technologies[] = False
-        # self.technologies[] = False
-        # self.technologies[] = False
+        self.technologies["cabin"] = False
+        self.technologies["wheat_plot"] = False
+        self.technologies["pasture"] = False
+        # self.technologies["quarry"] = False
         # self.technologies[] = False
         # self.technologies[] = False
         # self.technologies[] = False
@@ -451,14 +483,6 @@ class Player():
 
 
 
-#Forschungsbaum
-
-def enthalten(list):
-    ergebnis=True
-    for n in list:
-        if n not in erforscht.keys():
-            ergebnis=False
-    return ergebnis   
 
 
 
@@ -468,7 +492,7 @@ def enthalten(list):
 
 class Button(arcade.Sprite):
     def __init__(self, f, h):
-        super().__init__("data/buttons/" + f + ".png", center_x = 890, center_y = h*84)
+        super().__init__("data/buttons/" + f + ".png", center_x = 890, center_y = h*84 - 10)
         self.f = f 
         self.type = "Button"
 

@@ -2,7 +2,7 @@ import arcade
 
 class Button(arcade.Sprite):
     def __init__(self, f, h):
-        super().__init__("data/buttons/" + f + ".png", center_x = 890, center_y = h*84)
+        super().__init__("data/buttons/" + f + ".png", center_x = 890, center_y = h*84 - 10)
         self.f = f
         self.type = "Button"
 
