@@ -62,6 +62,19 @@ def cabin(cabin):
 
     return content
 
+def wheat_plot(wheat_plot):
+    lvl = str(wheat_plot.lvl)
+    name = "wheat_plot"
+    villagename = wheat_plot.village.name
+    color = wheat_plot.owner.color
+    content = []
+    content.append(buttons.Txt(name, 800, 760, arcade.color.BLACK, 20))
+    content.append(buttons.Txt(lvl, 950, 760, arcade.color.BLACK, 20))
+    content.append(buttons.Txt(villagename, 800, 740, color, 16))
+    content.append(buttons.Button("upgrade_wheat_plot", 7))
+
+    return content
+    
 def village(village):
     lvl = str(village.lvl)
     name = village.name
@@ -140,6 +153,10 @@ def open_it_productions(player):
         content.append(buttons.Button("open_t_pasture", 5))
     elif player.technologies["pasture"] == True:
         content.append(buttons.Button("researched_t_pasture", 5))
+    if player.technologies["mine"] != True:
+        content.append(buttons.Button("open_t_mine", 4))
+    elif player.technologies["mine"] == True:
+        content.append(buttons.Button("researched_t_mine", 4))
 
     return content
 
@@ -166,7 +183,14 @@ def open_t_wheat_plot():
 
 def open_t_pasture():
     content = []
-    content.append(buttons.Txt("Wheat Plot", 800, 760, arcade.color.BLACK, 20))
+    content.append(buttons.Txt("Pasture", 800, 760, arcade.color.BLACK, 20))
     content.append(buttons.Button("investigate_pasture", 1))
+
+    return content
+
+def open_t_mine():
+    content = []
+    content.append(buttons.Txt("Mine", 800, 760, arcade.color.BLACK, 20))
+    content.append(buttons.Button("investigate_mine", 1))
 
     return content

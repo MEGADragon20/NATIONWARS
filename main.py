@@ -166,7 +166,17 @@ class Suchspiel(arcade.Window):
                             self.sbar.clear()
                             self.players[0].technologies["pasture"] = True
                             self.sbar = sidebar.investigationstree()
-
+                        
+                        if i.f == "open_t_mine":
+                            if self.players[0].technologies["mine"] != True:
+                                self.sbar.clear()
+                                self.sbar = sidebar.open_t_mine()
+                            
+                        if i.f == "investigate_mine":
+                            self.sbar.clear()
+                            self.players[0].technologies["mine"] = True
+                            self.sbar = sidebar.investigationstree()
+                        
 
 
 
@@ -256,7 +266,15 @@ class Field(arcade.Sprite):
         c = Cabin(self.x, self.y, d[(a, b)].buildings[0])
         self.buildings.append(c)
         return c
-               
+
+    def add_wheat_plot(self, d, owner):
+        if self.typ != "forest":
+            raise(TypeError)
+        a,b = self.pos_for_village(d, owner)
+        c = Wheat_plot(self.x, self.y, d[(a, b)].buildings[0])
+        self.buildings.append(c)
+        return c
+
 # Add entities
     def add_soldier(self, owner):
         pass
@@ -425,6 +443,21 @@ class Cabin(Building):
     def klick(self):
         return sidebar.cabin(self)
 
+class Wheat_plot(Building):
+    def __init__(self, x, y, village, lvl = 1):
+        super().__init__(x, y, "wheat_plot")
+        self.x = x
+        self.y = y
+        self.village = village
+        self.owner = village.owner
+        self.lvl = lvl
+    
+    def produce(self):
+        self.owner.goods["wood"] += (self.lvl * self.village.lvl)
+    
+    def klick(self):
+        return sidebar.wheat_plot(self)
+
 class Player():
     def __init__(self, name, color, tribe, goods: dict = {}, technologies: dict = {}):
         self.name = name
@@ -453,7 +486,7 @@ class Player():
         self.technologies["cabin"] = False
         self.technologies["wheat_plot"] = False
         self.technologies["pasture"] = False
-        # self.technologies["quarry"] = False
+        self.technologies["mine"] = False
         # self.technologies[] = False
         # self.technologies[] = False
         # self.technologies[] = False
