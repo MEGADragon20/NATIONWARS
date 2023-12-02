@@ -51,7 +51,7 @@ def mine(mine):
 
 def cabin(cabin):
     lvl = str(cabin.lvl)
-    name = "Holzhütte"
+    name = "Cabin"
     villagename = cabin.village.name
     color = cabin.owner.color
     content = []
@@ -64,7 +64,7 @@ def cabin(cabin):
 
 def wheat_plot(wheat_plot):
     lvl = str(wheat_plot.lvl)
-    name = "wheat_plot"
+    name = "Wheat plot"
     villagename = wheat_plot.village.name
     color = wheat_plot.owner.color
     content = []
@@ -74,7 +74,20 @@ def wheat_plot(wheat_plot):
     content.append(buttons.Button("upgrade_wheat_plot", 7))
 
     return content
-    
+
+def pasture(pasture):
+    lvl = str(pasture.lvl)
+    name = "Pasture"
+    villagename = pasture.village.name
+    color = pasture.owner.color
+    content = []
+    content.append(buttons.Txt(name, 800, 760, arcade.color.BLACK, 20))
+    content.append(buttons.Txt(lvl, 950, 760, arcade.color.BLACK, 20))
+    content.append(buttons.Txt(villagename, 800, 740, color, 16))
+    content.append(buttons.Button("upgrade_pasture", 6))
+
+    return content
+
 def village(village):
     lvl = str(village.lvl)
     name = village.name
@@ -99,31 +112,32 @@ def field(field, d, owner):
         name = "Wiese"
     content = []
     content.append(buttons.Txt(name, 800, 760, arcade.color.BLACK, 20))
-    if field.buildings == [] and field.typ != "water":
-        content.append(buttons.Button("add_village", 7))
-    if field.typ == "mountain" and field.test_for_village(d, owner) == True: # More efficient version possible
-        testerquarry = False
-        testermine = False
-        for i in field.buildings:  
-            if i.typ == "quarry":
-                content.append(buttons.Button("upgrade_quarry", 6))
-                testerquarry = True
-        if testerquarry == False:
-            content.append(buttons.Button("add_quarry", 6))
-        for i in field.buildings:  
-            if i.typ == "mine":
-                content.append(buttons.Button("upgrade_mine", 5))
-                testermine = True
-        if testermine == False:
-            content.append(buttons.Button("add_mine", 5))
-    if field.typ == "forest" and field.test_for_village(d, owner) == True:
-        testercabin = False
-        for i in field.buildings:  
-            if i.typ == "cabin":
-                content.append(buttons.Button("upgrade_cabin", 6))
-                testercabin = True
-        if testercabin == False:
-            content.append(buttons.Button("add_cabin", 6))
+    if field.buildings == []:                                                    # Create Buttons for adding buildings
+        if field.typ != "water" and field.test_for_village(d, owner) == False:
+            content.append(buttons.Button("add_village", 8))
+        if field.typ == "forest" and field.test_for_village(d, owner) == True and owner.technologies["cabin"] == True:
+            content.append(buttons.Button("add_cabin", 7))
+        if field.typ == "mountain" and field.test_for_village(d, owner) == True and owner.technologies["quarry"] == True:
+            content.append(buttons.Button("add_quarry", 7))
+        if field.typ == "mountain" and field.test_for_village(d, owner) == True and owner.technologies["mine"] == True:   
+            content.append(buttons.Button("add_mine", 6))
+        if field.typ == "grass" and field.test_for_village(d, owner) == True and owner.technologies["pasture"] == True:
+            content.append(buttons.Button("add_pasture", 7))
+        if field.typ == "grass" and field.test_for_village(d, owner) == True and owner.technologies["wheat_plot"] == True:
+            content.append(buttons.Button("add_wheat_plot", 6))
+    else:                                                                         # Create Buttons to upgrade existing buildings from the field sb
+        if field.buildings[0].typ == "cabin":
+            content.append(buttons.Button("upgrade_cabin", 8))
+        elif field.buildings[0].typ == "quarry":
+            content.append(buttons.Button("upgrade_quarry", 8))
+        elif field.buildings[0].typ == "mine":
+            content.append(buttons.Button("upgrade_mine", 8))
+        elif field.buildings[0].typ == "pasture":
+            content.append(buttons.Button("upgrade_pasture", 8))
+        elif field.buildings[0].typ == "wheat_plot":
+            content.append(buttons.Button("upgrade_wheat_plot", 8))
+
+
 
     return content
 

@@ -1,5 +1,5 @@
 import arcade, random as r, arcade.gui
-import reader, sidebar, topbar, tree
+import reader, sidebar, topbar
 
 
 class Suchspiel(arcade.Window):
@@ -33,7 +33,8 @@ class Suchspiel(arcade.Window):
         self.buildings.append(self.fields[98].add_village("München", self.players[0])) 
         self.buildings.append(self.fields[99].add_quarry(self.Dictionary, None))
         self.buildings.append(self.fields[387].add_village("Berlin", self.players[0])) 
-        self.buildings.append(self.fields[386].add_quarry(self.Dictionary, None)) 
+        self.buildings.append(self.fields[386].add_quarry(self.Dictionary, None))
+        self.buildings.append(self.fields[388].add_wheat_plot(self.Dictionary, None))
         
         self.tbar = topbar.start(self.players[0])
 
@@ -53,8 +54,8 @@ class Suchspiel(arcade.Window):
                 if arcade.check_for_collision(pseudosprite, i):
                     kfields = True
                     self.active = i.select(self.Dictionary, self.fields, self.active)
-                    self.sbar.clear()
-                    a = i.klick(self.Dictionary)
+                    self.sbar.clear() 
+                    a = i.klick(self.Dictionary, self.players[0])
                     for i in a:
                         self.sbar.append(i)
             
@@ -81,44 +82,63 @@ class Suchspiel(arcade.Window):
                 if i.type == "Button":
                     if arcade.check_for_collision(pseudosprite, i):
                         kbuttons = True
+
+                        # FUNCTIONS FOR BUTTONS
+                        
+                        # add buildings
                         if i.f == "add_village":
                             self.buildings.append(self.active.add_village("Hamburg", self.players[0]))
                             self.sbar.clear()
                             self.sbar = sidebar.start()
-                        if i.f == "add_quarry":
-                            e = self.active.add_quarry(self.Dictionary, self.players[0])
-                            self.buildings.append(e)
-                            self.sbar.clear()
-                            self.sbar = sidebar.quarry(e)
-                        if i.f == "upgrade_quarry":
-                            for j in self.active.buildings:
-                                if j.typ == "quarry":
-                                    j.lvl += 1
-                                    self.sbar.clear()
-                                    self.sbar = sidebar.quarry(j)
-                        if i.f == "add_mine":
-                            e = self.active.add_mine(self.Dictionary, self.players[0])
-                            self.buildings.append(e)
-                            self.sbar.clear()
-                            self.sbar = sidebar.mine(e)
-                        if i.f == "upgrade_mine":
-                            for j in self.active.buildings:
-                                if j.typ == "mine":
-                                    j.lvl += 1
-                                    self.sbar.clear()
-                                    self.sbar = sidebar.mine(j)
-                        if i.f == "add_cabin":
-                            e = self.active.add_cabin(self.Dictionary, self.players[0])
-                            self.buildings.append(e)
-                            self.sbar.clear()
-                            self.sbar = sidebar.cabin(e)
-                        if i.f == "upgrade_cabin":
-                            for j in self.active.buildings:
-                                if j.typ == "cabin":
-                                    j.lvl += 1
-                                    self.sbar.clear()
-                                    self.sbar = sidebar.cabin(j)
 
+
+                        elif i.f == "add_quarry":
+                            self.add_building("quarry")
+                        elif i.f == "add_cabin":
+                            self.add_building("cabin")
+                        elif i.f == "add_wheat_plot":
+                            self.add_building("wheat_plot")
+                        elif i.f == "add_pasture":
+                            self.add_building("pasture")
+                        elif i.f == "add_mine":
+                            self.add_building("mine")
+                        
+                        # upgrade building
+                        elif i.f == "upgrade_quarry":
+                            self.upgrade_building("quarry")
+                        elif i.f == "upgrade_cabin":
+                            self.upgrade_building("cabin")
+                        elif i.f == "upgrade_wheat_plot":
+                            self.upgrade_building("wheat_plot")
+                        elif i.f == "upgrade_pasture":
+                            self.upgrade_building("pasture")
+                        elif i.f == "upgrade_mine":
+                            self.upgrade_building("mine")
+
+                        # open technology sb
+                        elif i.f == "open_t_quarry":
+                            self.open_technology("quarry")
+                        elif i.f == "open_t_cabin":
+                            self.open_technology("cabin")
+                        elif i.f == "open_t_wheat_plot":
+                            self.open_technology("wheat_plot")
+                        elif i.f == "open_t_pasture":
+                            self.open_technology("pasture")
+                        elif i.f == "open_t_mine":
+                            self.open_technology("mine")
+
+                        # investigate
+                        elif i.f == "investigate_quarry":
+                            self.investigate_technology("quarry")
+                        elif i.f == "investigate_cabin":
+                            self.investigate_technology("cabin")
+                        elif i.f == "investigate_wheat_plot":
+                            self.investigate_technology("wheat_plot")
+                        elif i.f == "investigate_pasture":
+                            self.investigate_technology("pasture")
+                        elif i.f == "investigate_mine":
+                            self.investigate_technology("mine")
+                            
                         if i.f == "open_investigations":
                             self.sbar.clear()
                             self.sbar = sidebar.investigationstree()
@@ -126,56 +146,6 @@ class Suchspiel(arcade.Window):
                         if i.f == "open_it_productions":
                             self.sbar.clear()
                             self.sbar = sidebar.open_it_productions(self.players[0])
-
-                        if i.f == "open_t_quarry":
-                            if self.players[0].technologies["quarry"] != True:
-                                self.sbar.clear()
-                                self.sbar = sidebar.open_t_quarry()
-                            
-                        if i.f == "investigate_quarry":
-                            self.sbar.clear()
-                            self.players[0].technologies["quarry"] = True
-                            self.sbar = sidebar.investigationstree()
-
-                        if i.f == "open_t_cabin":
-                            if self.players[0].technologies["cabin"] != True:
-                                self.sbar.clear()
-                                self.sbar = sidebar.open_t_cabin()
-                            
-                        if i.f == "investigate_cabin":
-                            self.sbar.clear()
-                            self.players[0].technologies["cabin"] = True
-                            self.sbar = sidebar.investigationstree()
-
-                        if i.f == "open_t_wheat_plot":
-                            if self.players[0].technologies["wheat_plot"] != True:
-                                self.sbar.clear()
-                                self.sbar = sidebar.open_t_wheat_plot()
-                            
-                        if i.f == "investigate_wheat_plot":
-                            self.sbar.clear()
-                            self.players[0].technologies["wheat_plot"] = True
-                            self.sbar = sidebar.investigationstree()
-
-                        if i.f == "open_t_pasture":
-                            if self.players[0].technologies["pasture"] != True:
-                                self.sbar.clear()
-                                self.sbar = sidebar.open_t_pasture()
-                            
-                        if i.f == "investigate_pasture":
-                            self.sbar.clear()
-                            self.players[0].technologies["pasture"] = True
-                            self.sbar = sidebar.investigationstree()
-                        
-                        if i.f == "open_t_mine":
-                            if self.players[0].technologies["mine"] != True:
-                                self.sbar.clear()
-                                self.sbar = sidebar.open_t_mine()
-                            
-                        if i.f == "investigate_mine":
-                            self.sbar.clear()
-                            self.players[0].technologies["mine"] = True
-                            self.sbar = sidebar.investigationstree()
                         
 
 
@@ -219,6 +189,28 @@ class Suchspiel(arcade.Window):
         for i in self.buildings:
             i.produce()
     
+    def open_technology(self, tech_type):
+        if not self.players[0].technologies.get(tech_type, False):
+            self.sbar.clear()
+            self.sbar = getattr(sidebar, f"open_t_{tech_type}")()
+    
+    def investigate_technology(self, tech_type):
+        self.sbar.clear()
+        self.players[0].technologies[tech_type] = True
+        self.sbar = sidebar.investigationstree()
+
+    def add_building(self, building_type):
+        building_instance = getattr(self.active, f"add_{building_type}")(self.Dictionary, self.players[0])
+        self.buildings.append(building_instance)
+        self.sbar.clear()
+        self.sbar = getattr(sidebar, building_type)(building_instance)
+
+    def upgrade_building(self, building_type):
+        for building in self.active.buildings:
+            if building.typ == building_type:
+                building.lvl += 1
+                self.sbar.clear()
+                self.sbar = getattr(sidebar, building_type)(building)
 
 class Field(arcade.Sprite):
     def __init__(self,  x, y, typ):
@@ -235,8 +227,8 @@ class Field(arcade.Sprite):
         self.texture = arcade.load_texture("data/fields/active/" + self.typ + ".png")
         return self
     
-    def klick(self, d):
-        return sidebar.field(self, d, None)
+    def klick(self, d, player):
+        return sidebar.field(self, d, player)
 
     def add_village(self, name, owner):
         a = Village(self.x, self.y, name, 1, owner)
@@ -268,12 +260,21 @@ class Field(arcade.Sprite):
         return c
 
     def add_wheat_plot(self, d, owner):
-        if self.typ != "forest":
+        if self.typ != "grass":
             raise(TypeError)
         a,b = self.pos_for_village(d, owner)
         c = Wheat_plot(self.x, self.y, d[(a, b)].buildings[0])
         self.buildings.append(c)
         return c
+    
+    def add_pasture(self, d, owner):
+        if self.typ != "grass":
+            raise(TypeError)
+        a,b = self.pos_for_village(d, owner)
+        c = Pasture(self.x, self.y, d[(a, b)].buildings[0])
+        self.buildings.append(c)
+        return c
+
 
 # Add entities
     def add_soldier(self, owner):
@@ -453,10 +454,25 @@ class Wheat_plot(Building):
         self.lvl = lvl
     
     def produce(self):
-        self.owner.goods["wood"] += (self.lvl * self.village.lvl)
+        self.owner.goods["wheat"] += (self.lvl * self.village.lvl)
     
     def klick(self):
         return sidebar.wheat_plot(self)
+
+class Pasture(Building):
+    def __init__(self, x, y, village, lvl = 1):
+        super().__init__(x, y, "pasture")
+        self.x = x
+        self.y = y
+        self.village = village
+        self.owner = village.owner
+        self.lvl = lvl
+    
+    def produce(self):
+        self.owner.goods["wood"] += (self.lvl * self.village.lvl)
+    
+    def klick(self):
+        return sidebar.pasture(self)
 
 class Player():
     def __init__(self, name, color, tribe, goods: dict = {}, technologies: dict = {}):
@@ -534,6 +550,14 @@ class Img(arcade.Sprite):
     def __init__(self, file, x, y):
         super().__init__(file, scale= 2, center_x = x, center_y = y)
         self.type = "Img"
+
+
+
+
+
+
+
+
 
 sp = Suchspiel(1000, 840, "NATIONWARS", 24, 24)
 arcade.run()

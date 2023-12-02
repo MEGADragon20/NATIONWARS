@@ -1,12 +1,14 @@
-def wheat_plot(wheat_plot):
-    lvl = str(wheat_plot.lvl)
-    name = "wheat_plot"
-    villagename = wheat_plot.village.name
-    color = wheat_plot.owner.color
-    content = []
-    content.append(buttons.Txt(name, 800, 760, arcade.color.BLACK, 20))
-    content.append(buttons.Txt(lvl, 950, 760, arcade.color.BLACK, 20))
-    content.append(buttons.Txt(villagename, 800, 740, color, 16))
-    content.append(buttons.Button("upgrade_wheat_plot", 7))
-
-    return content
+class Pasture(Building):
+    def __init__(self, x, y, village, lvl = 1):
+        super().__init__(x, y, "pasture")
+        self.x = x
+        self.y = y
+        self.village = village
+        self.owner = village.owner
+        self.lvl = lvl
+    
+    def produce(self):
+        self.owner.goods["wood"] += (self.lvl * self.village.lvl)
+    
+    def klick(self):
+        return sidebar.pasture(self)
