@@ -200,14 +200,44 @@ class Suchspiel(arcade.Window):
         self.sbar = sidebar.investigationstree()
 
     def add_building(self, building_type):
-        building_instance = getattr(self.active, f"add_{building_type}")(self.Dictionary, self.players[0])
-        self.buildings.append(building_instance)
-        self.sbar.clear()
-        self.sbar = getattr(sidebar, building_type)(building_instance)
+        if self.players[0].coins >= 25:
+            self.players[0].coins -= 25
+            self.tbar = topbar.start(self.players[0])
+            building_instance = getattr(self.active, f"add_{building_type}")(self.Dictionary, self.players[0])
+            self.buildings.append(building_instance)
+            self.sbar.clear()
+            self.sbar = getattr(sidebar, building_type)(building_instance)
+        else:
+            raise ValueError
 
     def upgrade_building(self, building_type):
+        
         for building in self.active.buildings:
             if building.typ == building_type:
+                i_cost = 0 # I_points, Stone, Wood, Wool, Wheat, Iron
+                s_cost = 0 # stone
+                w_cost = 0 # Wood
+                vv_cost = 0 # wool
+                h_cost = 0 # wheat 
+                f_cost = 0 # Iron
+                faktor = 1
+                if building_type == "mine":
+                    s_cost = 5
+                elif building_type == "cabin":
+                    w_cost = 5
+                elif building_type == "pasture":
+                    vv_cost = 5
+                elif building_type == "wheat_plot":
+                    h_cost = 5
+                elif building_type == "iron":
+                    f_cost = 5
+                if building.lvl == 2:
+                    i_cost = 1
+                elif building.lvl == 3:
+                    faktor = 2
+                elif building.lvl == 4:
+                    i_cost = 
+
                 building.lvl += 1
                 self.sbar.clear()
                 self.sbar = getattr(sidebar, building_type)(building)
@@ -397,6 +427,7 @@ class Village(Building):
     
     def produce(self):
         self.owner.coins += r.randint(2, 10) * self.lvl
+        self.owner.investigationpoints += 1
 
 class Quarry(Building):
     def __init__(self, x, y, village, lvl = 1):
@@ -469,7 +500,7 @@ class Pasture(Building):
         self.lvl = lvl
     
     def produce(self):
-        self.owner.goods["wood"] += (self.lvl * self.village.lvl)
+        self.owner.goods["coal"] += (self.lvl * self.village.lvl)
     
     def klick(self):
         return sidebar.pasture(self)
