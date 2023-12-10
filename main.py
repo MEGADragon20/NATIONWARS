@@ -31,10 +31,9 @@ class Suchspiel(arcade.Window):
         self.players.append(Player("Markus Söder", arcade.color.RED_DEVIL, "Conquerus"))
         self.entities.append(Soldier(self.Dictionary[(2,2)], self.players[0]))
         self.buildings.append(self.fields[98].add_village("München", self.players[0])) 
-        self.buildings.append(self.fields[99].add_quarry(self.Dictionary, None))
         self.buildings.append(self.fields[387].add_village("Berlin", self.players[0])) 
-        self.buildings.append(self.fields[386].add_quarry(self.Dictionary, None))
-        self.buildings.append(self.fields[388].add_wheat_plot(self.Dictionary, None))
+
+
         
         self.tbar = topbar.start(self.players[0])
 
@@ -59,32 +58,26 @@ class Suchspiel(arcade.Window):
                     for i in a:
                         self.sbar.append(i)
             
-            kbuildings = False
             for i in self.buildings:
                 if arcade.check_for_collision(pseudosprite, i):
-                    kbuildings = True
                     self.sbar.clear()
                     a = i.klick()
                     for i in a:
                         self.sbar.append(i)
             
-            kentities = False
             for i in self.entities:
                 if arcade.check_for_collision(pseudosprite, i):
-                    kentities = True
                     self.sbar.clear()
                     a = i.klick()
                     for i in a:
                         self.sbar.append(i)
             
-            kbuttons = False
             for i in self.sbar:
                 if i.type == "Button":
                     if arcade.check_for_collision(pseudosprite, i):
-                        kbuttons = True
 
                         # FUNCTIONS FOR BUTTONS
-                        
+
                         # add buildings
                         if i.f == "add_village":
                             self.buildings.append(self.active.add_village("Hamburg", self.players[0]))
@@ -139,32 +132,25 @@ class Suchspiel(arcade.Window):
                         elif i.f == "investigate_mine":
                             self.investigate_technology("mine")
                             
-                        if i.f == "open_investigations":
+                        elif i.f == "open_investigations":
                             self.sbar.clear()
                             self.sbar = sidebar.investigationstree()
 
-                        if i.f == "open_it_productions":
+                        elif i.f == "open_it_productions":
                             self.sbar.clear()
                             self.sbar = sidebar.open_it_productions(self.players[0])
                         
 
 
 
+                        #default stuff
+                        elif i.f == "home":
+                            self.sbar = sidebar.start()
 
-                        if i.f == "pass_turn":
+                        elif i.f == "pass_turn":
                             self.produce()
                             self.tbar = topbar.start(self.players[0])
                             self.turn += 1/len(self.players)
-
-
-                        
-
-
-            if kfields == False and kbuildings == False and kbuttons == False and kentities == False:
-                self.sbar.clear()
-                a = sidebar.start()
-                for i in a:
-                    self.sbar.append(i)
 
 
         elif button == 2 or button == 4:
@@ -195,9 +181,14 @@ class Suchspiel(arcade.Window):
             self.sbar = getattr(sidebar, f"open_t_{tech_type}")()
     
     def investigate_technology(self, tech_type):
-        self.sbar.clear()
-        self.players[0].technologies[tech_type] = True
-        self.sbar = sidebar.investigationstree()
+        if self.players[0].investigationpoints >= 1:
+            self.players[0].investigationpoints -= 1
+            self.tbar = topbar.start(self.players[0])           
+            self.sbar.clear()
+            self.players[0].technologies[tech_type] = True
+            self.sbar = sidebar.investigationstree()
+        else:
+            raise ValueError
 
     def add_building(self, building_type):
         if self.players[0].coins >= 25:
@@ -214,33 +205,41 @@ class Suchspiel(arcade.Window):
         
         for building in self.active.buildings:
             if building.typ == building_type:
-                i_cost = 0 # I_points, Stone, Wood, Wool, Wheat, Iron
-                s_cost = 0 # stone
-                w_cost = 0 # Wood
-                vv_cost = 0 # wool
-                h_cost = 0 # wheat 
-                f_cost = 0 # Iron
+                costtype1 = None
+                costtype2 = None
                 faktor = 1
-                if building_type == "mine":
-                    s_cost = 5
-                elif building_type == "cabin":
-                    w_cost = 5
-                elif building_type == "pasture":
-                    vv_cost = 5
-                elif building_type == "wheat_plot":
-                    h_cost = 5
-                elif building_type == "iron":
-                    f_cost = 5
-                if building.lvl == 2:
-                    i_cost = 1
-                elif building.lvl == 3:
-                    faktor = 2
-                elif building.lvl == 4:
-                    i_cost = 
 
-                building.lvl += 1
-                self.sbar.clear()
-                self.sbar = getattr(sidebar, building_type)(building)
+                # Auswählen der kosten 
+
+                if building_type == "quarry":
+                    costtype1 = "stone"
+                    costtype2 = "wood"
+                elif building_type == "cabin":
+                    costtype1 = "wood"
+                    costtype2 = "wool"
+                elif building_type == "pasture":
+                    costtype1 = "wool"
+                    costtype2 = "wheat"
+                elif building_type == "wheat_plot":
+                    costtype1 = "wheat"
+                    costtype2 = "iron"
+                elif building_type == "mine":
+                    costtype1 = "iron"
+                    costtype2 = "stone"
+                faktor = round(building.lvl/2 + 0.1) # Aufrunden 
+
+                if self.players[0].goods[costtype1] >= 5*faktor and self.players[0].goods[costtype2] >= 2*faktor:
+                    self.players[0].goods[costtype1] -= 5*faktor
+                    self.players[0].goods[costtype2] -= 2*faktor
+                    self.tbar = topbar.start(self.players[0])
+                    
+                  
+
+                    building.lvl += 1
+                    self.sbar.clear()
+                    self.sbar = getattr(sidebar, building_type)(building)
+                else:
+                    raise ValueError
 
 class Field(arcade.Sprite):
     def __init__(self,  x, y, typ):
@@ -249,7 +248,7 @@ class Field(arcade.Sprite):
         self.y = y
         self.typ = typ
         self.pos = (((self.x - 32)/32),((self.y - 32)/ 32))
-        self.buildings = []
+        self.buildings = [] 
         self.entities = []
     
     def select(self, f_dict, f_list, active):
@@ -500,7 +499,7 @@ class Pasture(Building):
         self.lvl = lvl
     
     def produce(self):
-        self.owner.goods["coal"] += (self.lvl * self.village.lvl)
+        self.owner.goods["wool"] += (self.lvl * self.village.lvl)
     
     def klick(self):
         return sidebar.pasture(self)
@@ -520,7 +519,7 @@ class Player():
     def startgoods(self):
         self.goods["stone"] = 0
         self.goods["wood"] = 0
-        self.goods["coal"] = 0
+        self.goods["wool"] = 0
         self.goods["wheat"] = 0
         self.goods["flour"] = 0
         self.goods["iron"] = 0
