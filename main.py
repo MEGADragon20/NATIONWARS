@@ -29,6 +29,7 @@ class Suchspiel(arcade.Window):
 
         self.active = Field(x = 0, y = 0, typ = "grass")
         self.players.append(Player("Markus Söder", arcade.color.RED_DEVIL, "Conquerus"))
+        self.players.append(Player("Olaf scholz", arcade.color.RED_DEVIL, "Uruks"))
         self.entities.append(Soldier(self.Dictionary[(2,2)], self.players[0]))
         self.buildings.append(self.fields[98].add_village("München", self.players[0])) 
         self.buildings.append(self.fields[387].add_village("Berlin", self.players[0])) 
@@ -149,8 +150,12 @@ class Suchspiel(arcade.Window):
 
                         elif i.f == "pass_turn":
                             self.produce()
+                            # change active player
+                            b = self.players[0]
+                            self.players.pop(0)
+                            self.players.append(b)
+                            # give next player his tbar
                             self.tbar = topbar.start(self.players[0])
-                            self.turn += 1/len(self.players)
 
 
         elif button == 2 or button == 4:
@@ -424,7 +429,7 @@ class Village(Building):
     def klick(self):
         return sidebar.village(self)
     
-    def produce(self):
+    def produce(self): 
         self.owner.coins += r.randint(2, 10) * self.lvl
         self.owner.investigationpoints += 1
 
