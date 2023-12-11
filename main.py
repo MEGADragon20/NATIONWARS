@@ -12,7 +12,9 @@ class Suchspiel(arcade.Window):
         self.players = []
         self.turn = 1
         self.sbar = []
-        self.sbar = sidebar.start()
+        self.players.append(Player("Markus Söder", arcade.color.BLIZZARD_BLUE, "Conquerus"))
+        self.players.append(Player("Olaf Scholz", arcade.color.RED_DEVIL, "Uruks"))
+        self.sbar = sidebar.start(self.players[0])
         self.tbar = []
         
         self.Dictionary = {}
@@ -28,8 +30,7 @@ class Suchspiel(arcade.Window):
 
 
         self.active = Field(x = 0, y = 0, typ = "grass")
-        self.players.append(Player("Markus Söder", arcade.color.RED_DEVIL, "Conquerus"))
-        self.players.append(Player("Olaf scholz", arcade.color.RED_DEVIL, "Uruks"))
+        
         self.entities.append(Soldier(self.Dictionary[(2,2)], self.players[0]))
         self.buildings.append(self.fields[98].add_village("München", self.players[0])) 
         self.buildings.append(self.fields[387].add_village("Berlin", self.players[0])) 
@@ -146,17 +147,19 @@ class Suchspiel(arcade.Window):
 
                         #default stuff
                         elif i.f == "home":
-                            self.sbar = sidebar.start()
+                            self.sbar = sidebar.start(self.players[0])
 
                         elif i.f == "pass_turn":
-                            self.produce()
+                            
                             # change active player
                             b = self.players[0]
                             self.players.pop(0)
                             self.players.append(b)
                             # give next player his tbar
                             self.tbar = topbar.start(self.players[0])
-
+                            self.sbar = sidebar.start(self.players[0])
+                            # give him his new stuff haha
+                            self.produce()
 
         elif button == 2 or button == 4:
             for i in self.fields:
@@ -178,7 +181,8 @@ class Suchspiel(arcade.Window):
     
     def produce(self):
         for i in self.buildings:
-            i.produce()
+            if i.owner.name == self.players[0].name:
+                i.produce()
     
     def open_technology(self, tech_type):
         if not self.players[0].technologies.get(tech_type, False):

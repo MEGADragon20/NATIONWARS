@@ -1,8 +1,11 @@
 import arcade
 import buttons
 
-def start():
+def start(player):
+    playername = player.name
+    color = player.color
     content = []
+    content.append(buttons.Txt(playername,800, 760, color, 20, True))
     content.append(buttons.Button("open_investigations", 8))
     content.append(buttons.Button("pass_turn", 1))
 
