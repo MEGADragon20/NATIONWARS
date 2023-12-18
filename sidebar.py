@@ -124,7 +124,7 @@ def village(village):
     color = village.owner.color
     content = []
     content.append(buttons.Button("home", 1))
-    content.append(buttons.Txt(name, 800, 760, arcade.color.BLACK, 20))
+    content.append(buttons.Txt(name, 800, 760, arcade.color.BLACK, 20, True))
     content.append(buttons.Txt(lvl, 950, 760, arcade.color.BLACK, 20))
     content.append(buttons.Txt(ownername, 800, 740, color, 16))
 
@@ -144,7 +144,7 @@ def field(field, d, owner):
     content.append(buttons.Button("home", 1))
     content.append(buttons.Txt(name, 800, 760, arcade.color.BLACK, 20, True))
     if field.buildings == []:                                                    # Create Buttons for adding buildings
-        if field.typ != "water" and field.test_for_village(d, owner) == False:
+        if field.typ != "water" and field.typ != "mountain" and field.typ != "forest" and field.test_for_village(d, owner) == False:
             content.append(buttons.Button("add_village", 8))
         if field.typ == "forest" and field.test_for_village(d, owner) == True and owner.technologies["cabin"] == True:
             content.append(buttons.Button("add_cabin", 7))

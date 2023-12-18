@@ -30,15 +30,15 @@ class Suchspiel(arcade.Window):
 
 
         self.active = Field(x = 0, y = 0, typ = "grass")
+        self.active_selector = arcade.Sprite("data/icons/active.png", center_x= -16, center_y= -16)
         
         self.entities.append(Soldier(self.Dictionary[(2,2)], self.players[0]))
         self.buildings.append(self.fields[98].add_village("München", self.players[0])) 
-        self.buildings.append(self.fields[387].add_village("Berlin", self.players[0])) 
+        self.buildings.append(self.fields[387].add_village("Berlin", self.players[1])) 
 
 
         
         self.tbar = topbar.start(self.players[0])
-
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.ESCAPE:
@@ -50,11 +50,11 @@ class Suchspiel(arcade.Window):
         pseudosprite.center_y = y
         pseudosprite.set_hit_box([(1,1), (0,1), (0,0), (1,0)])
         if button == 1:
-            kfields = False
+        
             for i in self.fields:
                 if arcade.check_for_collision(pseudosprite, i):
-                    kfields = True
-                    self.active = i.select(self.Dictionary, self.fields, self.active)
+                    self.active_selector = i.select(self.active_selector)
+                    self.active = i
                     self.sbar.clear() 
                     a = i.klick(self.Dictionary, self.players[0])
                     for i in a:
@@ -84,7 +84,7 @@ class Suchspiel(arcade.Window):
                         if i.f == "add_village":
                             self.buildings.append(self.active.add_village("Hamburg", self.players[0]))
                             self.sbar.clear()
-                            self.sbar = sidebar.start()
+                            self.sbar = sidebar.start(self.players[0])
 
 
                         elif i.f == "add_quarry":
@@ -150,7 +150,7 @@ class Suchspiel(arcade.Window):
                             self.sbar = sidebar.start(self.players[0])
 
                         elif i.f == "pass_turn":
-                            
+                            self.produce()
                             # change active player
                             b = self.players[0]
                             self.players.pop(0)
@@ -159,18 +159,20 @@ class Suchspiel(arcade.Window):
                             self.tbar = topbar.start(self.players[0])
                             self.sbar = sidebar.start(self.players[0])
                             # give him his new stuff haha
-                            self.produce()
+                             
 
         elif button == 2 or button == 4:
             for i in self.fields:
                 if arcade.check_for_collision(pseudosprite, i):
-                    pass
-
+                    pass 
+                
+                
     def on_draw(self):
         self.clear()
         self.fields.draw()  
         self.buildings.draw()
         self.entities.draw()
+        self.active_selector.draw()
         for i in self.sbar:
             i.draw()
         for i in self.tbar:
@@ -260,10 +262,10 @@ class Field(arcade.Sprite):
         self.buildings = [] 
         self.entities = []
     
-    def select(self, f_dict, f_list, active):
-        active.texture = arcade.load_texture("data/fields/" + active.typ + ".png")
-        self.texture = arcade.load_texture("data/fields/active/" + self.typ + ".png")
-        return self
+    def select(self, active):
+        active.center_x = self.center_x
+        active.center_y = self.center_y
+        return active
     
     def klick(self, d, player):
         return sidebar.field(self, d, player)
@@ -320,38 +322,49 @@ class Field(arcade.Sprite):
 
     def pos_for_village(self, d, owner):
         a, b = self.pos
+        print(str(a) + "/" + str(b))
+        print("a")
         if (a + 1, b) in d:
             if d[(a + 1, b)].buildings != []:
                 if d[(a + 1, b)].buildings[0].typ == "village":
+                    print("c")
                     return (a + 1, b)
         if (a, b + 1) in d:
             if d[(a, b + 1)].buildings != []:
                 if d[(a, b + 1)].buildings[0].typ == "village":
+                    print("c")
                     return (a, b + 1)
         if (a - 1 , b) in d:
             if d[(a - 1, b)].buildings != []:
                 if d[(a - 1, b)].buildings[0].typ == "village":
+                    print("c")
                     return (a - 1, b)
         if (a, b - 1) in d:
             if d[(a, b - 1)].buildings != []:
                 if d[(a, b - 1)].buildings[0].typ == "village":
+                    print("c")
                     return (a, b - 1)
         if (a + 1, b + 1) in d:
             if d[(a + 1, b + 1)].buildings != []:
                 if d[(a + 1, b + 1)].buildings[0].typ == "village":
+                    print("c")
                     return (a + 1, b + 1)
         if (a - 1 , b - 1) in d:
             if d[(a - 1, b - 1)].buildings != []:
                 if d[(a - 1, b - 1)].buildings[0].typ == "village":
+                    print("c")
                     return (a - 1, b - 1)
         if (a - 1, b + 1) in d:
             if d[(a - 1, b + 1)].buildings != []:
                 if d[(a - 1, b + 1)].buildings[0].typ == "village":
+                    print("c")
                     return (a - 1, b + 1)
         if (a + 1 , b - 1) in d:
             if d[(a + 1, b - 1)].buildings != []:
                 if d[(a + 1, b - 1)].buildings[0].typ == "village":
+                    print("c")
                     return (a + 1, b - 1)
+        print("b")
 
 # Others   
     def test_for_village(self, d, owner):
