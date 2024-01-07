@@ -1,11 +1,11 @@
 import arcade, random as r, arcade.gui
-import reader, sidebar, topbar
+import reader, sidebar2 as sidespace, topbar2 as topbar
 
 
 class Suchspiel(arcade.Window):
-    def __init__(self, breite, höhe, titel, feld_h, feld_b):
-        super().__init__(breite, höhe, titel)
-        arcade.set_background_color((155,155,155)) 
+    def __init__(self, titel, feld_h, feld_b):
+        super().__init__(title = titel, fullscreen=True)
+        arcade.set_background_color((155,155,155))
         self.fields = arcade.SpriteList()
         self.buildings = arcade.SpriteList()
         self.entities = arcade.SpriteList()
@@ -14,7 +14,7 @@ class Suchspiel(arcade.Window):
         self.sbar = []
         self.players.append(Player("Markus Söder", arcade.color.BLIZZARD_BLUE, "Conquerus"))
         self.players.append(Player("Olaf Scholz", arcade.color.RED_DEVIL, "Uruks"))
-        self.sbar = sidebar.start(self.players[0])
+        self.sbar = sidespace.start(self.players[0])
         self.tbar = []
         self.overlays = arcade.SpriteList()
         
@@ -23,7 +23,7 @@ class Suchspiel(arcade.Window):
         for h in range(feld_h):
             for b in range(feld_b):
                 a = reader.getvars()[index]
-                self.Dictionary[(b, h)] =  Field(x = 32 + b*32, y = 32 + h*32, typ = a)
+                self.Dictionary[(b, h)] =  Field(x = 16 + b*32, y = 16 + h*32, typ = a)
                 self.fields.append(self.Dictionary[(b, h)])
                 index += 1
 
@@ -38,7 +38,7 @@ class Suchspiel(arcade.Window):
 
 
         
-        self.tbar = topbar.start(self.players[0])
+        self.tbar = topbar.start(self.players[0], arcade.window_commands.get_display_size())
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.ESCAPE:
@@ -94,7 +94,7 @@ class Suchspiel(arcade.Window):
                         if i.f == "add_village":
                             self.buildings.append(self.active.add_village("Hamburg", self.players[0]))
                             self.sbar.clear()
-                            self.sbar = sidebar.start(self.players[0])
+                            self.sbar = sidespace.start(self.players[0])
 
 
                         elif i.f == "add_quarry":
@@ -146,24 +146,24 @@ class Suchspiel(arcade.Window):
                             
                         elif i.f == "open_investigations":
                             self.sbar.clear()
-                            self.sbar = sidebar.investigationstree()
+                            self.sbar = sidespace.investigationstree()
 
                         elif i.f == "open_it_productions":
                             self.sbar.clear()
-                            self.sbar = sidebar.open_it_productions(self.players[0])
+                            self.sbar = sidespace.open_it_productions(self.players[0])
                         
 
                         # army stuff
                         elif i.f == "recruit":
-                            self.sbar = sidebar.entities()
+                            self.sbar = sidespace.entities()
                         
                         elif i.f == "recruit_soldier":
-                            self.entities.append(Soldier(self.active, self.players[0]))
+                            self.entities.append(Soldier(self.active, self.players[0], True))
 
 
                         #default stuff
                         elif i.f == "home":
-                            self.sbar = sidebar.start(self.players[0])
+                            self.sbar = sidespace.start(self.players[0])
 
                         elif i.f == "pass_turn":
                             #give him his new stuff haha
@@ -173,8 +173,8 @@ class Suchspiel(arcade.Window):
                             self.players.pop(0)
                             self.players.append(b)
                             # give next player his tbar
-                            self.tbar = topbar.start(self.players[0])
-                            self.sbar = sidebar.start(self.players[0])
+                            self.tbar = topbar.start(self.players[0], arcade.window_commands.get_display_size())
+                            self.sbar = sidespace.start(self.players[0])
                             #
 
                             for i in self.entities:
@@ -209,7 +209,7 @@ class Suchspiel(arcade.Window):
     def open_technology(self, tech_type):
         if not self.players[0].technologies.get(tech_type, False):
             self.sbar.clear()
-            self.sbar = getattr(sidebar, f"open_t_{tech_type}")()
+            self.sbar = getattr(sidespace, f"open_t_{tech_type}")()
     
     def investigate_technology(self, tech_type):
         if self.players[0].investigationpoints >= 1:
@@ -217,7 +217,7 @@ class Suchspiel(arcade.Window):
             self.tbar = topbar.start(self.players[0])           
             self.sbar.clear()
             self.players[0].technologies[tech_type] = True
-            self.sbar = sidebar.investigationstree()
+            self.sbar = sidespace.investigationstree()
         else:
             raise ValueError
 
@@ -228,7 +228,7 @@ class Suchspiel(arcade.Window):
             building_instance = getattr(self.active, f"add_{building_type}")(self.Dictionary, self.players[0])
             self.buildings.append(building_instance)
             self.sbar.clear()
-            self.sbar = getattr(sidebar, building_type)(building_instance)
+            self.sbar = getattr(sidespace, building_type)(building_instance)
         else:
             raise ValueError
 
@@ -268,7 +268,7 @@ class Suchspiel(arcade.Window):
 
                     building.lvl += 1
                     self.sbar.clear()
-                    self.sbar = getattr(sidebar, building_type)(building)
+                    self.sbar = getattr(sidespace, building_type)(building)
                 else:
                     raise ValueError
 
@@ -278,7 +278,7 @@ class Field(arcade.Sprite):
         self.x = x
         self.y = y
         self.typ = typ
-        self.pos = (((self.x - 32)/32),((self.y - 32)/ 32))
+        self.pos = (((self.x - 16)/32),((self.y - 16)/ 32))
         self.buildings = [] 
         self.entities = []
     
@@ -288,7 +288,7 @@ class Field(arcade.Sprite):
         return active
     
     def klick(self, d, player):
-        return sidebar.field(self, d, player)
+        return sidespace.field(self, d, player)
 
     def add_village(self, name, owner):
         a = Village(self.x, self.y, name, 1, owner)
@@ -436,7 +436,7 @@ class Overlay(arcade.Sprite):
         self.entity.used = True
 
 class Entity(arcade.Sprite):
-    def __init__(self, typ, field, health, damage, owner):
+    def __init__(self, typ, field, health, damage, owner, used = False):
         super().__init__("data/entities/" + typ + ".png", scale = 0.5, center_x = field.x, center_y = field.y)    
         self.field = field
         self.health = health
@@ -444,7 +444,7 @@ class Entity(arcade.Sprite):
         self.owner = owner
         self.klicked = False
         self.typ = typ
-        self.used = False
+        self.used = used
 
     def on_key_press(self, symbol):
         if symbol == arcade.key.UP:
@@ -452,11 +452,13 @@ class Entity(arcade.Sprite):
             self.field.pos = [0,0]
 
     def klick(self, d, o):
-        return (sidebar.entity(self), self.test_for_fields(d, o, None))
+        return (sidespace.entity(self), self.test_for_fields(d, o, None))
     
     def test_for_fields(self, d, overlays, owner):
         a, b = self.field.pos
+        print(self.field.pos)
         if (a + 1, b) in d:
+            print("cockroach")
             overlays.append(Overlay(d[a+1, b], "data/icons/overlay.png", self))
 
         if (a, b + 1) in d:
@@ -489,8 +491,8 @@ class Entity(arcade.Sprite):
   
 
 class Soldier(Entity):
-    def __init__(self, field, owner):
-        super().__init__("Soldier", field, 10, 3, owner )
+    def __init__(self, field, owner, used = False):
+        super().__init__("Soldier", field, 10, 3, owner, used)
         self.owner = owner
 
    
@@ -512,7 +514,7 @@ class Village(Building):
         self.owner = owner
 
     def klick(self):
-        return sidebar.village(self)
+        return sidespace.village(self)
     
     def produce(self): 
         self.owner.coins += r.randint(2, 10) * self.lvl
@@ -531,7 +533,7 @@ class Quarry(Building):
         self.owner.goods["stone"] += (self.lvl * self.village.lvl)
     
     def klick(self):
-        return sidebar.quarry(self)
+        return sidespace.quarry(self)
 
 class Mine(Building):
     def __init__(self, x, y, village, lvl = 1):
@@ -546,7 +548,7 @@ class Mine(Building):
         self.owner.goods["iron"] += (self.lvl * self.village.lvl)
     
     def klick(self):
-        return sidebar.mine(self)
+        return sidespace.mine(self)
 
 
 class Cabin(Building):
@@ -562,7 +564,7 @@ class Cabin(Building):
         self.owner.goods["wood"] += (self.lvl * self.village.lvl)
     
     def klick(self):
-        return sidebar.cabin(self)
+        return sidespace.cabin(self)
 
 class Wheat_plot(Building):
     def __init__(self, x, y, village, lvl = 1):
@@ -577,7 +579,7 @@ class Wheat_plot(Building):
         self.owner.goods["wheat"] += (self.lvl * self.village.lvl)
     
     def klick(self):
-        return sidebar.wheat_plot(self)
+        return sidespace.wheat_plot(self)
 
 class Pasture(Building):
     def __init__(self, x, y, village, lvl = 1):
@@ -592,7 +594,7 @@ class Pasture(Building):
         self.owner.goods["wool"] += (self.lvl * self.village.lvl)
     
     def klick(self):
-        return sidebar.pasture(self)
+        return sidespace.pasture(self)
 
 class Player():
     def __init__(self, name, color, tribe, goods: dict = {}, technologies: dict = {}):
@@ -649,7 +651,7 @@ class Player():
 
 
 
-
+print
 
 
 
@@ -679,5 +681,5 @@ class Img(arcade.Sprite):
 
 
 
-sp = Suchspiel(1000, 840, "NATIONWARS", 24, 24)
+sp = Suchspiel("NATIONWARS", 24, 24)
 arcade.run()
