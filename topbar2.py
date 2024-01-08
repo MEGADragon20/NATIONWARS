@@ -2,7 +2,7 @@ import arcade
 import buttons2 as buttons
 
 def start(player, size):
-    win_width, win_height = size
+    win_width, win_height = size #! Hier kriegst du (breite, höhe)
     num_coins = str(player.coins)
     num_inpo = str(player.investigationpoints)
     num_stone = str(player.goods["stone"])
@@ -27,7 +27,7 @@ def start(player, size):
     x_positions = [10, 90, 170, 250, 330, 410, 490, 570, 650, 730, 810]
 
     for i,j in zip(lis, range(len(lis))):
-        content.append(buttons.Txt(i, win_width - 72, win_height - 48*(j), arcade.color.BLACK, 16))
+        content.append(buttons.Txt(i, win_width - 86, win_height - 48*(j) - 40, arcade.color.BLACK, 16))
 
     content.append(buttons.Img("data/icons/coin.png", win_width - 18, win_height - 32*(1)))
     content.append(buttons.Img("data/icons/investigationpoint.png", win_width - 18, win_height - 48*(2)))

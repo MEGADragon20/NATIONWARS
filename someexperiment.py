@@ -6,6 +6,8 @@ class Suchspiel(arcade.Window):
     def __init__(self, titel, feld_h, feld_b):
         super().__init__(title = titel, fullscreen=True)
         arcade.set_background_color((155,155,155))
+        self.size = arcade.window_commands.get_display_size()
+        self.height, self.width = self.size
         self.fields = arcade.SpriteList()
         self.buildings = arcade.SpriteList()
         self.entities = arcade.SpriteList()
@@ -38,7 +40,7 @@ class Suchspiel(arcade.Window):
 
 
         
-        self.tbar = topbar.start(self.players[0], arcade.window_commands.get_display_size())
+        self.tbar = topbar.start(self.players[0], self.size)
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.ESCAPE:
@@ -458,7 +460,6 @@ class Entity(arcade.Sprite):
         a, b = self.field.pos
         print(self.field.pos)
         if (a + 1, b) in d:
-            print("cockroach")
             overlays.append(Overlay(d[a+1, b], "data/icons/overlay.png", self))
 
         if (a, b + 1) in d:
@@ -681,5 +682,5 @@ class Img(arcade.Sprite):
 
 
 
-sp = Suchspiel("NATIONWARS", 24, 24)
+sp = Suchspiel("NATIONWARS", 36, 36)
 arcade.run()

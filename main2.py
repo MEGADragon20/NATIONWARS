@@ -2,7 +2,7 @@
 
 """
 import arcade, random as r, arcade.gui
-import reader, sidebar, topbar, tree
+import reader, sidebar2 as sidebar, topbar2 as topbar, tree
 
 # Technologies
 t_quarry = False
@@ -18,7 +18,7 @@ class Suchspiel(arcade.Window):
         self.players = []
         self.turn = 1
         self.sbar = []
-        self.sbar = sidebar.start()
+
         self.tbar = []
         self.overlays = arcade.SpriteList()
         
@@ -42,8 +42,8 @@ class Suchspiel(arcade.Window):
         self.buildings.append(self.fields[387].add_village("Berlin", self.players[0])) 
         self.buildings.append(self.fields[386].add_quarry(self.Dictionary, None)) 
         
-
-        self.tbar = topbar.start(self.players[0])
+        self.sbar = sidebar.start(self.players[0])
+        self.tbar = topbar.start(self.players[0], arcade.window_commands.get_display_size())
 
 
     def on_key_press(self, symbol: int, modifiers: int):
