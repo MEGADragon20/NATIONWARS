@@ -7,7 +7,7 @@ class Suchspiel(arcade.Window):
         super().__init__(title = titel, fullscreen=True)
         arcade.set_background_color((155,155,155))
         self.rsize = arcade.window_commands.get_display_size()
-        self.rheight, self.rwidth = self.rsize
+        self.rwidth, self.rheight = self.rsize
         self.fields = arcade.SpriteList()
         self.buildings = arcade.SpriteList()
         self.entities = arcade.SpriteList()
@@ -22,12 +22,16 @@ class Suchspiel(arcade.Window):
         
         self.Dictionary = {}
         index = 0
-
+        print(self.rheight)
         cartogrpah = 0
-        if 1152 <= self.rheight >= 768:
+        if 1152 > self.rheight >= 768:
             cartogrpah = 24
-        elif 1536 <= self.rheight >= 1152:
+        elif 1536 > self.rheight >= 1152:
             cartogrpah = 36
+        elif 2048 > self.rheight >= 1536:
+            cartogrpah = 48
+        elif 2560 > self.rheight >= 2048:
+            cartogrpah = 64
         
 
         for h in range(cartogrpah):
