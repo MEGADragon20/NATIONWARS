@@ -29,15 +29,15 @@ def start(player, size):
     for i,j in zip(lis, range(len(lis))):
         content.append(buttons.Txt(i, win_width - 86, win_height - 48*(j) - 40, arcade.color.BLACK, 16))
 
-    content.append(buttons.Img("data/icons/coin.png", win_width - 18, win_height - 32*(1)))
-    content.append(buttons.Img("data/icons/investigationpoint.png", win_width - 18, win_height - 48*(2)))
-    content.append(buttons.Img("data/icons/stone.png", win_width - 18, win_height - 32*(3)))
-    content.append(buttons.Img("data/icons/wood.png", win_width - 18, win_height - 32*(4)))
-    content.append(buttons.Img("data/icons/wool.png", win_width - 18, win_height - 32*(5)))
-    content.append(buttons.Img("data/icons/wheat.png", win_width - 18, win_height - 32*(6)))
-    content.append(buttons.Img("data/icons/flour.png", win_width - 18, win_height - 32*(7)))
-    content.append(buttons.Img("data/icons/iron.png", win_width - 18, win_height - 32*(8)))
-    content.append(buttons.Img("data/icons/iron.png", win_width - 18, win_height - 32*(9))) # gold eig
-    content.append(buttons.Img("data/icons/iron.png", win_width - 18, win_height - 32*(10))) # sword
-    content.append(buttons.Img("data/icons/wood.png", win_width - 18, win_height - 32*(11))) # bow
+    content.append(buttons.Img("data/icons/coin.png", win_width - 20, win_height - 32*(1)))
+    content.append(buttons.Img("data/icons/investigationpoint.png", win_width - 20, win_height - 38*(2)))
+    content.append(buttons.Img("data/icons/stone.png", win_width - 20, win_height - 32*(3)))
+    content.append(buttons.Img("data/icons/wood.png", win_width - 20, win_height - 32*(4)))
+    content.append(buttons.Img("data/icons/wool.png", win_width - 20, win_height - 32*(5)))
+    content.append(buttons.Img("data/icons/wheat.png", win_width - 20, win_height - 32*(6)))
+    content.append(buttons.Img("data/icons/flour.png", win_width - 20, win_height - 32*(7)))
+    content.append(buttons.Img("data/icons/iron.png", win_width - 20, win_height - 32*(8)))
+    content.append(buttons.Img("data/icons/iron.png", win_width - 20, win_height - 32*(9))) # gold eig
+    content.append(buttons.Img("data/icons/iron.png", win_width - 20, win_height - 32*(10))) # sword
+    content.append(buttons.Img("data/icons/wood.png", win_width - 20, win_height - 32*(11))) # bow
     return content 
