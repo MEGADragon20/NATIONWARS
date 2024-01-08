@@ -1,9 +1,11 @@
+"""
+
+"""
 import arcade, random as r, arcade.gui
 import reader, sidebar, topbar, tree
 
 # Technologies
 t_quarry = False
-
 
 
 class Suchspiel(arcade.Window):
