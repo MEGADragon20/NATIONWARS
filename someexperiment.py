@@ -3,11 +3,11 @@ import reader, sidebar2 as sidespace, topbar2 as topbar
 
 
 class Suchspiel(arcade.Window):
-    def __init__(self, titel, feld_h, feld_b):
+    def __init__(self, titel):
         super().__init__(title = titel, fullscreen=True)
         arcade.set_background_color((155,155,155))
-        self.size = arcade.window_commands.get_display_size()
-        self.height, self.width = self.size
+        self.rsize = arcade.window_commands.get_display_size()
+        self.rheight, self.rwidth = self.rsize
         self.fields = arcade.SpriteList()
         self.buildings = arcade.SpriteList()
         self.entities = arcade.SpriteList()
@@ -22,8 +22,16 @@ class Suchspiel(arcade.Window):
         
         self.Dictionary = {}
         index = 0
-        for h in range(feld_h):
-            for b in range(feld_b):
+
+        cartogrpah = 0
+        if 1152 <= self.rheight >= 768:
+            cartogrpah = 24
+        elif 1536 <= self.rheight >= 1152:
+            cartogrpah = 36
+        
+
+        for h in range(cartogrpah):
+            for b in range(cartogrpah):
                 a = reader.getvars()[index]
                 self.Dictionary[(b, h)] =  Field(x = 16 + b*32, y = 16 + h*32, typ = a)
                 self.fields.append(self.Dictionary[(b, h)])
@@ -40,7 +48,7 @@ class Suchspiel(arcade.Window):
 
 
         
-        self.tbar = topbar.start(self.players[0], self.size)
+        self.tbar = topbar.start(self.players[0], self.rsize)
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.ESCAPE:
@@ -682,5 +690,5 @@ class Img(arcade.Sprite):
 
 
 
-sp = Suchspiel("NATIONWARS", 36, 36)
+sp = Suchspiel("NATIONWARS")
 arcade.run()
