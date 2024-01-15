@@ -30,3 +30,8 @@ class Img(arcade.Sprite):
     def __init__(self, file, x, y):
         super().__init__(file, scale = 2, center_x = x, center_y = y)
         self.type = "Img"
+
+class Num(arcade.Text):
+    def __init__(self, txt, x, y, color, size, b = False):
+        super().__init__(txt, x, y, color, font_name="data/fonts/minimalistic.ttf", font_size = size, bold = b)
+        self.type = "Txt"

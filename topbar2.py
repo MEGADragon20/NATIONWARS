@@ -27,7 +27,7 @@ def start(player, size):
     x_positions = [10, 90, 170, 250, 330, 410, 490, 570, 650, 730, 810]
 
     for i,j in zip(lis, range(len(lis))):
-        content.append(buttons.Txt(i, win_width - 86, win_height - 48*(j) - 40, arcade.color.BLACK, 16))
+        content.append(buttons.Num(i, win_width - 86, win_height - 48*(j) - 40, arcade.color.BLACK, 16))
 
     content.append(buttons.Img("data/icons/coin.png", win_width - 30, win_height - 32*(1)))
     content.append(buttons.Img("data/icons/investigationpoint.png", win_width - 30, win_height - 38*(2)))

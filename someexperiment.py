@@ -24,6 +24,7 @@ class Suchspiel(arcade.Window):
         index = 0
         print(self.rheight)
         cartogrpah = 0
+        rest = 0
         if 1152 > self.rheight >= 768:
             cartogrpah = 24
         elif 1536 > self.rheight >= 1152:
@@ -32,12 +33,13 @@ class Suchspiel(arcade.Window):
             cartogrpah = 48
         elif 2560 > self.rheight >= 2048:
             cartogrpah = 64
+        rest = (self.rheight-cartogrpah*32)/2
         
 
         for h in range(cartogrpah):
             for b in range(cartogrpah):
                 a = reader.getvars()[index]
-                self.Dictionary[(b, h)] =  Field(x = 16 + b*32, y = 16 + h*32, typ = a)
+                self.Dictionary[(b, h)] =  Field(x = 16 + b*32, y = 16 + h*32 + rest, typ = a)
                 self.fields.append(self.Dictionary[(b, h)])
                 index += 1
 
@@ -685,6 +687,11 @@ class Img(arcade.Sprite):
     def __init__(self, file, x, y):
         super().__init__(file, scale= 2, center_x = x, center_y = y)
         self.type = "Img"
+
+class Num(arcade.Text):
+    def __init__(self, txt, x, y, color, size, b = False):
+        super().__init__(txt, x, y, color, font_name="data/fonts/minimalistic.ttf", font_size = size, bold = b)
+        self.type = "Txt"
 
 
 
