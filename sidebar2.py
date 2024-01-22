@@ -11,7 +11,7 @@ def start(player):
     playername = player.name
     color = player.color
     content = []
-    content.append(buttons.Txt(playername,0, 730, color, 20, True))
+    content.append(buttons.Txt(playername,0, 0, color, 20, True))
     content.append(buttons.Button("open_investigations", (1, 8)))
     content.append(buttons.Button("pass_turn", (1, 1)))
 
@@ -25,11 +25,11 @@ def entity(entity):
     damage = str(entity.damage)
     content = []
     content.append(buttons.Button("home", (1, 1)))
-    content.append(buttons.Txt(typ, 0, 700, arcade.color.BLACK, 20, True))
-    content.append(buttons.Txt(ownername, 0, 670, color, 16))
-    content.append(buttons.Txt(health, 150, 700, arcade.color.DARK_MOSS_GREEN, 16, True))
-    content.append(buttons.Txt(damage, 0, 640, arcade.color.RED, 16))
-    content.append(buttons.Txt("damage", 20, 640, arcade.color.BLACK, 16))
+    content.append(buttons.Txt(typ, 0, 0, arcade.color.BLACK, 20, True))
+    content.append(buttons.Txt(ownername, 0, 30, color, 16))
+    content.append(buttons.Txt(health, 150, 0, arcade.color.DARK_MOSS_GREEN, 16, True))
+    content.append(buttons.Txt(damage, 0, 60, arcade.color.RED, 16))
+    content.append(buttons.Txt("damage", 20, 60, arcade.color.BLACK, 16))
 
     return content
 
@@ -40,13 +40,13 @@ def quarry(quarry):
     color = quarry.owner.color
     content = []
     content.append(buttons.Button("home", (1, 1)))
-    content.append(buttons.Txt(name, 0, 760, arcade.color.BLACK, 20))
-    content.append(buttons.Txt(lvl, 150, 760, arcade.color.BLACK, 20))
-    content.append(buttons.Txt(villagename, 0, 740, color, 16))
+    content.append(buttons.Txt(name, 0, 40, arcade.color.BLACK, 20))
+    content.append(buttons.Txt(lvl, 150, 40, arcade.color.BLACK, 20))
+    content.append(buttons.Txt(villagename, 0, 60, color, 16))
     faktor = round(quarry.lvl/2 + 0.1)
-    content.append(buttons.Txt("Cost:", 0, 592, arcade.color.BLACK, 16))
-    content.append(buttons.Txt(str(5*faktor) + " stone", 0, 572, arcade.color.BLACK, 16))
-    content.append(buttons.Txt(str(2*faktor) + " wood", 0, 552, arcade.color.BLACK, 16))
+    content.append(buttons.Txt("Cost:", 0, 108, arcade.color.BLACK, 16))
+    content.append(buttons.Txt(str(5*faktor) + " stone", 0, 128, arcade.color.BLACK, 16))
+    content.append(buttons.Txt(str(2*faktor) + " wood", 0, 148, arcade.color.BLACK, 16))
     content.append(buttons.Button("upgrade_quarry", (1, 8)))
 
     return content
@@ -58,13 +58,13 @@ def mine(mine):
     color = mine.owner.color
     content = []
     content.append(buttons.Button("home", (1, 1)))
-    content.append(buttons.Txt(name, 0, 760, arcade.color.BLACK, 20))
-    content.append(buttons.Txt(lvl, 150, 760, arcade.color.BLACK, 20))
-    content.append(buttons.Txt(villagename, 0, 740, color, 16))
+    content.append(buttons.Txt(name, 0, 40, arcade.color.BLACK, 20))
+    content.append(buttons.Txt(lvl, 150, 40, arcade.color.BLACK, 20))
+    content.append(buttons.Txt(villagename, 0, 60, color, 16))
     faktor = round(mine.lvl/2 + 0.1)
-    content.append(buttons.Txt("Cost:", 0, 592, arcade.color.BLACK, 16))
-    content.append(buttons.Txt(str(5*faktor) + " iron", 0, 572, arcade.color.BLACK, 16))
-    content.append(buttons.Txt(str(2*faktor) + " stone", 0, 552, arcade.color.BLACK, 16))
+    content.append(buttons.Txt("Cost:", 0, 108, arcade.color.BLACK, 16))
+    content.append(buttons.Txt(str(5*faktor) + " iron", 0, 128, arcade.color.BLACK, 16))
+    content.append(buttons.Txt(str(2*faktor) + " stone", 0, 148, arcade.color.BLACK, 16))
     content.append(buttons.Button("upgrade_mine", (1, 8)))
 
     return content
@@ -76,13 +76,13 @@ def cabin(cabin):
     color = cabin.owner.color
     content = []
     content.append(buttons.Button("home", (1, 1)))
-    content.append(buttons.Txt(name, 0, 760, arcade.color.BLACK, 20))
-    content.append(buttons.Txt(lvl, 150, 760, arcade.color.BLACK, 20))
-    content.append(buttons.Txt(villagename, 0, 740, color, 16))
+    content.append(buttons.Txt(name, 0, 40, arcade.color.BLACK, 20))
+    content.append(buttons.Txt(lvl, 150, 40, arcade.color.BLACK, 20))
+    content.append(buttons.Txt(villagename, 0, 60, color, 16))
     faktor = round(cabin.lvl/2 + 0.1)
-    content.append(buttons.Txt("Cost:", 0, 592, arcade.color.BLACK, 16))
-    content.append(buttons.Txt(str(5*faktor) + " wood", 0, 572, arcade.color.BLACK, 16))
-    content.append(buttons.Txt(str(2*faktor) + " wool", 0, 552, arcade.color.BLACK, 16))
+    content.append(buttons.Txt("Cost:", 0, 108, arcade.color.BLACK, 16))
+    content.append(buttons.Txt(str(5*faktor) + " wood", 0, 128, arcade.color.BLACK, 16))
+    content.append(buttons.Txt(str(2*faktor) + " wool", 0, 148, arcade.color.BLACK, 16))
     content.append(buttons.Button("upgrade_cabin", (1, 8)))
 
     return content
@@ -94,13 +94,13 @@ def wheat_plot(wheat_plot):
     color = wheat_plot.owner.color
     content = []
     content.append(buttons.Button("home", (1, 1)))
-    content.append(buttons.Txt(name, 0, 760, arcade.color.BLACK, 20))
-    content.append(buttons.Txt(lvl, 150, 760, arcade.color.BLACK, 20))
-    content.append(buttons.Txt(villagename, 800, 740, color, 16))
+    content.append(buttons.Txt(name, 0, 40, arcade.color.BLACK, 20))
+    content.append(buttons.Txt(lvl, 150, 40, arcade.color.BLACK, 20))
+    content.append(buttons.Txt(villagename, 0, 60, color, 16))
     faktor = round(wheat_plot.lvl/2 + 0.1)
-    content.append(buttons.Txt("Cost:", 0, 592, arcade.color.BLACK, 16))
-    content.append(buttons.Txt(str(5*faktor) + " wheat", 800, 572, arcade.color.BLACK, 16))
-    content.append(buttons.Txt(str(2*faktor) + " iron", 800, 552, arcade.color.BLACK, 16))
+    content.append(buttons.Txt("Cost:", 0, 108, arcade.color.BLACK, 16))
+    content.append(buttons.Txt(str(5*faktor) + " wheat", 0, 128, arcade.color.BLACK, 16))
+    content.append(buttons.Txt(str(2*faktor) + " iron", 0, 148, arcade.color.BLACK, 16))
     content.append(buttons.Button("upgrade_wheat_plot", (1, 8)))
 
     return content
@@ -112,13 +112,13 @@ def pasture(pasture):
     color = pasture.owner.color
     content = []
     content.append(buttons.Button("home", (1, 1)))
-    content.append(buttons.Txt(name, 0, 760, arcade.color.BLACK, 20))
-    content.append(buttons.Txt(lvl, 150, 760, arcade.color.BLACK, 20))
-    content.append(buttons.Txt(villagename, 800, 740, color, 16))
+    content.append(buttons.Txt(name, 0, 40, arcade.color.BLACK, 20))
+    content.append(buttons.Txt(lvl, 150, 40, arcade.color.BLACK, 20))
+    content.append(buttons.Txt(villagename, 800, 60, color, 16))
     faktor = round(pasture.lvl/2 + 0.1)
-    content.append(buttons.Txt("Cost:", 0, 592, arcade.color.BLACK, 16))
-    content.append(buttons.Txt(str(5*faktor) + " wool", 800, 572, arcade.color.BLACK, 16))
-    content.append(buttons.Txt(str(2*faktor) + " wheat", 800, 552, arcade.color.BLACK, 16))
+    content.append(buttons.Txt("Cost:", 0, 108, arcade.color.BLACK, 16))
+    content.append(buttons.Txt(str(5*faktor) + " wool", 0, 128, arcade.color.BLACK, 16))
+    content.append(buttons.Txt(str(2*faktor) + " wheat", 0, 148, arcade.color.BLACK, 16))
     content.append(buttons.Button("upgrade_pasture", (1, 8)))
 
     return content
@@ -130,9 +130,9 @@ def village(village):
     color = village.owner.color
     content = []
     content.append(buttons.Button("home", (1, 1)))
-    content.append(buttons.Txt(name, 0, 760, arcade.color.BLACK, 20, True))
-    content.append(buttons.Txt(lvl, 150, 760, arcade.color.BLACK, 20))
-    content.append(buttons.Txt(ownername, 800, 740, color, 16))
+    content.append(buttons.Txt(name, 0, 40, arcade.color.BLACK, 20, True))
+    content.append(buttons.Txt(lvl, 150, 40, arcade.color.BLACK, 20))
+    content.append(buttons.Txt(ownername, 800, 0, color, 16))
     content.append(buttons.Button("recruit", (1, 8)))
 
     return content

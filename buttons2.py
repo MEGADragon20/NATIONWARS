@@ -23,7 +23,7 @@ class Button(arcade.Sprite):
     
 class Txt(arcade.Text):
     def __init__(self, txt, x, y, color, size, b = False):
-        super().__init__(txt, 20 + cartogrpah*32 + x, y, color, font_name="data/fonts/minimalistic.ttf", font_size = size, bold = b)
+        super().__init__(txt, 20 + cartogrpah*32 + x, height-((height-cartogrpah*32)/2-y), color, font_name="data/fonts/minimalistic.ttf", font_size = size, bold = b)
         self.type = "Txt"
 
 class Img(arcade.Sprite):
