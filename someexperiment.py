@@ -3,9 +3,11 @@ import reader, sidebar2 as sidespace, topbar2 as topbar
 
 
 class Suchspiel(arcade.Window):
-    def __init__(self, titel, feld_h, feld_b):
+    def __init__(self, titel):
         super().__init__(title = titel, fullscreen=True)
         arcade.set_background_color((155,155,155))
+        self.rsize = arcade.window_commands.get_display_size()
+        self.rwidth, self.rheight = self.rsize
         self.fields = arcade.SpriteList()
         self.buildings = arcade.SpriteList()
         self.entities = arcade.SpriteList()
@@ -20,10 +22,24 @@ class Suchspiel(arcade.Window):
         
         self.Dictionary = {}
         index = 0
-        for h in range(feld_h):
-            for b in range(feld_b):
+        print(self.rheight)
+        cartogrpah = 0
+        rest = 0
+        if 1152 > self.rheight >= 768:
+            cartogrpah = 24
+        elif 1536 > self.rheight >= 1152:
+            cartogrpah = 36
+        elif 2048 > self.rheight >= 1536:
+            cartogrpah = 48
+        elif 2560 > self.rheight >= 2048:
+            cartogrpah = 64
+        rest = (self.rheight-cartogrpah*32)/2
+        
+
+        for h in range(cartogrpah):
+            for b in range(cartogrpah):
                 a = reader.getvars()[index]
-                self.Dictionary[(b, h)] =  Field(x = 16 + b*32, y = 16 + h*32, typ = a)
+                self.Dictionary[(b, h)] =  Field(x = 16 + b*32, y = 16 + h*32 + rest, typ = a)
                 self.fields.append(self.Dictionary[(b, h)])
                 index += 1
 
@@ -38,7 +54,7 @@ class Suchspiel(arcade.Window):
 
 
         
-        self.tbar = topbar.start(self.players[0], arcade.window_commands.get_display_size())
+        self.tbar = topbar.start(self.players[0], self.rsize)
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.ESCAPE:
@@ -458,7 +474,6 @@ class Entity(arcade.Sprite):
         a, b = self.field.pos
         print(self.field.pos)
         if (a + 1, b) in d:
-            print("cockroach")
             overlays.append(Overlay(d[a+1, b], "data/icons/overlay.png", self))
 
         if (a, b + 1) in d:
@@ -673,6 +688,10 @@ class Img(arcade.Sprite):
         super().__init__(file, scale= 2, center_x = x, center_y = y)
         self.type = "Img"
 
+class Num(arcade.Text):
+    def __init__(self, txt, x, y, color, size, b = False):
+        super().__init__(txt, x, y, color, font_name="data/fonts/minimalistic.ttf", font_size = size, bold = b)
+        self.type = "Txt"
 
 
 
@@ -681,5 +700,6 @@ class Img(arcade.Sprite):
 
 
 
-sp = Suchspiel("NATIONWARS", 24, 24)
+
+sp = Suchspiel("NATIONWARS")
 arcade.run()
