@@ -32,7 +32,12 @@ class Suchspiel(arcade.Window):
 
         self.active = Field(x = 0, y = 0, typ = "grass")
         self.active_selector = arcade.Sprite("data/icons/active.png", center_x= -16, center_y= -16)
-        self.entities.append(Soldier(self.Dictionary[(2,2)], self.players[0]))
+        self.entities.append(Soldier(self.Dictionary[(2,5)], self.players[0]))
+        self.Dictionary[(2,5)].entities.append(Soldier(self.Dictionary[(2,5)], self.players[0]))
+        self.entities.append(Bow(self.Dictionary[(2,2)], self.players[1]))
+        self.Dictionary[(2,2)].entities.append(Bow(self.Dictionary[(2,2)], self.players[1]))
+        self.entities.append(Soldier(self.Dictionary[(2,8)], self.players[0]))
+        self.Dictionary[(2,8)].entities.append(Soldier(self.Dictionary[(2,8)], self.players[1]))
         self.buildings.append(self.fields[98].add_village("München", self.players[0])) 
         self.buildings.append(self.fields[387].add_village("Berlin", self.players[1])) 
 
@@ -69,14 +74,14 @@ class Suchspiel(arcade.Window):
             
             for i in self.overlays:
                 if arcade.check_for_collision(pseudosprite, i):
-                    a = i.klick()
+                    a = i.klick(self.Dictionary)
 
             self.overlays.clear()
             for i in self.entities:
                 if i.used == False:
                     if arcade.check_for_collision(pseudosprite, i):
                         self.sbar.clear()
-                        tulplehässlichding = i.klick(self.Dictionary, self.overlays)
+                        tulplehässlichding = i.klick(self.Dictionary, self.overlays, self.players[0])
                         a = tulplehässlichding[0]
                         self.overlays = tulplehässlichding[1]
                         print(len(self.overlays))
@@ -428,15 +433,24 @@ class Overlay(arcade.Sprite):
         super().__init__(tex , center_x = field.x, center_y = field.y)
         self.entity = entity
         self.field = field
-
-    def klick(self):
-        self.entity.center_x = self.center_x
-        self.entity.center_y = self.center_y
-        self.entity.field = self.field
-        self.entity.used = True
+    def klick(self, d):
+        if self.field.entities != []:
+            print("cock")
+            self.field.entities.health -= self.entity.damage
+        else:
+            print("penis")
+            self.entity.center_x = self.center_x
+            self.entity.center_y = self.center_y
+            self.entity.field = self.field
+            self.entity.used = True
+        
+        
+        
+          
+            
 
 class Entity(arcade.Sprite):
-    def __init__(self, typ, field, health, damage, owner):
+    def __init__(self, typ, field, health, damage, owner, feldtyp):
         super().__init__("data/entities/" + typ + ".png", scale = 0.5, center_x = field.x, center_y = field.y)    
         self.field = field
         self.health = health
@@ -445,42 +459,55 @@ class Entity(arcade.Sprite):
         self.klicked = False
         self.typ = typ
         self.used = False
-
+        self.feldtyp = feldtyp
     def on_key_press(self, symbol):
         if symbol == arcade.key.UP:
             print("ja")
             self.field.pos = [0,0]
 
-    def klick(self, d, o):
-        return (sidebar.entity(self), self.test_for_fields(d, o, None))
+    def klick(self, d, o, player):
+        return (sidebar.entity(self), self.test_for_fields(d, o, None, player))
     
-    def test_for_fields(self, d, overlays, owner):
+    def test_for_fields(self, d, overlays, owner, playeronturn):
         a, b = self.field.pos
         if (a + 1, b) in d:
-            overlays.append(Overlay(d[a+1, b], "data/icons/overlay.png", self))
+            if self.owner == playeronturn:
+                if d[a + 1, b].typ in self.feldtyp:
+                        overlays.append(Overlay(d[a+1, b], "data/icons/overlay.png", self))
 
         if (a, b + 1) in d:
-            overlays.append(Overlay(d[a, b+1], "data/icons/overlay.png", self))
-            
+           if self.owner == playeronturn:
+                if d[a , b+1].typ in self.feldtyp:    
+                    overlays.append(Overlay(d[a, b + 1], "data/icons/overlay.png", self))        
         if (a - 1 , b) in d:
-            overlays.append(Overlay(d[a-1, b], "data/icons/overlay.png", self))
+           if self.owner == playeronturn:
+                if d[a - 1, b].typ in self.feldtyp:
+                    overlays.append(Overlay(d[a - 1 , b], "data/icons/overlay.png", self))
 
         if (a, b - 1) in d:
-            overlays.append(Overlay(d[a, b-1], "data/icons/overlay.png", self))
-
+            if self.owner == playeronturn:
+                if d[a , b-1].typ in self.feldtyp:
+                    overlays.append(Overlay(d[a, b - 1], "data/icons/overlay.png", self))
+           
         if (a + 1, b + 1) in d:  
-            overlays.append(Overlay(d[a+1, b+1], "data/icons/overlay.png", self))
-
+           if self.owner == playeronturn:
+                if d[a+1 , b+1].typ in self.feldtyp:                    
+                    overlays.append(Overlay(d[a + 1, b + 1], "data/icons/overlay.png", self))
         if (a - 1 , b - 1) in d:
-            overlays.append(Overlay(d[a-1, b-1], "data/icons/overlay.png", self))
-
+           if self.owner == playeronturn:
+                if d[a-1 , b-1].typ in self.feldtyp:    
+                    overlays.append(Overlay(d[a - 1 , b - 1], "data/icons/overlay.png", self))
         if (a - 1, b + 1) in d:
-            overlays.append(Overlay(d[a-1, b+1], "data/icons/overlay.png", self))
-
+           if self.owner == playeronturn:
+                if d[a-1 , b+1].typ in self.feldtyp:    
+                    overlays.append(Overlay(d[a - 1, b + 1], "data/icons/overlay.png", self))
         if (a + 1 , b - 1) in d:
-            overlays.append(Overlay(d[a+1, b-1], "data/icons/overlay.png", self))
-
+           if self.owner == playeronturn:
+                if d[a+1 , b-1].typ in self.feldtyp:    
+                    overlays.append(Overlay(d[a + 1, b-1], "data/icons/overlay.png", self))
         return overlays  
+
+
 
         
     def check_for_field(self):
@@ -490,9 +517,18 @@ class Entity(arcade.Sprite):
 
 class Soldier(Entity):
     def __init__(self, field, owner):
-        super().__init__("Soldier", field, 10, 3, owner )
+        super().__init__("Soldier", field, 10, 4, owner, ["grass", "forest", "mountain"])
         self.owner = owner
 
+class Bow(Entity):
+    def __init__(self, field, owner):
+        super().__init__("Bow", field, 10, 4, owner, ["grass", "forest"])
+        self.owner = owner
+
+class Ship(Entity):
+    def __init__(self, field, owner):
+        super().__init__("Ship", field, 10, 4, owner, ["water"])
+        self.owner = owner
    
 
 class Building(arcade.Sprite):
