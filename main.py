@@ -22,6 +22,7 @@ class Suchspiel(arcade.Window):
         index = 0
         for h in range(feld_h):
             for b in range(feld_b):
+
                 a = reader.getvars()[index]
                 self.Dictionary[(b, h)] =  Field(x = 32 + b*32, y = 32 + h*32, typ = a)
                 self.fields.append(self.Dictionary[(b, h)])
@@ -79,16 +80,14 @@ class Suchspiel(arcade.Window):
 
             self.overlays.clear()
             for i in self.entities:
-                if i.used == False:
-                    if arcade.check_for_collision(pseudosprite, i):
-                        print(i.health)
-                        self.sbar.clear()
-                        tulplehässlichding = i.klick(self.Dictionary, self.overlays, self.players[0])
-                        a = tulplehässlichding[0]
-                        self.overlays = tulplehässlichding[1]
-
-                        for i in a:
-                            self.sbar.append(i)
+                if arcade.check_for_collision(pseudosprite, i):
+                    print(i.health)
+                    self.sbar.clear()
+                    tulplehässlichding = i.klick(self.Dictionary, self.overlays, self.players[0])
+                    a = tulplehässlichding[0]
+                    self.overlays = tulplehässlichding[1]
+                    for i in a:
+                        self.sbar.append(i)
             
             for i in self.sbar:
                 if i.type == "Button":
@@ -482,7 +481,10 @@ class Entity(arcade.Sprite):
             self.field.pos = [0,0]
 
     def klick(self, d, o, player):
-        return (sidebar.entity(self), self.test_for_fields(d, o, None, player))
+        if self.used == False:
+            return (sidebar.entity(self), self.test_for_fields(d, o, None, player))
+        else:
+            return (sidebar.entity(self), arcade.SpriteList())
     
     def test_for_fields(self, d, overlays, owner, playeronturn):
         a, b = self.field.pos
