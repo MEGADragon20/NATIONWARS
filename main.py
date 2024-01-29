@@ -36,7 +36,7 @@ class Suchspiel(arcade.Window):
         self.Dictionary[(2,5)].entities.append(Soldier(self.Dictionary[(2,5)], self.players[0]))
         self.entities.append(Bow(self.Dictionary[(2,2)], self.players[1]))
         self.Dictionary[(2,2)].entities.append(Bow(self.Dictionary[(2,2)], self.players[1]))
-        self.entities.append(Soldier(self.Dictionary[(2,8)], self.players[0]))
+        self.entities.append(Soldier(self.Dictionary[(2,8)], self.players[1]))
         self.Dictionary[(2,8)].entities.append(Soldier(self.Dictionary[(2,8)], self.players[1]))
         self.buildings.append(self.fields[98].add_village("München", self.players[0])) 
         self.buildings.append(self.fields[387].add_village("Berlin", self.players[1])) 
@@ -58,6 +58,7 @@ class Suchspiel(arcade.Window):
         
             for i in self.fields:
                 if arcade.check_for_collision(pseudosprite, i):
+                    print(i.entities)
                     self.active_selector = i.select(self.active_selector)
                     self.active = i
                     self.sbar.clear() 
@@ -80,11 +81,11 @@ class Suchspiel(arcade.Window):
             for i in self.entities:
                 if i.used == False:
                     if arcade.check_for_collision(pseudosprite, i):
+                        print(i.health)
                         self.sbar.clear()
                         tulplehässlichding = i.klick(self.Dictionary, self.overlays, self.players[0])
                         a = tulplehässlichding[0]
                         self.overlays = tulplehässlichding[1]
-                        print(len(self.overlays))
 
                         for i in a:
                             self.sbar.append(i)
@@ -198,6 +199,7 @@ class Suchspiel(arcade.Window):
         self.buildings.draw()
         self.entities.draw()
         self.active_selector.draw()
+        self.overlays.draw()
         for i in self.sbar:
             i.draw()
         for i in self.tbar:
@@ -434,15 +436,29 @@ class Overlay(arcade.Sprite):
         self.entity = entity
         self.field = field
     def klick(self, d):
+        kill = False
         if self.field.entities != []:
             print("cock")
-            self.field.entities.health -= self.entity.damage
+            self.field.entities[0].health -= self.entity.damage
+            if self.field.entities[0].health <= 0:
+                kill = True
+                self.field.entities.clear
+                self.entity.center_x = self.center_x
+                self.entity.center_y = self.center_y
+                self.entity.field.entities.clear()
+                self.field.entities.append(self.entity)
+                self.entity.field = self.field
+
         else:
             print("penis")
             self.entity.center_x = self.center_x
             self.entity.center_y = self.center_y
+            self.entity.field.entities.clear()
+            self.field.entities.append(self.entity)
             self.entity.field = self.field
-            self.entity.used = True
+            
+        self.entity.used = True
+        return kill
         
         
         
