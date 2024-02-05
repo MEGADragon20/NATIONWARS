@@ -4,9 +4,10 @@ import buttons
 def entities():
     content = []
     content.append(buttons.Button("recruit_soldier", 8))
+    content.append(buttons.Button("home", 9))
 
     return content
-
+  
 def start(player):
     playername = player.name
     color = player.color

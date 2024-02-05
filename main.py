@@ -197,6 +197,9 @@ class Suchspiel(arcade.Window):
 
                             for i in self.entities:
                                 i.used = False
+                            for i in self.buildings:
+                                if i.typ == "village":
+                                    i.used = False
                              
 
         elif button == 2 or button == 4:
@@ -610,6 +613,7 @@ class Village(Building):
         self.name = name
         self.lvl = lvl
         self.owner = owner
+        self.used = True
 
     def klick(self, player):
         return sidebar.village(self, player)
@@ -630,7 +634,7 @@ class Quarry(Building):
     def produce(self):
         self.owner.goods["stone"] += (self.lvl * self.village.lvl)
     
-    def klick(self):
+    def klick(self, player):
         return sidebar.quarry(self)
 
 class Mine(Building):
@@ -658,10 +662,10 @@ class Cabin(Building):
         self.owner = village.owner
         self.lvl = lvl
     
-    def produce(self, player):
+    def produce(self):
         self.owner.goods["wood"] += (self.lvl * self.village.lvl)
     
-    def klick(self):
+    def klick(self, player):
         return sidebar.cabin(self)
 
 class Wheat_plot(Building):
