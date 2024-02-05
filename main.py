@@ -77,7 +77,7 @@ class Suchspiel(arcade.Window):
             for i in self.buildings:
                 if arcade.check_for_collision(pseudosprite, i):
                     self.sbar.clear()
-                    a = i.klick()
+                    a = i.klick(self.players[0])
                     for i in a:
                         self.sbar.append(i)
             
@@ -169,7 +169,8 @@ class Suchspiel(arcade.Window):
 
                         # army stuff
                         elif i.f == "recruit":
-                            self.sbar = sidebar.entities()
+                            if self.players[0] == self.active.buildings[0].owner:
+                                self.sbar = sidebar.entities()
                         
                         elif i.f == "recruit_soldier":
                             sol = Soldier(self.active, self.players[0])
@@ -610,8 +611,8 @@ class Village(Building):
         self.lvl = lvl
         self.owner = owner
 
-    def klick(self):
-        return sidebar.village(self)
+    def klick(self, player):
+        return sidebar.village(self, player)
     
     def produce(self): 
         self.owner.coins += r.randint(2, 10) * self.lvl
@@ -644,7 +645,7 @@ class Mine(Building):
     def produce(self):
         self.owner.goods["iron"] += (self.lvl * self.village.lvl)
     
-    def klick(self):
+    def klick(self, player):
         return sidebar.mine(self)
 
 
@@ -657,7 +658,7 @@ class Cabin(Building):
         self.owner = village.owner
         self.lvl = lvl
     
-    def produce(self):
+    def produce(self, player):
         self.owner.goods["wood"] += (self.lvl * self.village.lvl)
     
     def klick(self):
@@ -675,7 +676,7 @@ class Wheat_plot(Building):
     def produce(self):
         self.owner.goods["wheat"] += (self.lvl * self.village.lvl)
     
-    def klick(self):
+    def klick(self, player):
         return sidebar.wheat_plot(self)
 
 class Pasture(Building):
@@ -690,7 +691,7 @@ class Pasture(Building):
     def produce(self):
         self.owner.goods["wool"] += (self.lvl * self.village.lvl)
     
-    def klick(self):
+    def klick(self, player):
         return sidebar.pasture(self)
 
 class Player():

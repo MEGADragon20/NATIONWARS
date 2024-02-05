@@ -123,7 +123,7 @@ def pasture(pasture):
 
     return content
 
-def village(village):
+def village(village, player):
     lvl = str(village.lvl)
     name = village.name
     ownername = village.owner.name
@@ -133,7 +133,8 @@ def village(village):
     content.append(buttons.Txt(name, 800, 760, arcade.color.BLACK, 20, True))
     content.append(buttons.Txt(lvl, 950, 760, arcade.color.BLACK, 20))
     content.append(buttons.Txt(ownername, 800, 740, color, 16))
-    content.append(buttons.Button("recruit", 7))
+    if player == village.owner:
+        content.append(buttons.Button("recruit", 7))
 
     return content
 
