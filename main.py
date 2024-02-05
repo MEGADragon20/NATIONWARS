@@ -172,7 +172,10 @@ class Suchspiel(arcade.Window):
                             self.sbar = sidebar.entities()
                         
                         elif i.f == "recruit_soldier":
-                            self.entities.append(Soldier(self.active, self.players[0]))
+                            sol = Soldier(self.active, self.players[0])
+                            self.entities.append(sol)
+                            self.active.entities.append(sol)
+                            
 
 
                         #default stuff
