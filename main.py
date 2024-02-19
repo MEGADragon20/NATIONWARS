@@ -176,6 +176,8 @@ class Suchspiel(arcade.Window):
                             sol = Soldier(self.active, self.players[0])
                             self.entities.append(sol)
                             self.active.entities.append(sol)
+                        elif i.f == "recruit_recon":
+                            rec = Recon(self.active, self.players[0])
                             
 
 

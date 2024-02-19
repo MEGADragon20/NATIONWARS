@@ -3,6 +3,7 @@ import buttons
 
 def entities():
     content = []
+    content.append(buttons.Button("recruit_recon", 7))
     content.append(buttons.Button("recruit_soldier", 8))
     content.append(buttons.Button("home", 9))
 
