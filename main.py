@@ -1,5 +1,6 @@
 import arcade, random as r, arcade.gui
 import reader, sidebar, topbar
+from math import ceil
 
 
 class Suchspiel(arcade.Window):
@@ -17,7 +18,7 @@ class Suchspiel(arcade.Window):
         self.sbar = sidebar.start(self.players[0])
         self.tbar = []
         self.overlays = arcade.SpriteList()
-        
+
         self.Dictionary = {}
         index = 0
         for h in range(feld_h):
@@ -53,8 +54,11 @@ class Suchspiel(arcade.Window):
             # give next player his tbar
             self.tbar = topbar.start(self.players[0])
             self.sbar = sidebar.start(self.players[0])
-            #
-
+            # add 1 to the turn-counters (which actually counts every player as a turn => actual turns int(self.truns/len(players)))
+            self.turn += 1
+            # if the amount of turns to be allowed to build a village is not allready 0, decrease it by one
+            if self.players[0].turnstovillage:
+                self.players[0].turnstovillage -= 1
             for i in self.entities:
                 i.used = False
 
@@ -176,8 +180,6 @@ class Suchspiel(arcade.Window):
                             sol = Soldier(self.active, self.players[0])
                             self.entities.append(sol)
                             self.active.entities.append(sol)
-                        elif i.f == "recruit_recon":
-                            rec = Recon(self.active, self.players[0])
                             
 
 
@@ -217,6 +219,15 @@ class Suchspiel(arcade.Window):
         self.entities.draw()
         self.active_selector.draw()
         self.overlays.draw()
+
+        # show amount of rounds
+        # an extra "." if the first person is playing
+        arcade.draw_text(str(ceil((self.turn)/len(self.players))),
+                         SCREENWIDTH-2*24,
+                         SCREENHEIGHT-2*24,
+                         arcade.color.BLACK,
+                         12 * 2)
+
         for i in self.sbar:
             i.draw()
         for i in self.tbar:
@@ -546,189 +557,79 @@ class Entity(arcade.Sprite):
     
     def test_for_fields(self, d, overlays, owner, playeronturn):
         a, b = self.field.pos
-        if self.typ == "Soldier" or self.typ == "Recon":
-            if (a + 1, b) in d:
-                if self.owner == playeronturn:
-                    if d[a + 1, b].typ in self.feldtyp:
-                        if d[a + 1, b].entities != [] and d[a + 1, b].entities[0].owner != self.owner:
-                            overlays.append(Overlay(d[a+1, b], "data/icons/overlayred.png", self))
-                        elif d[a + 1, b].entities != [] and d[a + 1, b].entities[0].owner == self.owner:
-                            pass
-                        else:
-                            overlays.append(Overlay(d[a+1, b], "data/icons/overlay.png", self))
-            if (a, b + 1) in d:
-                if self.owner == playeronturn:
-                        if d[a , b+1].typ in self.feldtyp: 
-                            if d[a , b+1].entities != [] and d[a, b + 1].entities[0].owner != self.owner:   
-                                overlays.append(Overlay(d[a, b + 1], "data/icons/overlayred.png", self))        
-                            elif d[a , b+1].entities != [] and d[a, b + 1].entities[0].owner == self.owner:   
-                                pass
-                            else:
-                                overlays.append(Overlay(d[a, b + 1], "data/icons/overlay.png", self))        
-            if (a - 1 , b) in d:
-                if self.owner == playeronturn:
-                        if d[a - 1, b].typ in self.feldtyp:
-                            if d[a - 1, b].entities != [] and d[a - 1, b].entities[0].owner != self.owner:
-                                overlays.append(Overlay(d[a - 1 , b], "data/icons/overlayred.png", self))
-                            elif d[a - 1, b].entities != [] and d[a - 1, b].entities[0].owner == self.owner:
-                                pass
-                            else:
-                                overlays.append(Overlay(d[a - 1 , b], "data/icons/overlay.png", self))
-            if (a, b - 1) in d:
-                if self.owner == playeronturn:
-                    if d[a , b - 1].typ in self.feldtyp:
-                        if d[a , b-1].entities != [] and d[a, b - 1].entities[0].owner != self.owner:
-                            overlays.append(Overlay(d[a, b - 1], "data/icons/overlayred.png", self))
-                        elif d[a , b-1].entities != [] and d[a, b - 1].entities[0].owner == self.owner:
-                            pass
-                        else:
-                            overlays.append(Overlay(d[a, b - 1], "data/icons/overlay.png", self))
-            if (a + 1, b + 1) in d:  
-                if self.owner == playeronturn:
-                        if d[a + 1 , b + 1].typ in self.feldtyp: 
-                            if d[a + 1 , b + 1].entities != [] and d[a + 1, b + 1].entities[0].owner != self.owner:    
-                                overlays.append(Overlay(d[a + 1, b + 1], "data/icons/overlayred.png", self))
-                            elif d[a + 1 , b + 1].entities != [] and d[a + 1, b + 1].entities[0].owner == self.owner:
-                                pass    
-                            else:
-                                overlays.append(Overlay(d[a + 1, b + 1], "data/icons/overlay.png", self))
-            if (a - 1 , b - 1) in d:
-                if self.owner == playeronturn:
-                        if d[a - 1 , b - 1].typ in self.feldtyp:   
-                            if d[a - 1 , b - 1].entities != [] and d[a - 1, b - 1].entities[0].owner != self.owner:
-                                overlays.append(Overlay(d[a - 1 , b - 1], "data/icons/overlayred.png", self))
-                            elif d[a - 1 , b - 1].entities != [] and d[a - 1, b - 1].entities[0].owner == self.owner:
-                                pass
-                            else:
-                                overlays.append(Overlay(d[a - 1 , b - 1], "data/icons/overlay.png", self))
-            if (a - 1, b + 1) in d:
-                if self.owner == playeronturn:
-                        if d[a - 1 , b + 1].typ in self.feldtyp:  
-                            if d[a - 1 , b + 1].entities != [] and d[a - 1, b + 1].entities[0].owner != self.owner:   
-                                overlays.append(Overlay(d[a - 1, b + 1], "data/icons/overlayred.png", self))
-                            elif d[a - 1 , b + 1].entities != [] and d[a - 1, b + 1].entities[0].owner == self.owner:   
-                                pass
-                            else:
-                                overlays.append(Overlay(d[a - 1, b + 1], "data/icons/overlay.png", self))
-            if (a + 1 , b - 1) in d:
-                if self.owner == playeronturn:
-                        if d[a + 1 , b - 1].typ in self.feldtyp:   
-                            if d[a + 1 , b - 1].entities != [] and d[a + 1, b - 1].entities[0].owner != self.owner:
-                                overlays.append(Overlay(d[a + 1, b-1], "data/icons/overlayred.png", self))
-                            elif d[a + 1, b - 1].entities!= [] and d[a + 1, b - 1].entities[0].owner == self.owner:
-                                pass
-                            else:
-                                overlays.append(Overlay(d[a + 1, b-1], "data/icons/overlay.png", self))
-        if self.typ == "Recon":
-            if (a-1, b-2) in d:
-                if self.owner == playeronturn:
-                    if d[a-1, b-2].typ in self.feldtyp:
-                        if d[a-1, b-2].entities != [] and d[a-1, b-2].entities[0].owner != self.owner:
-                            overlays.append(Overlay(d[a+1, b], "data/icons/overlayred.png", self))
-                        elif d[a-1, b-2].entities != [] and d[a-1, b-2].entities[0].owner == self.owner:
-                            pass
-                        else:
-                            overlays.append(Overlay(d[a+1, b], "data/icons/overlay.png", self))
-            
-                if self.owner == playeronturn:
-                        if d[a,b-2].typ in self.feldtyp: 
-                            if d[a,b-2].entities != [] and d[a,b-2].entities[0].owner != self.owner:   
-                                overlays.append(Overlay(d[a,b-2], "data/icons/overlayred.png", self))        
-                            elif d[a,b-2].entities != [] and d[a,b-2].entities[0].owner == self.owner:   
-                                pass
-                            else:
-                                overlays.append(Overlay(d[a,b-2], "data/icons/overlay.png", self))        
-
-                if self.owner == playeronturn:
-                        if d[a+1,b-2].typ in self.feldtyp: 
-                            if d[a+1,b-2].entities != [] and d[a+1,b-2].entities[0].owner != self.owner:   
-                                overlays.append(Overlay(d[a+1,b-2], "data/icons/overlayred.png", self))        
-                            elif d[a+1,b-2].entities != [] and d[a+1,b-2].entities[0].owner == self.owner:   
-                                pass
-                            else:
-                                overlays.append(Overlay(d[a+1,b-2], "data/icons/overlay.png", self))        
-
-                if self.owner == playeronturn:
-                        if d[a-2,b-1].typ in self.feldtyp: 
-                            if d[a-2,b-1].entities != [] and d[a-2,b-1].entities[0].owner != self.owner:   
-                                overlays.append(Overlay(d[a-2,b-1], "data/icons/overlayred.png", self))        
-                            elif d[a-2,b-1].entities != [] and d[a-2,b-1].entities[0].owner == self.owner:   
-                                pass
-                            else:
-                                overlays.append(Overlay(d[a-2,b-1], "data/icons/overlay.png", self))        
-
-                if self.owner == playeronturn:
-                        if d[a-2,b].typ in self.feldtyp: 
-                            if d[a-2,b].entities != [] and d[a-2,b].entities[0].owner != self.owner:   
-                                overlays.append(Overlay(d[a-2,b], "data/icons/overlayred.png", self))        
-                            elif d[a-2,b].entities != [] and d[a-2,b].entities[0].owner == self.owner:   
-                                pass
-                            else:
-                                overlays.append(Overlay(d[a-2,b], "data/icons/overlay.png", self))        
-
-                if self.owner == playeronturn:
-                        if d[a-2,b+1].typ in self.feldtyp: 
-                            if d[a-2,b+1].entities != [] and d[a-2,b+1].entities[0].owner != self.owner:   
-                                overlays.append(Overlay(d[a-2,b+1], "data/icons/overlayred.png", self))        
-                            elif d[a-2,b+1].entities != [] and d[a-2,b+1].entities[0].owner == self.owner:   
-                                pass
-                            else:
-                                overlays.append(Overlay(d[a-2,b+1], "data/icons/overlay.png", self))        
-
-                if self.owner == playeronturn:
-                        if d[a-1,b+2].typ in self.feldtyp: 
-                            if d[a-1,b+2].entities != [] and d[a-1,b+2].entities[0].owner != self.owner:   
-                                overlays.append(Overlay(d[a-1,b+2], "data/icons/overlayred.png", self))        
-                            elif d[a-1,b+2].entities != [] and d[a-1,b+2].entities[0].owner == self.owner:   
-                                pass
-                            else:
-                                overlays.append(Overlay(d[a-1,b+2], "data/icons/overlay.png", self))        
-
-                if self.owner == playeronturn:
-                        if d[a,b+2].typ in self.feldtyp: 
-                            if d[a,b+2].entities != [] and d[a,b+2].entities[0].owner != self.owner:   
-                                overlays.append(Overlay(d[a,b+2], "data/icons/overlayred.png", self))        
-                            elif d[a,b+2].entities != [] and d[a,b+2].entities[0].owner == self.owner:   
-                                pass
-                            else:
-                                overlays.append(Overlay(d[a,b+2], "data/icons/overlay.png", self))        
-
-                if self.owner == playeronturn:
-                        if d[a+1,b+2].typ in self.feldtyp: 
-                            if d[a+1,b+2].entities != [] and d[a+1,b+2].entities[0].owner != self.owner:   
-                                overlays.append(Overlay(d[a+1,b+2], "data/icons/overlayred.png", self))        
-                            elif d[a+1,b+2].entities != [] and d[a+1,b+2].entities[0].owner == self.owner:   
-                                pass
-                            else:
-                                overlays.append(Overlay(d[a+1,b+2], "data/icons/overlay.png", self))        
-
-                if self.owner == playeronturn:
-                        if d[a+2,b-1].typ in self.feldtyp: 
-                            if d[a+2,b-1].entities != [] and d[a+2,b-1].entities[0].owner != self.owner:   
-                                overlays.append(Overlay(d[a+2,b-1], "data/icons/overlayred.png", self))        
-                            elif d[a+2,b-1].entities != [] and d[a+2,b-1].entities[0].owner == self.owner:   
-                                pass
-                            else:
-                                overlays.append(Overlay(d[a+2,b-1], "data/icons/overlay.png", self))        
-
-                if self.owner == playeronturn:
-                        if d[a+2,b].typ in self.feldtyp: 
-                            if d[a+2,b].entities != [] and d[a+2,b].entities[0].owner != self.owner:   
-                                overlays.append(Overlay(d[a+2,b], "data/icons/overlayred.png", self))        
-                            elif d[a+2,b].entities != [] and d[a+2,b].entities[0].owner == self.owner:   
-                                pass
-                            else:
-                                overlays.append(Overlay(d[a+2,b], "data/icons/overlay.png", self))        
-
-                if self.owner == playeronturn:
-                        if d[a+2,b+1].typ in self.feldtyp: 
-                            if d[a+2,b+1].entities != [] and d[a+2,b+1].entities[0].owner != self.owner:   
-                                overlays.append(Overlay(d[a+2,b+1], "data/icons/overlayred.png", self))        
-                            elif d[a+2,b+1].entities != [] and d[a+2,b+1].entities[0].owner == self.owner:   
-                                pass
-                            else:
-                                overlays.append(Overlay(d[a+2,b+1], "data/icons/overlay.png", self))                                                                                                                                                                                                                                                                                                                                        
-            return overlays  
+        if (a + 1, b) in d:
+            if self.owner == playeronturn:
+                if d[a + 1, b].typ in self.feldtyp:
+                    if d[a + 1, b].entities != [] and d[a + 1, b].entities[0].owner != self.owner:
+                        overlays.append(Overlay(d[a+1, b], "data/icons/overlayred.png", self))
+                    elif d[a + 1, b].entities != [] and d[a + 1, b].entities[0].owner == self.owner:
+                        pass
+                    else:
+                        overlays.append(Overlay(d[a+1, b], "data/icons/overlay.png", self))
+        if (a, b + 1) in d:
+           if self.owner == playeronturn:
+                if d[a , b+1].typ in self.feldtyp: 
+                    if d[a , b+1].entities != [] and d[a, b + 1].entities[0].owner != self.owner:   
+                        overlays.append(Overlay(d[a, b + 1], "data/icons/overlayred.png", self))        
+                    elif d[a , b+1].entities != [] and d[a, b + 1].entities[0].owner == self.owner:   
+                        pass
+                    else:
+                        overlays.append(Overlay(d[a, b + 1], "data/icons/overlay.png", self))        
+        if (a - 1 , b) in d:
+           if self.owner == playeronturn:
+                if d[a - 1, b].typ in self.feldtyp:
+                    if d[a - 1, b].entities != [] and d[a - 1, b].entities[0].owner != self.owner:
+                        overlays.append(Overlay(d[a - 1 , b], "data/icons/overlayred.png", self))
+                    elif d[a - 1, b].entities != [] and d[a - 1, b].entities[0].owner == self.owner:
+                        pass
+                    else:
+                        overlays.append(Overlay(d[a - 1 , b], "data/icons/overlay.png", self))
+        if (a, b - 1) in d:
+            if self.owner == playeronturn:
+                if d[a , b - 1].typ in self.feldtyp:
+                    if d[a , b-1].entities != [] and d[a, b - 1].entities[0].owner != self.owner:
+                        overlays.append(Overlay(d[a, b - 1], "data/icons/overlayred.png", self))
+                    elif d[a , b-1].entities != [] and d[a, b - 1].entities[0].owner == self.owner:
+                        pass
+                    else:
+                        overlays.append(Overlay(d[a, b - 1], "data/icons/overlay.png", self))
+        if (a + 1, b + 1) in d:  
+           if self.owner == playeronturn:
+                if d[a + 1 , b + 1].typ in self.feldtyp: 
+                    if d[a + 1 , b + 1].entities != [] and d[a + 1, b + 1].entities[0].owner != self.owner:    
+                        overlays.append(Overlay(d[a + 1, b + 1], "data/icons/overlayred.png", self))
+                    elif d[a + 1 , b + 1].entities != [] and d[a + 1, b + 1].entities[0].owner == self.owner:
+                        pass    
+                    else:
+                        overlays.append(Overlay(d[a + 1, b + 1], "data/icons/overlay.png", self))
+        if (a - 1 , b - 1) in d:
+           if self.owner == playeronturn:
+                if d[a - 1 , b - 1].typ in self.feldtyp:   
+                    if d[a - 1 , b - 1].entities != [] and d[a - 1, b - 1].entities[0].owner != self.owner:
+                        overlays.append(Overlay(d[a - 1 , b - 1], "data/icons/overlayred.png", self))
+                    elif d[a - 1 , b - 1].entities != [] and d[a - 1, b - 1].entities[0].owner == self.owner:
+                        pass
+                    else:
+                        overlays.append(Overlay(d[a - 1 , b - 1], "data/icons/overlay.png", self))
+        if (a - 1, b + 1) in d:
+           if self.owner == playeronturn:
+                if d[a - 1 , b + 1].typ in self.feldtyp:  
+                    if d[a - 1 , b + 1].entities != [] and d[a - 1, b + 1].entities[0].owner != self.owner:   
+                        overlays.append(Overlay(d[a - 1, b + 1], "data/icons/overlayred.png", self))
+                    elif d[a - 1 , b + 1].entities != [] and d[a - 1, b + 1].entities[0].owner == self.owner:   
+                        pass
+                    else:
+                        overlays.append(Overlay(d[a - 1, b + 1], "data/icons/overlay.png", self))
+        if (a + 1 , b - 1) in d:
+           if self.owner == playeronturn:
+                if d[a + 1 , b - 1].typ in self.feldtyp:   
+                    if d[a + 1 , b - 1].entities != [] and d[a + 1, b - 1].entities[0].owner != self.owner:
+                        overlays.append(Overlay(d[a + 1, b-1], "data/icons/overlayred.png", self))
+                    elif d[a + 1, b - 1].entities!= [] and d[a + 1, b - 1].entities[0].owner == self.owner:
+                        pass
+                    else:
+                        overlays.append(Overlay(d[a + 1, b-1], "data/icons/overlay.png", self))
+        return overlays  
 
 
 
@@ -752,11 +653,7 @@ class Ship(Entity):
     def __init__(self, field, owner):
         super().__init__("Ship", field, 10, 4, owner, ["water"])
         self.owner = owner
-        
-class Recon(Entity):
-    def __init__(self, field, owner, rangewow):
-        super().__init__("Recon", field, 8, 2, owner, ["grass", "forest"])
-        self.owner = owner    
+   
 
 class Building(arcade.Sprite):
     def __init__(self, x, y, typ):
@@ -869,6 +766,8 @@ class Player():
         self.technologies = technologies
         self.startgoods()
         self.startt()
+        # turns left untill a village can be built (intervall of 10)
+        self.turnstovillage = 0
 
     def startgoods(self):
         self.goods["stone"] = 0
@@ -939,9 +838,10 @@ class Img(arcade.Sprite):
 
 
 
+SCREENWIDTH  = 1000
+SCREENHEIGHT = 840
 
 
 
-
-sp = Suchspiel(1000, 840, "NATIONWARS", 24, 24)
+sp = Suchspiel(SCREENWIDTH, SCREENHEIGHT, "NATIONWARS", 24, 24)
 arcade.run()
