@@ -362,6 +362,50 @@ class Field(arcade.Sprite):
     def add_soldier(self, owner):
         pass
 
+    def neighbor_for_village(self, d, owner):
+        a, b = self.pos
+
+        if (a + 1, b) in d:
+            if d[(a + 1, b)].buildings != []:
+                if d[(a + 1, b)].buildings[0].typ == "village":
+
+                    return d[(a + 1, b)].buildings[0]
+        if (a, b + 1) in d:
+            if d[(a, b + 1)].buildings != []:
+                if d[(a, b + 1)].buildings[0].typ == "village":
+
+                    return d[(a, b + 1)].buildings[0]
+        if (a - 1 , b) in d:
+            if d[(a - 1, b)].buildings != []:
+                if d[(a - 1, b)].buildings[0].typ == "village":
+
+                    return d[(a - 1, b)].buildings[0]
+        if (a, b - 1) in d:
+            if d[(a, b - 1)].buildings != []:
+                if d[(a, b - 1)].buildings[0].typ == "village":
+
+                    return d[(a, b - 1)].buildings[0]
+        if (a + 1, b + 1) in d:
+            if d[(a + 1, b + 1)].buildings != []:
+                if d[(a + 1, b + 1)].buildings[0].typ == "village":
+
+                    return d[(a + 1, b + 1)].buildings[0]
+        if (a - 1 , b - 1) in d:
+            if d[(a - 1, b - 1)].buildings != []:
+                if d[(a - 1, b - 1)].buildings[0].typ == "village":
+
+                    return d[(a - 1, b - 1)].buildings[0]
+        if (a - 1, b + 1) in d:
+            if d[(a - 1, b + 1)].buildings != []:
+                if d[(a - 1, b + 1)].buildings[0].typ == "village":
+
+                    return d[(a - 1, b + 1)].buildings[0]
+        if (a + 1 , b - 1) in d:
+            if d[(a + 1, b - 1)].buildings != []:
+                if d[(a + 1, b - 1)].buildings[0].typ == "village":
+
+                    return d[(a + 1, b - 1)].buildings[0]
+                
     def pos_for_village(self, d, owner):
         a, b = self.pos
 

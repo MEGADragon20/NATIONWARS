@@ -155,23 +155,23 @@ def field(field, d, owner):
     if field.buildings == []:                                                    # Create Buttons for adding buildings
         if field.typ != "water" and field.typ != "mountain" and field.typ != "forest" and field.test_for_village(d, owner) == False:
             content.append(buttons.Button("add_village", 8))
-        if field.typ == "forest" and field.test_for_village(d, owner) == True and owner.technologies["cabin"] == True:
+        if field.typ == "forest" and field.test_for_village(d, owner) == True and owner.technologies["cabin"] == True and field.neighbor_for_village(d, owner).owner == owner:
             content.append(buttons.Button("add_cabin", 7))
             content.append(buttons.Txt("Cost:", 800, 514, arcade.color.BLACK, 16))
             content.append(buttons.Txt("25 coins", 800, 494, arcade.color.BLACK, 16))
-        if field.typ == "mountain" and field.test_for_village(d, owner) == True and owner.technologies["quarry"] == True:
+        if field.typ == "mountain" and field.test_for_village(d, owner) == True and owner.technologies["quarry"] == True and field.neighbor_for_village(d, owner).owner == owner:
             content.append(buttons.Button("add_quarry", 7))
             content.append(buttons.Txt("Cost:", 800, 514, arcade.color.BLACK, 16))
             content.append(buttons.Txt("25 coins", 800, 494, arcade.color.BLACK, 16))
-        if field.typ == "mountain" and field.test_for_village(d, owner) == True and owner.technologies["mine"] == True:   
+        if field.typ == "mountain" and field.test_for_village(d, owner) == True and owner.technologies["mine"] == True and field.neighbor_for_village(d, owner).owner == owner:   
             content.append(buttons.Button("add_mine", 5))
             content.append(buttons.Txt("Cost:", 800, 345, arcade.color.BLACK, 16))
             content.append(buttons.Txt("25 coins", 800, 325, arcade.color.BLACK, 16))
-        if field.typ == "grass" and field.test_for_village(d, owner) == True and owner.technologies["pasture"] == True:
+        if field.typ == "grass" and field.test_for_village(d, owner) == True and owner.technologies["pasture"] == True and field.neighbor_for_village(d, owner).owner == owner:
             content.append(buttons.Button("add_pasture", 7))
             content.append(buttons.Txt("Cost:", 800, 514, arcade.color.BLACK, 16))
             content.append(buttons.Txt("25 coins", 800, 494, arcade.color.BLACK, 16))
-        if field.typ == "grass" and field.test_for_village(d, owner) == True and owner.technologies["wheat_plot"] == True:
+        if field.typ == "grass" and field.test_for_village(d, owner) == True and owner.technologies["wheat_plot"] == True and field.neighbor_for_village(d, owner).owner == owner:
             content.append(buttons.Button("add_wheat_plot", 5))
             content.append(buttons.Txt("Cost:", 800, 345, arcade.color.BLACK, 16))
             content.append(buttons.Txt("25 coins", 800, 325, arcade.color.BLACK, 16))
