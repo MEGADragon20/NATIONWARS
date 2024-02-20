@@ -2,6 +2,7 @@ import arcade, random as r, arcade.gui
 import reader, sidebar, topbar
 from math import ceil
 
+print("YES")
 
 class Suchspiel(arcade.Window):
     def __init__(self, breite, höhe, titel, feld_h, feld_b):
@@ -34,8 +35,8 @@ class Suchspiel(arcade.Window):
 
         self.active = Field(x = 0, y = 0, typ = "grass")
         self.active_selector = arcade.Sprite("data/icons/active.png", center_x= -16, center_y= -16)
-        self.buildings.append(self.fields[98].add_village("München", self.players[0])) 
-        self.buildings.append(self.fields[387].add_village("Berlin", self.players[1])) 
+        self.buildings.append(self.fields[98].add_village("München", self.players[0], invisible = True))
+        self.buildings.append(self.fields[387].add_village("Berlin", self.players[1], invisible = True))
 
 
         
@@ -188,6 +189,9 @@ class Suchspiel(arcade.Window):
                             self.sbar = sidebar.start(self.players[0])
 
                         elif i.f == "pass_turn":
+                            if self.players[0].turnstovillage:
+                                self.players[0].turnstovillage -= 1
+                            self.turn += 1
                             #give him his new stuff haha
                             self.produce()
                             # change active player
@@ -325,8 +329,12 @@ class Field(arcade.Sprite):
     def klick(self, d, player):
         return sidebar.field(self, d, player)
 
-    def add_village(self, name, owner):
+    # invisible determines if the village should reset the counter for the next village-build (True at the beginning, when the game is being initialized)
+    def add_village(self, name, owner, invisible=False):
+        # reset counter (until village-build is allowed)
         a = Village(self.x, self.y, name, 1, owner)
+        if not invisible:
+            owner.turnstovillage = 10
         self.buildings.append(a) 
         return a
     
@@ -375,9 +383,11 @@ class Field(arcade.Sprite):
     def add_soldier(self, owner):
         pass
 
-    def neighbor_for_village(self, d, owner):
+    def neighbor_for_village(self, d, owner): #!!! owner is not used
         a, b = self.pos
 
+
+        print(d)
         if (a + 1, b) in d:
             if d[(a + 1, b)].buildings != []:
                 if d[(a + 1, b)].buildings[0].typ == "village":
@@ -528,11 +538,11 @@ class Overlay(arcade.Sprite):
             
         self.entity.used = True
         return kill
-        
-        
-        
-          
-            
+
+
+
+
+
 
 class Entity(arcade.Sprite):
     def __init__(self, typ, field, health, damage, owner, feldtyp):
@@ -644,16 +654,18 @@ class Soldier(Entity):
         super().__init__("Soldier", field, 10, 4, owner, ["grass", "forest", "mountain"])
         self.owner = owner
 
+
 class Bow(Entity):
     def __init__(self, field, owner):
         super().__init__("Bow", field, 10, 4, owner, ["grass", "forest"])
         self.owner = owner
 
+
 class Ship(Entity):
     def __init__(self, field, owner):
         super().__init__("Ship", field, 10, 4, owner, ["water"])
         self.owner = owner
-   
+
 
 class Building(arcade.Sprite):
     def __init__(self, x, y, typ):
@@ -661,6 +673,7 @@ class Building(arcade.Sprite):
         self.x = x
         self.y = y
         self.typ = typ
+
 
 class Village(Building):
     def __init__(self, x, y, name, lvl = 1, owner = None):
@@ -679,6 +692,7 @@ class Village(Building):
         self.owner.coins += r.randint(2, 10) * self.lvl
         self.owner.investigationpoints += 1
 
+
 class Quarry(Building):
     def __init__(self, x, y, village, lvl = 1):
         super().__init__(x, y, "quarry")
@@ -693,6 +707,7 @@ class Quarry(Building):
     
     def klick(self, player):
         return sidebar.quarry(self)
+
 
 class Mine(Building):
     def __init__(self, x, y, village, lvl = 1):
@@ -725,89 +740,83 @@ class Cabin(Building):
     def klick(self, player):
         return sidebar.cabin(self)
 
+
 class Wheat_plot(Building):
-    def __init__(self, x, y, village, lvl = 1):
+    def __init__(self, x:any, y:any, village:Village, lvl:int = 1):
         super().__init__(x, y, "wheat_plot")
-        self.x = x
-        self.y = y
-        self.village = village
-        self.owner = village.owner
-        self.lvl = lvl
+        self.x:any = x                      # x-coordinate of the wheat plot
+        self.y:any = y                      # y-coordinate of the wheat plot
+        self.village:Village = village      # the village the wheat plot is part of/belongs to
+        self.owner:Player = village.owner   # the owner of the wheat plot
+        self.lvl:int = lvl                  # the level of the wheat plot
     
     def produce(self):
+        # wheat plot produces wheat (amount: multiplication of the level of the village and the level of the wheat plot)
         self.owner.goods["wheat"] += (self.lvl * self.village.lvl)
     
     def klick(self, player):
+        # when klicked on, the sidebar for the wheat plot is returned (to e.g. upgrade the wheat plot)
         return sidebar.wheat_plot(self)
 
+class Player():
+    DEFAULT:dict[any] = {    # every Player's default values
+        "coins": 0,
+        "investigationpoints": 0,
+        "goods": {
+            "stone":  0,
+            "wood":   0,
+            "wool":   0,
+            "wheat":  0,
+            "flour":  0,
+            "iron":   0,
+            "gold":   0,
+            "swords": 0,
+            "bows":   0
+        },
+        "technologies": {
+            "quarry": False,
+            "cabin": False,
+            "wheat_plot": False,
+            "pasture": False,
+            "mine": False
+        },
+        "turnstovillage": 0
+    }
+
+    # the constructor sets the values and attributes of the player
+    # the constructor takes a name, color and tribe as arguments, optionally coins, investigationpoints, goods, technologies and turnstovillage, which are set to the default values if not given
+    def __init__(self, name:str, color:any, tribe:any, coins:int = DEFAULT["coins"], investigationpoints:int = DEFAULT["investigationpoints"], goods:dict[str, int] = DEFAULT["goods"], technologies:dict[str, int] = DEFAULT["technologies"], turnstovillage:int = DEFAULT["turnstovillage"]):
+        self.name:str =                    name                 # the name of the player
+        self.color:any =                   color                # the color of the player
+        self.tribe:any =                   tribe                # the tribe of which it is a part of
+
+        self.coins:int =                   coins                                            # amount of coins currently owned
+        self.investigationpoints:int =     investigationpoints                              # amount of investigationpoints currently owned
+        self.turnstovillage:int =          turnstovillage                                   # turns left untill a village can be built (intervall of 10)
+        # the dictionaries are being combined with the default deictionaries (=> if one key forgotten, it will be set to the default value)
+        self.goods:dict[str, int] =        goods | Player.DEFAULT["goods"]                  # the goods currently owned
+        self.technologies:dict[str, int] = technologies | Player.DEFAULT["technologies"]    # the technologies currently owned
+
+
+
+
 class Pasture(Building):
-    def __init__(self, x, y, village, lvl = 1):
+    def __init__(self, x:any, y:any, village:Village, lvl:int = 1):
         super().__init__(x, y, "pasture")
-        self.x = x
-        self.y = y
-        self.village = village
-        self.owner = village.owner
-        self.lvl = lvl
+        self.x:any           = x                # x-coordinate of the pasture     #!!! => change x and y to tuple (x, y)
+        self.y:any           = y                # y-coordinate of the pasture 
+        self.village:Village = village          # #!!! the village the pasture is part of/belongs to
+        self.owner:Player    = village.owner    # the owner of the pasture #!!! => actually needed? can be accessed via village
+        self.lvl:int         = lvl              # the level of the pasture
     
     def produce(self):
+        # pasture produces wool (amount: multiplication of the level of the village and the level of the pasture)
         self.owner.goods["wool"] += (self.lvl * self.village.lvl)
-    
-    def klick(self, player):
+
+    def klick(self, player:Player): # !!! player not used
+        # when klicked on, the sidebar for the pasture is returned (to e.g. upgrade the pasture)
         return sidebar.pasture(self)
 
-class Player():
-    def __init__(self, name, color, tribe, goods: dict = {}, technologies: dict = {}):
-        self.name = name
-        self.color = color
-        self.tribe = tribe
-        self.coins = 0
-        self.investigationpoints = 0
-        self.goods = goods
-        self.technologies = technologies
-        self.startgoods()
-        self.startt()
-        # turns left untill a village can be built (intervall of 10)
-        self.turnstovillage = 0
-
-    def startgoods(self):
-        self.goods["stone"] = 0
-        self.goods["wood"] = 0
-        self.goods["wool"] = 0
-        self.goods["wheat"] = 0
-        self.goods["flour"] = 0
-        self.goods["iron"] = 0
-        self.goods["gold"] = 0
-        self.goods["swords"] = 0
-        self.goods["bows"] = 0
-
-    def startt(self):
-        self.technologies["quarry"] = False
-        self.technologies["cabin"] = False
-        self.technologies["wheat_plot"] = False
-        self.technologies["pasture"] = False
-        self.technologies["mine"] = False
-        # self.technologies[] = False
-        # self.technologies[] = False
-        # self.technologies[] = False
-        # self.technologies[] = False
-        # self.technologies[] = False
-        # self.technologies[] = False
-        # self.technologies[] = False
-        # self.technologies[] = False
-        # self.technologies[] = False
-        # self.technologies[] = False
-        # self.technologies[] = False
-        # self.technologies[] = False
-        # self.technologies[] = False
-        # self.technologies[] = False
-        # self.technologies[] = False
-        # self.technologies[] = False
-        # self.technologies[] = False
-        # self.technologies[] = False
-        # self.technologies[] = False
-        # self.technologies[] = False
-        # self.technologies[] = False
-        # self.technologies[] = False
 
 
 
@@ -816,23 +825,29 @@ class Player():
 
 
 
-#klassen
 
+
+
+# Button-Class (like a buttons-template)
 class Button(arcade.Sprite):
-    def __init__(self, f, h):
+    def __init__(self, f:str, h:any):
         super().__init__("data/buttons/" + f + ".png", center_x = 890, center_y = h*84 - 10)
-        self.f = f 
-        self.type = "Button"
+        self.f:str = f              # the Button-Image-Name
+        self.type:str = "Button"    # the type of Sprite (= Button)
 
+
+# Text-Class (like a text-template)
 class Txt(arcade.Text):
-    def __init__(self, txt, x, y, color, b = False):
+    def __init__(self, txt:str, x:any, y:any, color:any, b:bool = False):
         super().__init__(txt, x, y, color, font_name="data/fonts/minimalistic.ttf", font_size = 16, bold = b)
-        self.type = "Txt"
+        self.type:str = "Txt"       # the type of Sprite (= Text)
 
+
+# Image-Class (like an image-template)
 class Img(arcade.Sprite):
-    def __init__(self, file, x, y):
+    def __init__(self, file:str, x:any, y:any):
         super().__init__(file, scale= 2, center_x = x, center_y = y)
-        self.type = "Img"
+        self.type:str = "Img"       # the type of Sprite (= Image)
 
 
 
@@ -845,3 +860,10 @@ SCREENHEIGHT = 840
 
 sp = Suchspiel(SCREENWIDTH, SCREENHEIGHT, "NATIONWARS", 24, 24)
 arcade.run()
+
+
+
+
+# note (daniel): 
+    # find the correct types instead of any
+    # #!!! => ask other teammembers abt why

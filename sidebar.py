@@ -155,8 +155,6 @@ def field(field, d, owner):
     if field.buildings == []:                                                    # Create Buttons for adding buildings
         if field.typ != "water" and field.typ != "mountain" and field.typ != "forest" and field.test_for_village(d, owner) == False and not owner.turnstovillage:
             content.append(buttons.Button("add_village", 8))
-            # reset counter (until village-build is allowed)
-            owner.turnstovillage = 10
         if field.typ == "forest" and field.test_for_village(d, owner) == True and owner.technologies["cabin"] == True and field.neighbor_for_village(d, owner).owner == owner:
             content.append(buttons.Button("add_cabin", 7))
             content.append(buttons.Txt("Cost:", 800, 514, arcade.color.BLACK, 16))
