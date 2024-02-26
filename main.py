@@ -63,6 +63,18 @@ class Suchspiel(arcade.Window):
             for i in self.entities:
                 i.used = False
 
+    # def on_key_release(self, symbol, modifiers):
+    #     if symbol == arcade.key.KEY_0:
+    #         print("0")
+    #     if symbol == arcade.key.KEY_1:
+    #         print("1")
+    #     if symbol == arcade.key.KEY_2:
+    #         print("2")
+    #     if symbol == arcade.key.KEY_3:
+    #         print("3")
+    #     if symbol == arcade.key.KEY_4:
+    #         print("4")
+
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
         pseudosprite = arcade.Sprite()
         pseudosprite.center_x = x
@@ -325,7 +337,7 @@ class Field(arcade.Sprite):
         active.center_x = self.center_x
         active.center_y = self.center_y
         return active
-    
+
     def klick(self, d, player):
         return sidebar.field(self, d, player)
 
@@ -555,6 +567,7 @@ class Entity(arcade.Sprite):
         self.typ = typ
         self.used = False
         self.feldtyp = feldtyp
+
     def on_key_press(self, symbol):
         if symbol == arcade.key.UP:
             self.field.pos = [0,0]
