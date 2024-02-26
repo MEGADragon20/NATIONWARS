@@ -3,6 +3,7 @@ import buttons
 
 def entities():
     return [
+        buttons.Button("recruit_recon", 7),
         buttons.Button("recruit_soldier", 8),
         buttons.Button("home", 9)
     ]
