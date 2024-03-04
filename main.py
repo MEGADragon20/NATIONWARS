@@ -2,7 +2,6 @@ import arcade, random as r, arcade.gui
 import reader, sidebar, topbar
 from math import ceil
 
-print("YES")
 
 class Suchspiel(arcade.Window):
     def __init__(self, breite, höhe, titel, feld_h, feld_b):
