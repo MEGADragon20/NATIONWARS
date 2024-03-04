@@ -462,6 +462,7 @@ class Suchspiel(arcade.Window):
         self.buildings.draw()
         self.entities.draw()
         self.active_selector.draw()
+        print(self.overlays)
         self.overlays.draw()
 
         # show amount of rounds
@@ -817,6 +818,7 @@ class Entity(arcade.Sprite):
                                 pass
                             else:
                                 overlays.append(Overlay(d[a+1, b], "data/icons/overlay.png", self))
+                            print(overlays)
                 if (a, b + 1) in d:
                     if self.owner == playeronturn:
                             if d[a , b+1].typ in self.feldtyp:
@@ -880,6 +882,7 @@ class Entity(arcade.Sprite):
                                     pass
                                 else:
                                     overlays.append(Overlay(d[a + 1, b-1], "data/icons/overlay.png", self))
+        
         elif self.typ == "Recon":
                 if (a-1, b-2) in d:
                     if self.owner == playeronturn:
