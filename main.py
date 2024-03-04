@@ -97,28 +97,42 @@ class Suchspiel(arcade.Window):
                 self.activefield = (w-1)
             setactivefield(self.activefield)
         elif symbol == arcade.key.MOTION_UP:
-            print(self.activefield)
             if self.activefield + w > len(self.fields)-1:
-                # self.activefield = (len(self.fields)-1 - (w-1))
-                if self.activefield == w*h -1:
-                    self.activefield = 0
-                else:
-                    self.activefield -= w*(h-1) -1
+                self.activefield -= w*(h-1)
             else:
                 self.activefield += w
             setactivefield(self.activefield)
         elif symbol == arcade.key.MOTION_DOWN:
-            print(self.activefield)
             if self.activefield - w < 0:
-                # self.activefield += (w-1)
-                if self.activefield == 0:
-                    self.activefield = w*h -1
-                else:
-                    self.activefield += w*(h-1) -1
+                self.activefield += w*(h-1)
             else:
                 self.activefield -= w
             setactivefield(self.activefield)
-        # other direction:
+        
+        # other direction 1:
+            # elif symbol == arcade.key.MOTION_UP:
+            #     print(self.activefield)
+            #     if self.activefield + w > len(self.fields)-1:
+            #         # self.activefield = (len(self.fields)-1 - (w-1))
+            #         if self.activefield == w*h -1:
+            #             self.activefield = 0
+            #         else:
+            #             self.activefield -= w*(h-1) -1
+            #     else:
+            #         self.activefield += w
+            #     setactivefield(self.activefield)
+            # elif symbol == arcade.key.MOTION_DOWN:
+            #     print(self.activefield)
+            #     if self.activefield - w < 0:
+            #         # self.activefield += (w-1)
+            #         if self.activefield == 0:
+            #             self.activefield = w*h -1
+            #         else:
+            #             self.activefield += w*(h-1) -1
+            #     else:
+            #         self.activefield -= w
+            #     setactivefield(self.activefield)
+        # other direction 2:
             # elif symbol == arcade.key.MOTION_UP:
             #     print(self.activefield)
             #     if self.activefield + w > len(self.fields)-1:
