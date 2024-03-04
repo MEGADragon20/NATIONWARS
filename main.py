@@ -880,7 +880,7 @@ class Entity(arcade.Sprite):
                                     pass
                                 else:
                                     overlays.append(Overlay(d[a + 1, b-1], "data/icons/overlay.png", self))
-        elif self.typ == "Recon":
+        if self.typ == "Recon":
                 if (a-1, b-2) in d:
                     if self.owner == playeronturn:
                         if d[a-1, b-2].typ in self.feldtyp:
@@ -989,8 +989,7 @@ class Entity(arcade.Sprite):
                                     pass
                                 else:
                                     overlays.append(Overlay(d[a+2,b+1], "data/icons/overlay.png", self))
-
-                return overlays
+        return overlays
 
 
 
