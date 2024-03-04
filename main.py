@@ -1004,7 +1004,7 @@ class Ship(Entity):
         self.owner = owner
 
 class Recon(Entity):
-    def __init__(self, field, owner, rangewow):
+    def __init__(self, field, owner):
         super().__init__("Recon", field, 8, 2, owner, ["grass", "forest"])
         self.owner = owner
 
