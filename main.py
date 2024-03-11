@@ -851,13 +851,14 @@ class Entity(arcade.Sprite):
                 add_overlays(d, a, b, overlays, self, playeronturn)
         if self.typ == "Recon":
                 if (a-1, b-2) in d:
-                        if d[a-1, b-2].typ in self.feldtyp:
-                            if d[a-1, b-2].entities != [] and d[a-1, b-2].entities[0].owner != self.owner:
-                                overlays.append(Overlay(d[a-1, b-2], "data/icons/overlayred.png", self))
-                            elif d[a-1, b-2].entities != [] and d[a-1, b-2].entities[0].owner == self.owner:
-                                pass
-                            else:
-                                overlays.append(Overlay(d[a-1, b-2], "data/icons/overlay.png", self))
+                    if self.owner == playeronturn:
+                            if d[a-1,b-2].typ in self.feldtyp:
+                                if d[a-1,b-2].entities != [] and d[a-1,b-2].entities[0].owner != self.owner:
+                                    overlays.append(Overlay(d[a-1,b-2], "data/icons/overlayred.png", self))
+                                elif d[a-1,b-2].entities != [] and d[a-1,b-2].entities[0].owner == self.owner:
+                                    pass
+                                else:
+                                    overlays.append(Overlay(d[a-1,b-2], "data/icons/overlay.png", self))
                 if (a, b-2) in d:
                     if self.owner == playeronturn:
                             if d[a,b-2].typ in self.feldtyp:
