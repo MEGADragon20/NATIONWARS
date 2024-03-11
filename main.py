@@ -11,13 +11,13 @@ def add_overlay_if_valid(d, a, b, overlays, self, playeronturn):
     if (a, b) not in d or d[a, b].typ not in self.feldtyp:
         return
     target_entity = d.get((a, b)).entities[0] if d[a, b].entities else None
-    if target_entity and target_entity.owner == self.owner:
+    if (target_entity and target_entity.owner == self.owner) or (target_entity and (self.typ == "Soldier" or self.typ == "Recon") and self.field.typ == "water"):
         return
     overlay_icon = "data/icons/overlayred.png" if target_entity else "data/icons/overlay.png"
     overlays.append(Overlay(d[a, b], overlay_icon, self))
-    
+
 def add_overlays(d, a, b, overlays, self, playeronturn):
-    if self.typ not in ["Soldier", "Recon", "Ship"]:
+    if self.typ not in ["Soldier", "Recon", "Korvette"]:
         return
     add_overlay_if_valid(d, a + 1, b, overlays, self, playeronturn)
     add_overlay_if_valid(d, a, b + 1, overlays, self, playeronturn)
