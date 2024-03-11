@@ -496,28 +496,32 @@ class Suchspiel(arcade.Window):
 
     def on_draw(self):
         # print(self.players)
-        if len(self.players) <= 1:
-            raise
         self.clear()
-        self.fields.draw()
-        self.buildings.draw()
-        self.entities.draw()
-        self.active_selector.draw()
-        self.overlays.draw()
+        if len(self.players) <= 1:
+            imgwidth = 32
+            imgheight = 24
+            smallest = SCREENHEIGHT if SCREENHEIGHT < SCREENWIDTH else SCREENWIDTH
+            arcade.draw_texture_rectangle(SCREENWIDTH/2, SCREENHEIGHT/2, smallest, smallest*imgheight/imgwidth,arcade.load_texture("./data/icons/victoryscreen.png"))
+        else:
+            self.fields.draw()
+            self.buildings.draw()
+            self.entities.draw()
+            self.active_selector.draw()
+            self.overlays.draw()
 
-        arcade.draw_text(str(ceil((self.turn)/len(self.players))),
-                        SCREENWIDTH-2*24,
-                        SCREENHEIGHT-2*24,
-                        arcade.color.BLACK,
-                        12 * 2)
+            arcade.draw_text(str(ceil((self.turn)/len(self.players))),
+                            SCREENWIDTH-2*24,
+                            SCREENHEIGHT-2*24,
+                            arcade.color.BLACK,
+                            12 * 2)
 
-        for i in self.sbar:
-            i.draw()
-        for i in self.tbar:
-            if i.type != "Txt":
-                i.draw(pixelated = True)
-            else:
+            for i in self.sbar:
                 i.draw()
+            for i in self.tbar:
+                if i.type != "Txt":
+                    i.draw(pixelated = True)
+                else:
+                    i.draw()
 
     def produce(self):
         for i in self.buildings:
