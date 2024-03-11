@@ -991,7 +991,7 @@ class Ship(Entity):
 
 class Recon(Entity):
     def __init__(self, field, owner):
-        super().__init__("Recon", field, 8, 2, owner, ["grass", "forest"])
+        super().__init__("Recon", field, 8, 2, owner, ["grass", "forest", "water"])
         self.owner = owner
 
 
