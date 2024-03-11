@@ -1,0 +1,2 @@
+class Instances:
+    game = None
