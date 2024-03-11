@@ -4,25 +4,20 @@ from math import ceil
 import random
 from instances import Instances
 
+
 def add_overlay_if_valid(d, a, b, overlays, self, playeronturn):
     if self.owner != playeronturn:
         return
-
     if (a, b) not in d or d[a, b].typ not in self.feldtyp:
         return
-
     target_entity = d.get((a, b)).entities[0] if d[a, b].entities else None
-
     if target_entity and target_entity.owner == self.owner:
         return
-
     overlay_icon = "data/icons/overlayred.png" if target_entity else "data/icons/overlay.png"
     overlays.append(Overlay(d[a, b], overlay_icon, self))
-
 def add_overlays(d, a, b, overlays, self, playeronturn):
     if self.typ not in ["Soldier", "Recon", "Ship"]:
         return
-
     add_overlay_if_valid(d, a + 1, b, overlays, self, playeronturn)
     add_overlay_if_valid(d, a, b + 1, overlays, self, playeronturn)
     add_overlay_if_valid(d, a - 1, b, overlays, self, playeronturn)
@@ -393,9 +388,17 @@ class Suchspiel(arcade.Window):
 
                         elif i.f == "takeover":
                             newplayer = self.players[0]
+                            playerstoremove = self.players
                             for building in self.buildings:
-                                if isinstance(building, Village) and arcade.check_for_collision(building, self.fields[self.activefield]):
-                                    building.owner = newplayer
+                                if isinstance(building, Village):
+                                    if arcade.check_for_collision(building, self.fields[self.activefield]):
+                                        building.takeover(newplayer)
+                                    if building.owner in playerstoremove:
+                                        playerstoremove.remove(building.owner)
+                            for toremove in playerstoremove:
+                                self.players.remove(toremove)
+                                
+                                        
 
 
                         # upgrade building
@@ -492,6 +495,9 @@ class Suchspiel(arcade.Window):
 
 
     def on_draw(self):
+        # print(self.players)
+        if len(self.players) <= 1:
+            raise
         self.clear()
         self.fields.draw()
         self.buildings.draw()
@@ -499,13 +505,11 @@ class Suchspiel(arcade.Window):
         self.active_selector.draw()
         self.overlays.draw()
 
-        # show amount of rounds
-        # an extra "." if the first person is playing
         arcade.draw_text(str(ceil((self.turn)/len(self.players))),
-                         SCREENWIDTH-2*24,
-                         SCREENHEIGHT-2*24,
-                         arcade.color.BLACK,
-                         12 * 2)
+                        SCREENWIDTH-2*24,
+                        SCREENHEIGHT-2*24,
+                        arcade.color.BLACK,
+                        12 * 2)
 
         for i in self.sbar:
             i.draw()
@@ -963,6 +967,8 @@ class Entity(arcade.Sprite):
         y = self.field.y
 
 
+
+
 class Soldier(Entity):
     def __init__(self, field, owner):
         super().__init__("Soldier", field, 10, 4, owner, ["grass", "forest", "mountain"])
@@ -1005,8 +1011,7 @@ class Village(Building):
         self.used = True
 
     def takeover(self, player):
-        if random.randint(0, 2) == 0:
-            self.owner = player
+        self.owner = player
 
     def klick(self, player):
         return sidebar.village(self, player)
@@ -1183,7 +1188,6 @@ SCREENHEIGHT = 840
 
 sp = Suchspiel(SCREENWIDTH, SCREENHEIGHT, "NATIONWARS", 24, 24)
 arcade.run()
-
 
 
 
