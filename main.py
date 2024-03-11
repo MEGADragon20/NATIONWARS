@@ -11,12 +11,13 @@ def add_overlay_if_valid(d, a, b, overlays, self, playeronturn):
     if (a, b) not in d or d[a, b].typ not in self.feldtyp:
         return
     target_entity = d.get((a, b)).entities[0] if d[a, b].entities else None
-    if target_entity and target_entity.owner == self.owner:
+    if (target_entity and target_entity.owner == self.owner) or (target_entity and self.field.typ == "water"):
         return
     overlay_icon = "data/icons/overlayred.png" if target_entity else "data/icons/overlay.png"
     overlays.append(Overlay(d[a, b], overlay_icon, self))
+
 def add_overlays(d, a, b, overlays, self, playeronturn):
-    if self.typ not in ["Soldier", "Recon", "Ship"]:
+    if self.typ not in ["Soldier", "Recon", "Korvette"]:
         return
     add_overlay_if_valid(d, a + 1, b, overlays, self, playeronturn)
     add_overlay_if_valid(d, a, b + 1, overlays, self, playeronturn)
@@ -850,17 +851,18 @@ class Entity(arcade.Sprite):
             return (sidebar.entity(self, Village), arcade.SpriteList())
     def test_for_fields(self, d, overlays, owner, playeronturn):
         a, b = self.field.pos
-        if self.typ == "Soldier" or self.typ == "Recon" or self.typ == "Ship":
+        if self.typ == "Soldier" or self.typ == "Recon" or self.typ == "Corvette":
                 add_overlays(d, a, b, overlays, self, playeronturn)
         if self.typ == "Recon":
                 if (a-1, b-2) in d:
-                        if d[a-1, b-2].typ in self.feldtyp:
-                            if d[a-1, b-2].entities != [] and d[a-1, b-2].entities[0].owner != self.owner:
-                                overlays.append(Overlay(d[a-1, b-2], "data/icons/overlayred.png", self))
-                            elif d[a-1, b-2].entities != [] and d[a-1, b-2].entities[0].owner == self.owner:
-                                pass
-                            else:
-                                overlays.append(Overlay(d[a-1, b-2], "data/icons/overlay.png", self))
+                    if self.owner == playeronturn:
+                            if d[a-1,b-2].typ in self.feldtyp:
+                                if d[a-1,b-2].entities != [] and d[a-1,b-2].entities[0].owner != self.owner:
+                                    overlays.append(Overlay(d[a-1,b-2], "data/icons/overlayred.png", self))
+                                elif d[a-1,b-2].entities != [] and d[a-1,b-2].entities[0].owner == self.owner:
+                                    pass
+                                else:
+                                    overlays.append(Overlay(d[a-1,b-2], "data/icons/overlay.png", self))
                 if (a, b-2) in d:
                     if self.owner == playeronturn:
                             if d[a,b-2].typ in self.feldtyp:
@@ -985,9 +987,9 @@ class Bow(Entity):
         self.owner = owner
 
 
-class Ship(Entity):
+class Corvette(Entity):
     def __init__(self, field, owner):
-        super().__init__("Ship", field, 10, 4, owner, ["water"])
+        super().__init__("Corvette", field, 10, 4, owner, ["water"])
         self.owner = owner
 
 class Recon(Entity):
