@@ -815,7 +815,7 @@ class Entity(arcade.Sprite):
             return (sidebar.entity(self, Village), arcade.SpriteList())
     def test_for_fields(self, d, overlays, owner, playeronturn):
         a, b = self.field.pos
-        if self.typ == "Soldier" or self.typ == "Recon":
+        if self.typ == "Soldier" or self.typ == "Recon" or self.typ == "Ship":
                 if (a + 1, b) in d:
                     if self.owner == playeronturn:
                         if d[a + 1, b].typ in self.feldtyp:
