@@ -1,5 +1,6 @@
 import arcade
 import buttons
+from instances import Instances
 
 def entities():
     return [
@@ -17,15 +18,25 @@ def start(player):
     ]
 
 
-def entity(entity):
+def entity(entity, Village):
+    for building in Instances.game.buildings:
+        if isinstance(building, Village) and arcade.check_for_collision(building, Instances.game.fields[Instances.game.activefield]):
+            return [
+                buttons.Button("home", 1),
+                buttons.Txt(entity.typ, 800, 760, arcade.color.BLACK, 20, True),
+                buttons.Txt(entity.owner.name, 800, 730, entity.owner.color, 16),
+                buttons.Txt(str(entity.health), 950, 760, arcade.color.DARK_MOSS_GREEN, 16, True),
+                buttons.Txt(str(entity.damage), 800, 700, arcade.color.RED, 16),
+                buttons.Txt("damage", 820, 700, arcade.color.BLACK, 16),
+                buttons.Button("takeover", 8)
+            ]
     return [
         buttons.Button("home", 1),
         buttons.Txt(entity.typ, 800, 760, arcade.color.BLACK, 20, True),
         buttons.Txt(entity.owner.name, 800, 730, entity.owner.color, 16),
         buttons.Txt(str(entity.health), 950, 760, arcade.color.DARK_MOSS_GREEN, 16, True),
         buttons.Txt(str(entity.damage), 800, 700, arcade.color.RED, 16),
-        buttons.Txt("damage", 820, 700, arcade.color.BLACK, 16),
-        buttons.Button("takeover", 8)
+        buttons.Txt("damage", 820, 700, arcade.color.BLACK, 16)
     ]
 
 

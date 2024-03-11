@@ -2,10 +2,12 @@ import arcade, random as r, arcade.gui
 import reader, sidebar, topbar
 from math import ceil
 import random
+from instances import Instances
 
 
 class Suchspiel(arcade.Window):
     def __init__(self, breite, höhe, titel, feld_h, feld_b):
+        Instances.game = self
         super().__init__(breite, höhe, titel)
         arcade.set_background_color((155,155,155))
         self.activefield = 0
@@ -365,9 +367,8 @@ class Suchspiel(arcade.Window):
                         elif i.f == "takeover":
                             newplayer = self.players[0]
                             for building in self.buildings:
-                                if isinstance(building, Village):
-                                    if arcade.check_for_collision(building, self.fields[self.activefield]):
-                                        building.owner = newplayer
+                                if isinstance(building, Village) and arcade.check_for_collision(building, self.fields[self.activefield]):
+                                    building.owner = newplayer
 
 
                         # upgrade building
@@ -809,12 +810,12 @@ class Entity(arcade.Sprite):
 
     def klick(self, d, o, player):
         if self.used == False:
-            return (sidebar.entity(self), self.test_for_fields(d, o, None, player))
+            return (sidebar.entity(self, Village), self.test_for_fields(d, o, None, player))
         else:
-            return (sidebar.entity(self), arcade.SpriteList())
+            return (sidebar.entity(self, Village), arcade.SpriteList())
     def test_for_fields(self, d, overlays, owner, playeronturn):
         a, b = self.field.pos
-        if self.typ == "Soldier" or self.typ == "Recon":
+        if self.typ == "Soldier" or self.typ == "Recon" or self.typ == "Ship":
                 if (a + 1, b) in d:
                     if self.owner == playeronturn:
                         if d[a + 1, b].typ in self.feldtyp:
