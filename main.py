@@ -1,6 +1,7 @@
 import arcade, random as r, arcade.gui
 import reader, sidebar, topbar
 from math import ceil
+import random
 
 
 class Suchspiel(arcade.Window):
@@ -302,7 +303,6 @@ class Suchspiel(arcade.Window):
         pseudosprite.center_y = y
         pseudosprite.set_hit_box([(1,1), (0,1), (0,0), (1,0)])
         if button == 1:
-
             for i in self.fields:
                 if arcade.check_for_collision(pseudosprite, i):
                     self.active_selector = i.select(self.active_selector)
@@ -361,6 +361,15 @@ class Suchspiel(arcade.Window):
                             self.add_building("pasture")
                         elif i.f == "add_mine":
                             self.add_building("mine")
+
+                        #!!!!!! TODO DANIEL
+                        # elif i.f == "takeover":
+                        #     newplayer = self.players[0]
+                        #     for building in self.buildings:
+                        #         if isinstance(building, Village):
+                        #             if self.fields[self.activefield] contains village:
+                        #                 (take that village).takeover(newplayer)
+
 
                         # upgrade building
                         elif i.f == "upgrade_quarry":
@@ -1039,6 +1048,10 @@ class Village(Building):
         self.owner = owner
         self.used = True
 
+    def takeover(self, player):
+        if random.randint(0, 2) == 0:
+            self.owner = player
+
     def klick(self, player):
         return sidebar.village(self, player)
 
@@ -1217,7 +1230,4 @@ arcade.run()
 
 
 
-
-# note (daniel):
-    # find the correct types instead of any
-    # #!!! => ask other teammembers abt why
+# IMPORTANT NOTE: #!!!!!! TODO DANIEL => FINISH
