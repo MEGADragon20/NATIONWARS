@@ -362,13 +362,12 @@ class Suchspiel(arcade.Window):
                         elif i.f == "add_mine":
                             self.add_building("mine")
 
-                        #!!!!!! TODO DANIEL
-                        # elif i.f == "takeover":
-                        #     newplayer = self.players[0]
-                        #     for building in self.buildings:
-                        #         if isinstance(building, Village):
-                        #             if self.fields[self.activefield] contains village:
-                        #                 (take that village).takeover(newplayer)
+                        elif i.f == "takeover":
+                            newplayer = self.players[0]
+                            for building in self.buildings:
+                                if isinstance(building, Village):
+                                    if arcade.check_for_collision(building, self.fields[self.activefield]):
+                                        building.owner = newplayer
 
 
                         # upgrade building
