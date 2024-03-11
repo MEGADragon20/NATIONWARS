@@ -12,17 +12,15 @@ def add_overlay_if_valid(d, a, b, overlays, self, playeronturn):
         return
 
     target_entity = d.get((a, b)).entities[0] if d[a, b].entities else None
-
-    if target_entity and target_entity.owner == self.owner:
+    print(self.field.typ)
+    if (target_entity and target_entity.owner == self.owner) or (target_entity and self.field.typ == "water"):
         return
-
+        #
+    
     overlay_icon = "data/icons/overlayred.png" if target_entity else "data/icons/overlay.png"
     overlays.append(Overlay(d[a, b], overlay_icon, self))
 
 def add_overlays(d, a, b, overlays, self, playeronturn):
-    if self.typ not in ["Soldier", "Recon", "Ship"]:
-        return
-
     add_overlay_if_valid(d, a + 1, b, overlays, self, playeronturn)
     add_overlay_if_valid(d, a, b + 1, overlays, self, playeronturn)
     add_overlay_if_valid(d, a - 1, b, overlays, self, playeronturn)
@@ -965,7 +963,7 @@ class Entity(arcade.Sprite):
 
 class Soldier(Entity):
     def __init__(self, field, owner):
-        super().__init__("Soldier", field, 10, 4, owner, ["grass", "forest", "mountain"])
+        super().__init__("Soldier", field, 10, 4, owner, ["grass", "forest", "mountain", "water"])
         self.owner = owner
 
 
