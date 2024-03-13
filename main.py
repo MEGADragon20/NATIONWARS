@@ -17,7 +17,7 @@ def add_overlay_if_valid(d, a, b, overlays, self, playeronturn):
     overlays.append(Overlay(d[a, b], overlay_icon, self))
 
 def add_overlays(d, a, b, overlays, self, playeronturn):
-    if self.typ not in ["Soldier", "Recon", "Korvette"]:
+    if self.typ not in ["Soldier", "Recon", "Korvette", "ReconSys"]:
         return
     add_overlay_if_valid(d, a + 1, b, overlays, self, playeronturn)
     add_overlay_if_valid(d, a, b + 1, overlays, self, playeronturn)
@@ -462,6 +462,10 @@ class Suchspiel(arcade.Window):
                             self.entities.append(rec)
                             self.active.entities.append(rec)
 
+                        elif i.f == "recruit_reconsys":
+                            recsys = ReconSys(self.active, self.players[0])
+                            self.entities.append(recsys)
+                            self.active.entities.append(recsys)
 
                         #default stuff
                         elif i.f == "home":
@@ -517,7 +521,10 @@ class Suchspiel(arcade.Window):
                             12 * 2)
 
             for i in self.sbar:
-                i.draw()
+                if i.type != "Txt":
+                    i.draw(pixelated = True)
+                else:
+                    i.draw()
             for i in self.tbar:
                 if i.type != "Txt":
                     i.draw(pixelated = True)
@@ -851,7 +858,7 @@ class Entity(arcade.Sprite):
             return (sidebar.entity(self, Village), arcade.SpriteList())
     def test_for_fields(self, d, overlays, owner, playeronturn):
         a, b = self.field.pos
-        if self.typ == "Soldier" or self.typ == "Recon" or self.typ == "Corvette":
+        if self.typ == "Soldier" or self.typ == "Recon" or self.typ == "Corvette" or self.typ == "ReconSys":
                 add_overlays(d, a, b, overlays, self, playeronturn)
         if self.typ == "Recon":
                 if (a-1, b-2) in d:
@@ -997,6 +1004,10 @@ class Recon(Entity):
         super().__init__("Recon", field, 8, 2, owner, ["grass", "forest", "water"])
         self.owner = owner
 
+class ReconSys(Entity):
+    def __init__(self, field, owner):
+        super().__init__("ReconSys", field, 8, 2, owner, ["grass", "forest", "water"])
+        self.owner = owner
 
 class Building(arcade.Sprite):
     def __init__(self, x, y, typ):

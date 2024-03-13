@@ -16,6 +16,6 @@ class Txt(arcade.Text):
         self.type = "Txt"
 
 class Img(arcade.Sprite):
-    def __init__(self, file, x, y):
-        super().__init__(file, scale = 2, center_x = x, center_y = y)
+    def __init__(self, file, x, y, scal = 2):
+        super().__init__(file, scale = scal, center_x = x, center_y = y)
         self.type = "Img"

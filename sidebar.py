@@ -4,6 +4,7 @@ from instances import Instances
 
 def entities():
     return [
+        buttons.Button("recruit_reconsys", 6),
         buttons.Button("recruit_recon", 7),
         buttons.Button("recruit_soldier", 8),
         buttons.Button("home", 9)
@@ -36,8 +37,9 @@ def entity(entity, Village):
         buttons.Txt(entity.owner.name, 800, 730, entity.owner.color, 16),
         buttons.Txt(str(entity.health), 950, 760, arcade.color.DARK_MOSS_GREEN, 16, True),
         buttons.Txt(str(entity.damage), 800, 700, arcade.color.RED, 16),
-        buttons.Txt("damage", 820, 700, arcade.color.BLACK, 16)
-    ]
+        buttons.Txt("damage", 820, 700, arcade.color.BLACK, 16),
+        buttons.Img("data/entities/" + entity.typ + ".png", 890, 500, 4)
+        ]
 
 
 def quarry(quarry):
