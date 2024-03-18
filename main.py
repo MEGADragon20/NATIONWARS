@@ -85,7 +85,7 @@ def add(info):
         overlays.append(Overlay(d[a, b], overlay_icon, self))
 
 def add_overlays(d, a, b, overlays, self, playeronturn):
-    if self.typ not in ["Soldier", "Recon", "Korvette", "ReconSys"]:
+    if self.typ not in ["Soldier", "Recon", "Korvette", "ReconSys", "Helicopter"]:
         return
     add(overlay_if_valid(d, a + 1, b, overlays, self, playeronturn))
     add(overlay_if_valid(d, a, b + 1, overlays, self, playeronturn))
@@ -324,6 +324,8 @@ class Suchspiel(arcade.Window):
                     self.add_building("pasture")
                 elif i.f == "add_mine":
                     self.add_building("mine")
+                elif i.f == "add_naval_base":
+                    self.add_building("naval_base")
 
                 # upgrade building
                 elif i.f == "upgrade_quarry":
@@ -374,6 +376,7 @@ class Suchspiel(arcade.Window):
                 elif i.f == "recruit":
                     if self.players[0] == self.active.buildings[0].owner:
                         self.sbar = sidebar.entities()
+                
 
                 elif i.f == "recruit_soldier":
                     sol = Soldier(self.active, self.players[0])
@@ -385,6 +388,15 @@ class Suchspiel(arcade.Window):
                     self.entities.append(rec)
                     self.active.entities.append(rec)
 
+                elif i.f == "recruit_corvette":
+                    kor = Corvette(self.active, self.players[0])
+                    self.entities.append(kor)
+                    self.active.entities.append(kor)
+
+                elif i.f == "recurit_helicopter":
+                    hel = Helicopter(self.active, self.players[0])
+                    self.entities.append(hel)
+                    self.active.entities.append(hel)
 
                 #default stuff
                 elif i.f == "home":
@@ -467,7 +479,8 @@ class Suchspiel(arcade.Window):
                             self.buildings.append(self.active.add_village("Hamburg", self.players[0]))
                             self.sbar.clear()
                             self.sbar = sidebar.start(self.players[0])
-
+                        elif i.f == "add_naval_base":
+                            self.add_building("naval_base")
 
                         elif i.f == "add_quarry":
                             self.add_building("quarry")
@@ -558,7 +571,7 @@ class Suchspiel(arcade.Window):
                         elif i.f == "recruit_reconsys":
                             recsys = ReconSys(self.active, self.players[0])
                             self.entities.append(recsys)
-                            self.active.entities.append(recsys)
+                            self.active.entities.append(recsys) 
 
                         #default stuff
                         elif i.f == "home":
@@ -761,6 +774,13 @@ class Field(arcade.Sprite):
         c = Pasture(self.x, self.y, d[(a, b)].buildings[0])
         self.buildings.append(c)
         return c
+    
+    def add_naval_base(self, d, owner):
+        if self.typ != "water":
+            raise(TypeError)
+        c = Naval_Base(self.x, self.y, owner)
+        self.buildings.append(c)
+        return c
 
 
 # Add entities
@@ -957,7 +977,7 @@ class Entity(arcade.Sprite):
             return (sidebar.entity(self, Village), arcade.SpriteList())
     def test_for_fields(self, d, overlays, owner, playeronturn):
         a, b = self.field.pos
-        if self.typ == "Soldier" or self.typ == "Recon" or self.typ == "Corvette" or self.typ == "ReconSys":
+        if self.typ == "Soldier" or self.typ == "Recon" or self.typ == "Corvette" or self.typ == "ReconSys" or self.typ == "Helicopter":
             add_overlays(d, a, b, overlays, self, playeronturn)
         if self.typ == "Recon" or self.typ == "ReconSys":
             add_overlays2(d, a, b, overlays, self, playeronturn)
@@ -1002,6 +1022,11 @@ class ReconSys(Entity):
         super().__init__("ReconSys", field, 2, 1, owner, ["grass", "forest", "mountain"])
         self.owner = owner
 
+class Helicopter(Entity):
+    def __init__(self, field, owner):
+        super().__init__("Helicopter", field, 6, 2,  owner, ["grass", "mountain", "water"])
+        self.owner = owner
+
 class Building(arcade.Sprite):
     def __init__(self, x, y, typ):
         super().__init__("data/buildings/" + typ + ".png", center_x = x, center_y = y)
@@ -1029,6 +1054,21 @@ class Village(Building):
     def produce(self):
         self.owner.coins += r.randint(2, 10) * self.lvl
         self.owner.investigationpoints += 1
+
+class Naval_Base(Building):
+    def __init__(self, x, y, owner, lvl = 1):
+        super().__init__(x, y, "naval_base")
+        self.x = x
+        self.y = y
+        self.owner = owner
+        self.lvl = lvl
+    
+    def klick(self, player):
+        return sidebar.naval_base(self,player)
+    
+    def produce(self):
+        pass
+                                
 
 
 class Quarry(Building):
@@ -1201,4 +1241,4 @@ arcade.run()
 
 
 
-# IMPORTANT NOTE: #!!!!!! TODO DANIEL => FINISH
+# IMPORTANT NOTE: #!!!!!! TODO DANIEL => FINISH  

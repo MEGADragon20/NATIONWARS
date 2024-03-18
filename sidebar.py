@@ -4,9 +4,11 @@ from instances import Instances
 
 def entities():
     return [
+        buttons.Button("recruit_helicopter", 4),
         buttons.Button("recruit_reconsys", 6),
         buttons.Button("recruit_recon", 7),
         buttons.Button("recruit_soldier", 8),
+        buttons.Button("recruit_corvette", 5),
         buttons.Button("home", 9)
     ]
 
@@ -124,6 +126,15 @@ def village(village, player):
 
     return content
 
+def naval_base(naval_base, player):
+    content = [
+        buttons.Button("home",1),
+        buttons.Txt("Naval_Base", 800, 760, arcade.color.BLACK, 20),
+        buttons.Txt(str(naval_base.lvl), 950, 760, arcade.color.BLACK, 20)
+    ]
+    if player == naval_base.owner:
+        content.append(buttons.Button("recruit", 7))
+    return content
 
 def field(field, d, owner):
     name = field.typ.capitalize()
@@ -179,6 +190,11 @@ def field(field, d, owner):
             content.append(buttons.Button("add_wheat_plot", 5))
             content.append(buttons.Txt("Cost:", 800, 345, arcade.color.BLACK, 16))
             content.append(buttons.Txt("25 coins", 800, 325, arcade.color.BLACK, 16))
+
+        if field.typ == "water":
+            content.append(buttons.Button("add_naval_base", 5))
+            content.append(buttons.Txt("Cost:", 800, 345, arcade.color.BLACK, 16))
+            content.append(buttons.Txt("25 coins", 800, 325, arcade.color.BLACK, 16))  
 
     else:                                                                         # Create Buttons to upgrade existing buildings from the field sb
         if field.buildings[0].typ == "cabin":
