@@ -4,6 +4,7 @@ from instances import Instances
 
 def entities():
     return [
+        buttons.Button("recruit_helicopter", 4),
         buttons.Button("recruit_reconsys", 6),
         buttons.Button("recruit_recon", 7),
         buttons.Button("recruit_soldier", 8),

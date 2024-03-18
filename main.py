@@ -59,7 +59,7 @@ def add(info):
         overlays.append(Overlay(d[a, b], overlay_icon, self))
 
 def add_overlays(d, a, b, overlays, self, playeronturn):
-    if self.typ not in ["Soldier", "Recon", "Korvette", "ReconSys"]:
+    if self.typ not in ["Soldier", "Recon", "Korvette", "ReconSys", "Helicopter"]:
         return
     add(overlay_if_valid(d, a + 1, b, overlays, self, playeronturn))
     add(overlay_if_valid(d, a, b + 1, overlays, self, playeronturn))
@@ -361,6 +361,10 @@ class Suchspiel(arcade.Window):
                     self.entities.append(rec)
                     self.active.entities.append(rec)
 
+                elif i.f == "recurit_helicopter":
+                    hel = Helicopter(self.active, self.players[0])
+                    self.entities.append(hel)
+                    self.active.entities.append(hel)
 
                 #default stuff
                 elif i.f == "home":
@@ -534,7 +538,12 @@ class Suchspiel(arcade.Window):
                         elif i.f == "recruit_reconsys":
                             recsys = ReconSys(self.active, self.players[0])
                             self.entities.append(recsys)
-                            self.active.entities.append(recsys)
+                            self.active.entities.append(recsys) 
+
+                        elif i.f == "recruit_helicopter":
+                            hel = Helicopter(self.active, self.players[0])
+                            self.entities.append(hel)
+                            self.active.entities.append(hel)
 
                         #default stuff
                         elif i.f == "home":
@@ -938,7 +947,7 @@ class Entity(arcade.Sprite):
             return (sidebar.entity(self, Village), arcade.SpriteList())
     def test_for_fields(self, d, overlays, owner, playeronturn):
         a, b = self.field.pos
-        if self.typ == "Soldier" or self.typ == "Recon" or self.typ == "Corvette" or self.typ == "ReconSys":
+        if self.typ == "Soldier" or self.typ == "Recon" or self.typ == "Corvette" or self.typ == "ReconSys" or self.typ == "Helicopter":
             add_overlays(d, a, b, overlays, self, playeronturn)
         if self.typ == "Recon" or self.typ == "ReconSys":
             add_overlays2(d, a, b, overlays, self, playeronturn)
@@ -981,6 +990,11 @@ class Recon(Entity):
 class ReconSys(Entity):
     def __init__(self, field, owner):
         super().__init__("ReconSys", field, 2, 1, owner, ["grass", "forest", "mountain"])
+        self.owner = owner
+
+class Helicopter(Entity):
+    def __init__(self, field, owner):
+        super().__init__("Helicopter", field, 6, 2,  owner, ["grass", "mountain", "water"])
         self.owner = owner
 
 class Building(arcade.Sprite):
@@ -1193,4 +1207,4 @@ arcade.run()
 
 
 
-# IMPORTANT NOTE: #!!!!!! TODO DANIEL => FINISH
+# IMPORTANT NOTE: #!!!!!! TODO DANIEL => FINISH  
