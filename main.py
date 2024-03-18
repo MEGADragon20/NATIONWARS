@@ -17,39 +17,31 @@ def overlay_if_valid(d, a, b, overlays, self, playeronturn):
     return [a, b, d, overlay_icon, self, overlays]
 
 def overlay_if_valid2(d, a, b, overlays, self, playeronturn):
-    c, e = self.field.pos
-    dif_a = a - c
-    dif_b = b - e
-    if dif_a == -1 and dif_b == 2:
-        if overlay_if_valid(d, -1, 1, overlays, self, playeronturn) == False or overlay_if_valid(d, 0, 1, overlays, self, playeronturn) == False:
+    start_a, start_b = self.field.pos
+    end_a, end_b = a, b
+    
+    # Calculate the differences in coordinates
+    dif_a = end_a - start_a
+    dif_b = end_b - start_b
+    
+    # Check if the movement is diagonal
+    if abs(dif_a) == 1 and abs(dif_b) == 1:
+        # Diagonal movement, check if both horizontal and vertical movements are valid
+        if not overlay_if_valid(d, dif_a, 0, overlays, self, playeronturn) and not overlay_if_valid(d, 0, dif_b, overlays, self, playeronturn):
             return False
-    if dif_a == 0 and dif_b == 2:
-        if overlay_if_valid(d, -1, 1, overlays, self, playeronturn) == False or overlay_if_valid(d, 0, 1, overlays, self, playeronturn) == False or overlay_if_valid(d, 1, 1, overlays, self, playeronturn) == False:
+    else:
+        # Non-diagonal movement, check if there is only one non-zero direction of movement
+        if dif_a != 0:
+            # Horizontal movement, check if the vertical movement is valid
+            if not overlay_if_valid(d, 0, dif_b, overlays, self, playeronturn):
+                return False
+        elif dif_b != 0:
+            # Vertical movement, check if the horizontal movement is valid
+            if not overlay_if_valid(d, dif_a, 0, overlays, self, playeronturn):
+                return False
+        else:
+            # No movement
             return False
-    if dif_a == 1 and dif_b == 2:
-        if overlay_if_valid(d, 0, 1, overlays, self, playeronturn) == False or overlay_if_valid(d, 1, 1, overlays, self, playeronturn) == False:
-            return False
-        
-    if dif_a == -1 and dif_b == -2:
-        if overlay_if_valid(d, -1, -1, overlays, self, playeronturn) == False or overlay_if_valid(d, 0, -1, overlays, self, playeronturn) == False:
-            return False
-    if dif_a == 0 and dif_b == -2:
-        if overlay_if_valid(d, -1, -1, overlays, self, playeronturn) == False or overlay_if_valid(d, 0, -1, overlays, self, playeronturn) == False or overlay_if_valid(d, 1, -1, overlays, self, playeronturn) == False:
-            return False
-    if dif_a == 1 and dif_b == -2:
-        if overlay_if_valid(d, 0, -1, overlays, self, playeronturn) == False or overlay_if_valid(d, 1, -1, overlays, self, playeronturn) == False:
-            return False
-
-    if dif_a == 2 and dif_b == 1:
-        if overlay_if_valid(d, 1, 1, overlays, self, playeronturn) == False or overlay_if_valid(d, 1, 0, overlays, self, playeronturn) == False:
-            return False
-    if dif_a == 2 and dif_b == 0:
-        if overlay_if_valid(d, 1, -1, overlays, self, playeronturn) == False or overlay_if_valid(d, 0, -1, overlays, self, playeronturn) == False or overlay_if_valid(d, 1, -1, overlays, self, playeronturn) == False:
-            return False
-    if dif_a == 2 and dif_b == -1:
-        if overlay_if_valid(d, 0, -1, overlays, self, playeronturn) == False or overlay_if_valid(d, 1, -1, overlays, self, playeronturn) == False:
-            return False
-        
 
     if self.owner != playeronturn:
         return False
