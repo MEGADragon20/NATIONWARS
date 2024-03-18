@@ -27,17 +27,43 @@ def overlay_if_valid2(d, a, b, overlays, self, playeronturn):
     # Check if the movement is diagonal
     if abs(dif_a) == 1 and abs(dif_b) == 1:
         # Diagonal movement, check if both horizontal and vertical movements are valid
-        if not overlay_if_valid(d, dif_a, 0, overlays, self, playeronturn) and not overlay_if_valid(d, 0, dif_b, overlays, self, playeronturn):
+        if overlay_if_valid(d, dif_a, 0, overlays, self, playeronturn) and overlay_if_valid(d, 0, dif_b, overlays, self, playeronturn):
+            pass
+        else:
             return False
     else:
         # Non-diagonal movement, check if there is only one non-zero direction of movement
         if dif_a != 0:
             # Horizontal movement, check if the vertical movement is valid
-            if not overlay_if_valid(d, 0, dif_b, overlays, self, playeronturn):
+            if overlay_if_valid(d, 0, dif_b, overlays, self, playeronturn):
+                pass
+            else:
                 return False
         elif dif_b != 0:
             # Vertical movement, check if the horizontal movement is valid
-            if not overlay_if_valid(d, dif_a, 0, overlays, self, playeronturn):
+            if overlay_if_valid(d, dif_a, 0, overlays, self, playeronturn):
+                pass
+            else:
+                return False
+        elif dif_a == 2 and dif_b == 1:
+            if overlay_if_valid(d, 1, 0, overlays, self, playeronturn):
+                pass
+            else:
+                return False
+        elif dif_a == 2 and dif_b == -1:
+            if overlay_if_valid(d, 1, 0, overlays, self, playeronturn):
+                pass
+            else:
+                return False
+        elif dif_a == -2 and dif_b == 1:
+            if overlay_if_valid(d, -1, 0, overlays, self, playeronturn):
+                pass
+            else:
+                return False
+        elif dif_a == -2 and dif_b == -1:
+            if overlay_if_valid(d, -1, 0, overlays, self, playeronturn):
+                pass
+            else:
                 return False
         else:
             # No movement
@@ -573,7 +599,7 @@ class Suchspiel(arcade.Window):
             imgwidth = 32
             imgheight = 24
             smallest = SCREENHEIGHT if SCREENHEIGHT < SCREENWIDTH else SCREENWIDTH
-            arcade.draw_texture_rectangle(SCREENWIDTH/2, SCREENHEIGHT/2, smallest, smallest*imgheight/imgwidth,arcade.load_texture("./data/icons/victoryscreen.png"))
+            arcade.draw_texture_rectangle(SCREENWIDTH/2, SCREENHEIGHT/2, smallest, smallest*imgheight/imgwidth,arcade.load_texture("./data/icons/victoryscreen.png", pixelated = True))
         else:
             self.fields.draw()
             self.buildings.draw()
