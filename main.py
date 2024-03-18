@@ -572,7 +572,16 @@ class Suchspiel(arcade.Window):
                             recsys = ReconSys(self.active, self.players[0])
                             self.entities.append(recsys)
                             self.active.entities.append(recsys) 
-
+                        
+                        elif i.f == "recruit_helicopter":
+                            recsys = Helicopter(self.active, self.players[0])
+                            self.entities.append(recsys)
+                            self.active.entities.append(recsys) 
+                        
+                        elif i.f == "recruit_corvette":
+                            recsys = Corvette(self.active, self.players[0])
+                            self.entities.append(recsys)
+                            self.active.entities.append(recsys) 
                         #default stuff
                         elif i.f == "home":
                             self.sbar = sidebar.start(self.players[0])
