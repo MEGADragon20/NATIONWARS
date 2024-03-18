@@ -7,6 +7,7 @@ def entities():
         buttons.Button("recruit_reconsys", 6),
         buttons.Button("recruit_recon", 7),
         buttons.Button("recruit_soldier", 8),
+        buttons.Button("recruit_corvette", 5),
         buttons.Button("home", 9)
     ]
 

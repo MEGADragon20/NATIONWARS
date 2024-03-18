@@ -350,6 +350,7 @@ class Suchspiel(arcade.Window):
                 elif i.f == "recruit":
                     if self.players[0] == self.active.buildings[0].owner:
                         self.sbar = sidebar.entities()
+                
 
                 elif i.f == "recruit_soldier":
                     sol = Soldier(self.active, self.players[0])
@@ -360,6 +361,11 @@ class Suchspiel(arcade.Window):
                     rec = Recon(self.active, self.players[0])
                     self.entities.append(rec)
                     self.active.entities.append(rec)
+
+                elif i.f == "recruit_corvette":
+                    kor = Corvette(self.active, self.players[0])
+                    self.entities.append(kor)
+                    self.active.entities.append(kor)
 
 
                 #default stuff
@@ -443,7 +449,8 @@ class Suchspiel(arcade.Window):
                             self.buildings.append(self.active.add_village("Hamburg", self.players[0]))
                             self.sbar.clear()
                             self.sbar = sidebar.start(self.players[0])
-
+                        elif i.f == "add_naval_base":
+                            self.add_building("naval_base")
 
                         elif i.f == "add_quarry":
                             self.add_building("quarry")
@@ -536,6 +543,10 @@ class Suchspiel(arcade.Window):
                             self.entities.append(recsys)
                             self.active.entities.append(recsys)
 
+                        elif i.f == "recruit_corvette":
+                            cor = Corvette(self.active, self.players[0])
+                            self.entities.append(cor)
+                            self.active.entities.append(cor)
                         #default stuff
                         elif i.f == "home":
                             self.sbar = sidebar.start(self.players[0])
@@ -741,7 +752,9 @@ class Field(arcade.Sprite):
     def add_naval_base(self, d, owner):
         if self.typ != "water":
             raise(TypeError)
-        c = Pasture(self.x, self.y, owner)
+        c = Naval_Base(self.x, self.y, owner)
+        self.buildings.append(c)
+        return c
 
 
 # Add entities
@@ -1020,7 +1033,11 @@ class Naval_Base(Building):
         self.lvl = lvl
     
     def klick(self, player):
-        return sidebar.naval_base(self, player)
+        return sidebar.naval_base(self,player)
+    
+    def produce(self):
+        pass
+                                
 
 
 class Quarry(Building):
