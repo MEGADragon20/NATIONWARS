@@ -298,6 +298,8 @@ class Suchspiel(arcade.Window):
                     self.add_building("pasture")
                 elif i.f == "add_mine":
                     self.add_building("mine")
+                elif i.f == "add_naval_base":
+                    self.add_building("naval_base")
 
                 # upgrade building
                 elif i.f == "upgrade_quarry":
@@ -735,6 +737,11 @@ class Field(arcade.Sprite):
         c = Pasture(self.x, self.y, d[(a, b)].buildings[0])
         self.buildings.append(c)
         return c
+    
+    def add_naval_base(self, d, owner):
+        if self.typ != "water":
+            raise(TypeError)
+        c = Pasture(self.x, self.y, owner)
 
 
 # Add entities
@@ -1003,6 +1010,17 @@ class Village(Building):
     def produce(self):
         self.owner.coins += r.randint(2, 10) * self.lvl
         self.owner.investigationpoints += 1
+
+class Naval_Base(Building):
+    def __init__(self, x, y, owner, lvl = 1):
+        super().__init__(x, y, "naval_base")
+        self.x = x
+        self.y = y
+        self.owner = owner
+        self.lvl = lvl
+    
+    def klick(self, player):
+        return sidebar.naval_base(self, player)
 
 
 class Quarry(Building):
