@@ -27,9 +27,9 @@ def start(player):
     ]
 
 
-def entity(entity, Village):
+def entity(entity, village):
     for building in Instances.game.buildings:
-        if isinstance(building, Village) and arcade.check_for_collision(building, Instances.game.fields[Instances.game.activefield]):
+        if entity.field == village.field:
             return [
                 buttons.Button("home", 1),
                 buttons.Txt(entity.typ, 800, 760, arcade.color.BLACK, 20, True),

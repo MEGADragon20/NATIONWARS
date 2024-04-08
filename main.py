@@ -374,24 +374,33 @@ class Suchspiel(arcade.Window):
                 
 
                 elif i.f == "recruit_soldier":
-                    sol = Soldier(self.active, self.players[0])
-                    self.entities.append(sol)
-                    self.active.entities.append(sol)
+                    if self.players[0].goods["stone"] >= 10:
+                        sol = Soldier(self.active, self.players[0])
+                        self.entities.append(sol)
+                        self.active.entities.append(sol)
+                        self.players[0].goods["stone"] -= 10
 
                 elif i.f == "recruit_recon":
-                    rec = Recon(self.active, self.players[0])
-                    self.entities.append(rec)
-                    self.active.entities.append(rec)
+                    if self.players[0].goods["iron"] >= 10:
+                        rec = Recon(self.active, self.players[0])
+                        self.entities.append(rec)
+                        self.active.entities.append(rec)
+                        self.players[0].goods["iron"] -= 10
 
                 elif i.f == "recruit_corvette":
-                    kor = Corvette(self.active, self.players[0])
-                    self.entities.append(kor)
-                    self.active.entities.append(kor)
+                    if self.players[0].goods["wood"] >= 10:
+                        kor = Corvette(self.active, self.players[0])
+                        self.entities.append(kor)
+                        self.active.entities.append(kor)
+                        self.players[0].goods["wood"] >= 10
 
                 elif i.f == "recurit_helicopter":
-                    hel = Helicopter(self.active, self.players[0])
-                    self.entities.append(hel)
-                    self.active.entities.append(hel)
+                    if self.players[0].goods["wheat"] >= 10:
+                        hel = Helicopter(self.active, self.players[0])
+                        self.entities.append(hel)
+                        self.active.entities.append(hel)
+                        self.players[0].goods["wheat"] >= 10
+
 
                 #default stuff
                 elif i.f == "home":
@@ -558,29 +567,41 @@ class Suchspiel(arcade.Window):
                                 self.sbar = sidebar.entities_w()
 
                         elif i.f == "recruit_soldier":
-                            sol = Soldier(self.active, self.players[0])
-                            self.entities.append(sol)
-                            self.active.entities.append(sol)
+                            if self.players[0].goods["stone"] >= 10:
+                                sol = Soldier(self.active, self.players[0])
+                                self.entities.append(sol)
+                                self.active.entities.append(sol)
+                                self.players[0].goods["stone"] -= 10
+                                self.tbar = topbar.start(self.players[0])
 
                         elif i.f == "recruit_recon":
-                            rec = Recon(self.active, self.players[0])
-                            self.entities.append(rec)
-                            self.active.entities.append(rec)
-
+                            if self.players[0].goods["wood"] >= 10:
+                                rec = Recon(self.active, self.players[0])
+                                self.entities.append(rec)
+                                self.active.entities.append(rec)
+                                self.players[0].goods["wood"] -= 10
+                                self.tbar = topbar.start(self.players[0])
                         elif i.f == "recruit_reconsys":
-                            recsys = ReconSys(self.active, self.players[0])
-                            self.entities.append(recsys)
-                            self.active.entities.append(recsys) 
-                        
+                            if self.players[0].goods["wool"] >= 10:
+                                recsys = ReconSys(self.active, self.players[0])
+                                self.entities.append(recsys)
+                                self.active.entities.append(recsys) 
+                                self.players[0].goods["wool"] -= 10
+                                self.tbar = topbar.start(self.players[0])
                         elif i.f == "recruit_helicopter":
-                            recsys = Helicopter(self.active, self.players[0])
-                            self.entities.append(recsys)
-                            self.active.entities.append(recsys) 
-                        
+                            if self.players[0].goods["wheat"] >= 10:                            
+                                recsys = Helicopter(self.active, self.players[0])
+                                self.entities.append(recsys)
+                                self.active.entities.append(recsys) 
+                                self.players[0].goods["wheat"] -= 10
+                                self.tbar = topbar.start(self.players[0])
                         elif i.f == "recruit_corvette":
-                            recsys = Corvette(self.active, self.players[0])
-                            self.entities.append(recsys)
-                            self.active.entities.append(recsys) 
+                            if self.players[0].goods["wheat"] >= 10:                            
+                                recsys = Corvette(self.active, self.players[0])
+                                self.entities.append(recsys)
+                                self.active.entities.append(recsys) 
+                                self.players[0].goods["wheat"] -= 10
+                                self.tbar = topbar.start(self.players[0])
                         #default stuff
                         elif i.f == "home":
                             self.sbar = sidebar.start(self.players[0])
