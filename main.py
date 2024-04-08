@@ -370,11 +370,14 @@ class Suchspiel(arcade.Window):
                 
 
                 elif i.f == "recruit_soldier":
-                    sol = Soldier(self.active, self.players[0])
-                    self.entities.append(sol)
-                    self.active.entities.append(sol)
+                    if self.players[0].goods["stone"] >= 10:
+                        sol = Soldier(self.active, self.players[0])
+                        self.entities.append(sol)
+                        self.active.entities.append(sol)
+                        self.players[0].goods["stone"] -= 10
 
                 elif i.f == "recruit_recon":
+                    if self.players[0].goods
                     rec = Recon(self.active, self.players[0])
                     self.entities.append(rec)
                     self.active.entities.append(rec)
@@ -549,9 +552,11 @@ class Suchspiel(arcade.Window):
                                 self.sbar = sidebar.entities()
 
                         elif i.f == "recruit_soldier":
-                            sol = Soldier(self.active, self.players[0])
-                            self.entities.append(sol)
-                            self.active.entities.append(sol)
+                            if self.players[0].goods["stone"] >= 10:
+                                sol = Soldier(self.active, self.players[0])
+                                self.entities.append(sol)
+                                self.active.entities.append(sol)
+                                self.players[0].goods["stone"] -= 10
 
                         elif i.f == "recruit_recon":
                             rec = Recon(self.active, self.players[0])
