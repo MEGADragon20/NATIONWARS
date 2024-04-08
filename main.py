@@ -3,7 +3,8 @@ import reader, sidebar, topbar
 from math import ceil
 import random
 from instances import Instances
- 
+
+
 
 def overlay_if_valid(d, a, b, overlays, self, playeronturn):
     if self.owner != playeronturn:
@@ -11,7 +12,7 @@ def overlay_if_valid(d, a, b, overlays, self, playeronturn):
     if (a, b) not in d or d[a, b].typ not in self.feldtyp:
         return False
     target_entity = d.get((a, b)).entities[0] if d[a, b].entities else None
-    if (target_entity and target_entity.owner == self.owner) or (target_entity and self.field.typ == "water"):
+    if (target_entity and target_entity.owner == self.owner) or (target_entity and self.field.typ == "water" and self.typ != "Corvette"):
         return False
     overlay_icon = "data/icons/overlayred.png" if target_entity else "data/icons/overlay.png"
     return [a, b, d, overlay_icon, self, overlays]
@@ -76,7 +77,7 @@ def add(info):
         overlays.append(Overlay(d[a, b], overlay_icon, self))
 
 def add_overlays(d, a, b, overlays, self, playeronturn):
-    if self.typ not in ["Soldier", "Recon", "Korvette", "ReconSys", "Helicopter"]:
+    if self.typ not in ["Soldier", "Recon", "Corvette", "ReconSys", "Helicopter"]:
         return
     add(overlay_if_valid(d, a + 1, b, overlays, self, playeronturn))
     add(overlay_if_valid(d, a, b + 1, overlays, self, playeronturn))
@@ -364,9 +365,12 @@ class Suchspiel(arcade.Window):
 
 
                 # army stuff
-                elif i.f == "recruit":
+                elif i.f == "recruit_village":
                     if self.players[0] == self.active.buildings[0].owner:
-                        self.sbar = sidebar.entities()
+                        self.sbar = sidebar.entities_l()
+                elif i.f == "recruit_naval_base":
+                    if self.players[0] == self.active.buildings[0].owner:
+                        self.sbar = sidebar.entities_w()
                 
 
                 elif i.f == "recruit_soldier":
@@ -467,7 +471,7 @@ class Suchspiel(arcade.Window):
 
                         # add buildings
                         if i.f == "add_village":
-                            self.buildings.append(self.active.add_village("Hamburg", self.players[0]))
+                            self.buildings.append(self.active.add_village(random.choice(read_cities()), self.players[0]))
                             self.sbar.clear()
                             self.sbar = sidebar.start(self.players[0])
                         elif i.f == "add_naval_base":
@@ -544,9 +548,14 @@ class Suchspiel(arcade.Window):
 
 
                         # army stuff
-                        elif i.f == "recruit":
+                        elif i.f == "recruit_village":
                             if self.players[0] == self.active.buildings[0].owner:
-                                self.sbar = sidebar.entities()
+                                self.sbar = sidebar.entities_l()
+                            
+
+                        elif i.f == "recruit_naval_base":
+                            if self.players[0] == self.active.buildings[0].owner:
+                                self.sbar = sidebar.entities_w()
 
                         elif i.f == "recruit_soldier":
                             sol = Soldier(self.active, self.players[0])
@@ -777,9 +786,10 @@ class Field(arcade.Sprite):
     def add_naval_base(self, d, owner):
         if self.typ != "water":
             raise(TypeError)
-        c = Naval_Base(self.x, self.y, owner)
-        self.buildings.append(c)
-        return c
+        if self.test_for_village(d, owner)==True:
+            c = Naval_Base(self.x, self.y, owner)
+            self.buildings.append(c)
+            return c
 
 
 # Add entities
@@ -1064,7 +1074,7 @@ class Naval_Base(Building):
         self.lvl = lvl
     
     def klick(self, player):
-        return sidebar.naval_base(self,player)
+        return sidebar.naval_base(self)
     
     def produce(self):
         pass

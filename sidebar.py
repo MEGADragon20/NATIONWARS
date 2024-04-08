@@ -2,13 +2,19 @@ import arcade
 import buttons
 from instances import Instances
 
-def entities():
+def entities_l():
     return [
         buttons.Button("recruit_helicopter", 4),
         buttons.Button("recruit_reconsys", 6),
         buttons.Button("recruit_recon", 7),
         buttons.Button("recruit_soldier", 8),
-        buttons.Button("recruit_corvette", 5),
+        buttons.Button("home", 9)
+    ]
+
+def entities_w():
+    return [
+
+        buttons.Button("recruit_corvette", 4),
         buttons.Button("home", 9)
     ]
 
@@ -122,18 +128,18 @@ def village(village, player):
         buttons.Txt(village.owner.name, 800, 740, village.owner.color, 16)
     ]
     if player == village.owner:
-        content.append(buttons.Button("recruit", 7))
+        content.append(buttons.Button("recruit_village", 7))
 
     return content
 
-def naval_base(naval_base, player):
+def naval_base(naval_base):
     content = [
         buttons.Button("home",1),
         buttons.Txt("Naval_Base", 800, 760, arcade.color.BLACK, 20),
         buttons.Txt(str(naval_base.lvl), 950, 760, arcade.color.BLACK, 20)
     ]
-    if player == naval_base.owner:
-        content.append(buttons.Button("recruit", 7))
+    
+    content.append(buttons.Button("recruit_naval_base", 7))
     return content
 
 def field(field, d, owner):
