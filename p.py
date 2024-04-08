@@ -1,8 +1,29 @@
-                if self.owner == playeronturn:
-                        if d[a+2,b+1].typ in self.feldtyp: 
-                            if d[a+2,b+1].entities != [] and d[a+2,b+1].entities[0].owner != self.owner:   
-                                overlays.append(Overlay(d[a+2,b+1], "data/icons/overlayred.png", self))        
-                            elif d[a+2,b+1].entities != [] and d[a+2,b+1].entities[0].owner == self.owner:   
-                                pass
-                            else:
-                                overlays.append(Overlay(d[a+2,b+1], "data/icons/overlay.png", self))        
+#if dif_a == -1 and dif_b == 2:
+        #    if not overlay_if_valid(d, -1, 1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 0, 1, overlays, self, playeronturn) == True:
+        #        return False
+        #if dif_a == 0 and dif_b == 2:
+        #    if not overlay_if_valid(d, -1, 1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 0, 1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, 1, overlays, self, playeronturn) == True:
+        #        return False
+        #if dif_a == 1 and dif_b == 2:
+        #    if not overlay_if_valid(d, 0, 1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, 1, overlays, self, playeronturn) == True:
+        #        return False
+        #    
+        #if dif_a == -1 and dif_b == -2:
+        #    if not overlay_if_valid(d, -1, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 0, -1, overlays, self, playeronturn) == True:
+        #        return False
+        #if dif_a == 0 and dif_b == -2:
+        #    if not overlay_if_valid(d, -1, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 0, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, -1, overlays, self, playeronturn) == True:
+        #        return False
+        #if dif_a == 1 and dif_b == -2:
+        #    if not overlay_if_valid(d, 0, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, -1, overlays, self, playeronturn) == True:
+        #        return False
+        #
+        #if dif_a == 2 and dif_b == 1:
+        #    if not overlay_if_valid(d, 1, 1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, 0, overlays, self, playeronturn) == True:
+        #        return False
+        #if dif_a == 2 and dif_b == 0:
+        #    if not overlay_if_valid(d, 1, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 0, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, -1, overlays, self, playeronturn) == True:
+        #        return False
+        #if dif_a == 2 and dif_b == -1:
+        #    if not overlay_if_valid(d, 0, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, -1, overlays, self, playeronturn) == True:
+        #        return False

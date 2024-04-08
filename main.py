@@ -3,7 +3,7 @@ import reader, sidebar, topbar
 from math import ceil
 import random
 from instances import Instances
-
+ 
 
 def overlay_if_valid(d, a, b, overlays, self, playeronturn):
     if self.owner != playeronturn:
@@ -17,68 +17,59 @@ def overlay_if_valid(d, a, b, overlays, self, playeronturn):
     return [a, b, d, overlay_icon, self, overlays]
 
 def overlay_if_valid2(d, a, b, overlays, self, playeronturn):
-    start_a, start_b = self.field.pos
-    end_a, end_b = a, b
-    
-    # Calculate the differences in coordinates
-    dif_a = end_a - start_a
-    dif_b = end_b - start_b
-    
-    # Check if the movement is diagonal
-    if abs(dif_a) == 1 and abs(dif_b) == 1:
-        # Diagonal movement, check if both horizontal and vertical movements are valid
-        if overlay_if_valid(d, dif_a, 0, overlays, self, playeronturn) and overlay_if_valid(d, 0, dif_b, overlays, self, playeronturn):
-            pass
-        else:
-            return False
-    else:
-        # Non-diagonal movement, check if there is only one non-zero direction of movement
-        if dif_a != 0:
-            # Horizontal movement, check if the vertical movement is valid
-            if overlay_if_valid(d, 0, dif_b, overlays, self, playeronturn):
-                pass
-            else:
+        c, e = self.field.pos
+        dif_a = a - c
+        dif_b = b - e
+        #if dif_a == -1 and dif_b == 2:
+        #    if not overlay_if_valid(d, -1, 1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 0, 1, overlays, self, playeronturn) == True:
+        #        return False
+        #if dif_a == 0 and dif_b == 2:
+        #    if not overlay_if_valid(d, -1, 1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 0, 1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, 1, overlays, self, playeronturn) == True:
+        #        return False
+        #if dif_a == 1 and dif_b == 2:
+        #    if not overlay_if_valid(d, 0, 1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, 1, overlays, self, playeronturn) == True:
+        #        return False
+        #    
+        #if dif_a == -1 and dif_b == -2:
+        #    if not overlay_if_valid(d, -1, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 0, -1, overlays, self, playeronturn) == True:
+        #        return False
+        #if dif_a == 0 and dif_b == -2:
+        #    if not overlay_if_valid(d, -1, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 0, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, -1, overlays, self, playeronturn) == True:
+        #        return False
+        #if dif_a == 1 and dif_b == -2:
+        #    if not overlay_if_valid(d, 0, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, -1, overlays, self, playeronturn) == True:
+        #        return False
+        #
+        #if dif_a == 2 and dif_b == 1:
+        #    if not overlay_if_valid(d, 1, 1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, 0, overlays, self, playeronturn) == True:
+        #        return False
+        #if dif_a == 2 and dif_b == 0:
+        #    if not overlay_if_valid(d, 1, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 0, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, -1, overlays, self, playeronturn) == True:
+        #        return False
+        #if dif_a == 2 and dif_b == -1:
+        #    if not overlay_if_valid(d, 0, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, -1, overlays, self, playeronturn) == True:
+        #        return False
+        
+        if dif_a == 0 and dif_b == 2:
+            print(dif_a)
+            print(dif_b)
+            if overlay_if_valid(d, 0, 1, overlays, self, playeronturn) == False:
+                print("Luck")
                 return False
-        elif dif_b != 0:
-            # Vertical movement, check if the horizontal movement is valid
-            if overlay_if_valid(d, dif_a, 0, overlays, self, playeronturn):
-                pass
-            else:
-                return False
-        elif dif_a == 2 and dif_b == 1:
-            if overlay_if_valid(d, 1, 0, overlays, self, playeronturn):
-                pass
-            else:
-                return False
-        elif dif_a == 2 and dif_b == -1:
-            if overlay_if_valid(d, 1, 0, overlays, self, playeronturn):
-                pass
-            else:
-                return False
-        elif dif_a == -2 and dif_b == 1:
-            if overlay_if_valid(d, -1, 0, overlays, self, playeronturn):
-                pass
-            else:
-                return False
-        elif dif_a == -2 and dif_b == -1:
-            if overlay_if_valid(d, -1, 0, overlays, self, playeronturn):
-                pass
-            else:
-                return False
-        else:
-            # No movement
-            return False
 
-    if self.owner != playeronturn:
-        return False
-    if (a, b) not in d or d[a, b].typ not in self.feldtyp:
-        return False
-    target_entity = d.get((a, b)).entities[0] if d[a, b].entities else None
-    if (target_entity and target_entity.owner == self.owner) or (target_entity and self.field.typ == "water"):
-        return False
-    overlay_icon = "data/icons/overlayred.png" if target_entity else "data/icons/overlay.png"
-    return [a, b, d, overlay_icon, self, overlays]
 
+        
+
+        if self.owner != playeronturn:
+            return False
+        if (a, b) not in d or d[a, b].typ not in self.feldtyp:
+            return False
+        target_entity = d.get((a, b)).entities[0] if d[a, b].entities else None
+        if (target_entity and target_entity.owner == self.owner) or (target_entity and self.field.typ == "water"):
+            return False
+        overlay_icon = "data/icons/overlayred.png" if target_entity else "data/icons/overlay.png"
+        return [a, b, d, overlay_icon, self, overlays]
+    
 def add(info):
     if info is not False:
         a, b, d, overlay_icon, self, overlays = info
@@ -481,7 +472,6 @@ class Suchspiel(arcade.Window):
                             self.sbar = sidebar.start(self.players[0])
                         elif i.f == "add_naval_base":
                             self.add_building("naval_base")
-
                         elif i.f == "add_quarry":
                             self.add_building("quarry")
                         elif i.f == "add_cabin":
@@ -939,6 +929,7 @@ class Overlay(arcade.Sprite):
                 self.entity.center_x = self.center_x
                 self.entity.center_y = self.center_y
                 self.entity.field.entities.clear()
+                print(self.entity)
                 self.field.entities.append(self.entity)
                 self.entity.field = self.field
             #else: #!wir brauchen eine lösung damit wir näher ranrücken können
