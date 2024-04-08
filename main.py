@@ -4,7 +4,16 @@ from math import ceil
 import random
 from instances import Instances
 
-
+def read_cities():
+    file = "data/names/cities.csv"
+    vars = []
+    num = ""
+    # Use a raw string to specify the file path
+    with open(r'data/names/cities.csv') as f:
+        for line in f:
+            num = line.strip()  # Remove newline character
+            vars.append(num)
+    return vars
 
 def overlay_if_valid(d, a, b, overlays, self, playeronturn):
     if self.owner != playeronturn:
