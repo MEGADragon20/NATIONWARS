@@ -123,20 +123,64 @@ def add_overlays2b(d, a, b, overlays, self, playeronturn):
     add(overlay_if_valid(d, a - 2, b - 2, overlays, self, playeronturn))
 
 
-class Suchspiel(arcade.Window):
-    def __init__(self, breite, höhe, titel, feld_h, feld_b):
+def strs_to_player(strings):
+    colors = [arcade.color.BLIZZARD_BLUE, arcade.color.RED_DEVIL, arcade.color.GREEN, arcade.color.YELLOW, arcade.color.PURPLE, arcade.color.ORANGE, arcade.color.PINK, arcade.color.BROWN, arcade.color.GRAY]
+    if len(strings) > len(colors):
+        raise ValueError("Too many players")
+    return [Player(strings[i], colors[i], f"Player {i+1}") for i in range(len(strings))]
+
+
+class StartScreen(arcade.View):
+    def __init__(self, field_h, field_w):
+        super().__init__()
+        self.h = field_h
+        self.w = field_w
+
+    def startgame(self):
+        game_view = Suchspiel(self.h, self.w, strs_to_player(list(map(lambda x: x.strip(), self.players.split(",")))))
+        self.window.show_view(game_view)
+
+    def on_show(self):
+        arcade.set_background_color(arcade.color.BLACK)
+        self.players = ""
+
+    def on_draw(self):
+        arcade.start_render()
+        arcade.draw_text("NATIONWARS", SCREENWIDTH/2, SCREENHEIGHT/2 + 100,
+                         arcade.color.WHITE, font_size=50, anchor_x="center")
+        arcade.draw_text("Players: " + self.players, SCREENWIDTH/2, SCREENHEIGHT/2 + 50,
+                         arcade.color.WHITE, font_size=20, anchor_x="center")
+        arcade.draw_text("Start Game", SCREENWIDTH/2, SCREENHEIGHT/2 - 50,
+                         arcade.color.WHITE, font_size=20, anchor_x="center")
+
+    def on_key_press(self, key, modifiers):
+        if key == arcade.key.BACKSPACE:
+            self.players = self.players[:-1]
+        elif key == arcade.key.ENTER:
+            self.startgame()
+
+    def on_text(self, text):
+        self.players += text
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        if SCREENWIDTH/2 - 50 < x < SCREENWIDTH/2 + 50 and SCREENHEIGHT/2 - 75 < y < SCREENHEIGHT/2 - 25:
+            self.startgame()
+
+
+class Suchspiel(arcade.View):
+    def __init__(self, feld_h, feld_b, players):
         Instances.game = self
-        super().__init__(breite, höhe, titel)
+        super().__init__()
         arcade.set_background_color((155,155,155))
         self.activefield = 0
         self.fields = arcade.SpriteList()
         self.buildings = arcade.SpriteList()
         self.entities = arcade.SpriteList()
-        self.players = []
+        self.players = players
         self.turn = 1
         self.sbar = []
-        self.players.append(Player("Markus Söder", arcade.color.BLIZZARD_BLUE, "Conquerus"))
-        self.players.append(Player("Olaf Scholz", arcade.color.RED_DEVIL, "Uruks"))
+        # self.players.append(Player("Markus Söder", arcade.color.BLIZZARD_BLUE, "Conquerus"))
+        # self.players.append(Player("Olaf Scholz", arcade.color.RED_DEVIL, "Uruks"))
         self.sbar = sidebar.start(self.players[0])
         self.tbar = []
         self.overlays = arcade.SpriteList()
@@ -157,6 +201,7 @@ class Suchspiel(arcade.Window):
         self.active_selector = arcade.Sprite("data/icons/active.png", center_x= -16, center_y= -16)
         self.buildings.append(self.fields[98].add_village("München", self.players[0], invisible = True))
         self.buildings.append(self.fields[387].add_village("Berlin", self.players[1], invisible = True))
+        # !PROBLEM!: only 2 villages are added, but there can be n players => n villages (ask Fernando if he's already fixed this by adding n villages with random names from a big dataset (i thought he did))
 
 
 
@@ -746,6 +791,9 @@ class Suchspiel(arcade.Window):
                 else:
                     raise ValueError
 
+
+
+
 class Field(arcade.Sprite):
     def __init__(self,  x, y, typ):
         super().__init__("data/fields/" + typ + ".png", center_x = x, center_y = y)
@@ -1268,6 +1316,11 @@ class Img(arcade.Sprite):
         self.type:str = "Img"       # the type of Sprite (= Image)
 
 
+class Game(arcade.Window):
+    def __init__(self, breite, höhe, titel, field_w, field_h):
+        super().__init__(breite, höhe, titel)
+        startscreen = StartScreen(field_h=field_h, field_w=field_w)
+        self.show_view(startscreen)
 
 
 
@@ -1276,9 +1329,13 @@ SCREENHEIGHT = 840
 
 
 
-sp = Suchspiel(SCREENWIDTH, SCREENHEIGHT, "NATIONWARS", 24, 24)
+sp = Game(SCREENWIDTH, SCREENHEIGHT, "NATIONWARS", 24, 24)
 arcade.run()
 
 
 
-# IMPORTANT NOTE: #!!!!!! TODO DANIEL => FINISH  
+#!!! PROBLEMS:                                                                            Fixes:
+#     1. 2nd player gets less coins                                                       => find problem
+#     2. only 1st and 2nd player have villages and get coins, the others have/get neither => find problem (probably code was only made for 2 people)  /  make it only possible for 2 players to play in this first version of the game
+
+# look for !PROBLEM! (with cmd + f) to find where the problems are in the code
