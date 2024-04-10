@@ -4,6 +4,14 @@ from math import ceil
 import random
 from instances import Instances
 
+
+def find_village(d, h, b):
+    a = random.randint(0, 24)
+    b = random.randint(0, 24)
+    if d[a,b].typ == "grass":
+        return d[a,b]
+    else:
+        return find_village(d, h, b)
 def read_cities():
     file = "data/names/cities.csv"
     vars = []
@@ -199,8 +207,10 @@ class Suchspiel(arcade.View):
 
         self.active = Field(x = 0, y = 0, typ = "grass")
         self.active_selector = arcade.Sprite("data/icons/active.png", center_x= -16, center_y= -16)
-        self.buildings.append(self.fields[98].add_village("München", self.players[0], invisible = True))
-        self.buildings.append(self.fields[387].add_village("Berlin", self.players[1], invisible = True))
+        for i in self.players:
+            self.buildings.append(find_village(self.Dictionary, feld_h, feld_b).add_village(random.choice(read_cities()), i, invisible = True))
+        #self.buildings.append(self.fields[98].add_village("München", self.players[0], invisible = True))
+        #self.buildings.append(self.fields[387].add_village("Berlin", self.players[1], invisible = True))
         # !PROBLEM!: only 2 villages are added, but there can be n players => n villages (ask Fernando if he's already fixed this by adding n villages with random names from a big dataset (i thought he did))
 
 
@@ -352,7 +362,6 @@ class Suchspiel(arcade.View):
             elif symbol == arcade.key.KEY_9:
                 print("9")
                 i = new[9]
-
             try:
                 if i.f == "add_village":
                     self.buildings.append(self.active.add_village("Hamburg", self.players[0]))
