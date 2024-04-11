@@ -6,8 +6,8 @@ from instances import Instances
 
 
 def find_village(d, h, b):
-    a = random.randint(0, 24)
-    b = random.randint(0, 24)
+    a = random.randint(0, 23)
+    b = random.randint(0, 23)
     if d[a,b].typ == "grass":
         return d[a,b]
     else:
