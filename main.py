@@ -701,10 +701,10 @@ class Suchspiel(arcade.View):
         # print(self.players)
         self.clear()
         if len(self.players) <= 1:
-            imgwidth = 32
-            imgheight = 24
+            imgwidth = 840
+            imgheight = 840
             smallest = SCREENHEIGHT if SCREENHEIGHT < SCREENWIDTH else SCREENWIDTH
-            arcade.draw_texture_rectangle(SCREENWIDTH/2, SCREENHEIGHT/2, smallest, smallest*imgheight/imgwidth,arcade.load_texture("./data/icons/victoryscreen.png", pixelated = True))
+            arcade.draw_texture_rectangle(SCREENWIDTH/2, SCREENHEIGHT/2, smallest, smallest*imgheight/imgwidth,arcade.load_texture("./data/icons/victoryscreen.png"))
         else:
             self.fields.draw()
             self.buildings.draw()
