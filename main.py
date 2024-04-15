@@ -4,7 +4,65 @@ from math import ceil
 import random
 from instances import Instances
 
-
+def create_map():
+    world =  []
+    probs = [5,1,2,2]
+    for i in range(24):
+        for j in range(24):
+            thisprobs = []
+            for k in probs:
+                thisprobs.append(k)
+# TODO: here, stuff idk it wont work.
+            if j != 0:
+                if world[j-1] == "grass":
+                    thisprobs[0] = thisprobs[0]*2
+                elif world[j-1] == "mountain":
+                    thisprobs[1] = thisprobs[1]*1
+                elif world[j-1] == "water":
+                    thisprobs[2] = thisprobs[2]*3
+                elif world[j-1] == "forest":
+                    thisprobs[3] = thisprobs[3]*2
+            else:
+                thisprobs = []
+            if i > 1:
+                #print(str(i)+"//"+str(i*24+j))
+                if world[((i-1)*24)-24] == "grass":
+                    thisprobs[0] = thisprobs[0]*2
+                elif world[((i-1)*24)-24] == "mountain":
+                    thisprobs[1] = thisprobs[1]*3
+                elif world[((i-1)*24)-24] == "water":
+                    thisprobs[2] = thisprobs[2]*1
+                elif world[((i-1)*24)-24] == "forest":
+                    thisprobs[3] = thisprobs[3]*2
+            
+            
+            aka = random.choices(["grass", "mountain", "water", "forest"], weights = thisprobs)[0]
+            world.append(aka)
+            #if aka == "grass":
+            #    probs[0] = probs[0] + 1
+            #elif aka == "mountain":
+            #    probs[1] = probs[1] + 1
+            #elif aka == "water":
+            #    probs[2] = probs[2] + 1
+            #elif aka == "forest":
+            #    probs[3] = probs[3] + 1
+            #print(probs)
+    count = [0,0,0,0]
+    for element in range(len(world)):
+        if world[element] == "grass":
+            count[0] = count[0] + 1
+        elif world[element] == "mountain":
+            count[1] = count[1] + 1
+        elif world[element] == "water":
+            count[2] = count[2] + 1
+        elif world[element] == "forest":
+            count[3] = count[3] + 1
+    print("###############################")
+    print("Grass: " + str(count[0]))
+    print("Mountain: " + str(count[1]))
+    print("Water: " + str(count[2]))
+    print("Forest: " + str(count[3]))
+    return world
 def find_village(d, h, b):
     a = random.randint(0, 23)
     b = random.randint(0, 23)
@@ -12,6 +70,7 @@ def find_village(d, h, b):
         return d[a,b]
     else:
         return find_village(d, h, b)
+
 def read_cities():
     file = "data/names/cities.csv"
     vars = []
@@ -38,46 +97,12 @@ def overlay_if_valid2(d, a, b, overlays, self, playeronturn):
         c, e = self.field.pos
         dif_a = a - c
         dif_b = b - e
-        #if dif_a == -1 and dif_b == 2:
-        #    if not overlay_if_valid(d, -1, 1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 0, 1, overlays, self, playeronturn) == True:
-        #        return False
-        #if dif_a == 0 and dif_b == 2:
-        #    if not overlay_if_valid(d, -1, 1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 0, 1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, 1, overlays, self, playeronturn) == True:
-        #        return False
-        #if dif_a == 1 and dif_b == 2:
-        #    if not overlay_if_valid(d, 0, 1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, 1, overlays, self, playeronturn) == True:
-        #        return False
-        #    
-        #if dif_a == -1 and dif_b == -2:
-        #    if not overlay_if_valid(d, -1, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 0, -1, overlays, self, playeronturn) == True:
-        #        return False
-        #if dif_a == 0 and dif_b == -2:
-        #    if not overlay_if_valid(d, -1, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 0, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, -1, overlays, self, playeronturn) == True:
-        #        return False
-        #if dif_a == 1 and dif_b == -2:
-        #    if not overlay_if_valid(d, 0, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, -1, overlays, self, playeronturn) == True:
-        #        return False
-        #
-        #if dif_a == 2 and dif_b == 1:
-        #    if not overlay_if_valid(d, 1, 1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, 0, overlays, self, playeronturn) == True:
-        #        return False
-        #if dif_a == 2 and dif_b == 0:
-        #    if not overlay_if_valid(d, 1, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 0, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, -1, overlays, self, playeronturn) == True:
-        #        return False
-        #if dif_a == 2 and dif_b == -1:
-        #    if not overlay_if_valid(d, 0, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, -1, overlays, self, playeronturn) == True:
-        #        return False
-        
         if dif_a == 0 and dif_b == 2:
             print(dif_a)
             print(dif_b)
             if overlay_if_valid(d, 0, 1, overlays, self, playeronturn) == False:
                 print("Luck")
                 return False
-
-
-        
-
         if self.owner != playeronturn:
             return False
         if (a, b) not in d or d[a, b].typ not in self.feldtyp:
@@ -187,18 +212,17 @@ class Suchspiel(arcade.View):
         self.players = players
         self.turn = 1
         self.sbar = []
-        # self.players.append(Player("Markus Söder", arcade.color.BLIZZARD_BLUE, "Conquerus"))
-        # self.players.append(Player("Olaf Scholz", arcade.color.RED_DEVIL, "Uruks"))
         self.sbar = sidebar.start(self.players[0])
         self.tbar = []
         self.overlays = arcade.SpriteList()
 
         self.Dictionary = {}
         index = 0
+        #world = create_map()
+        world = reader.getvars()
         for h in range(feld_h):
             for b in range(feld_b):
-
-                a = reader.getvars()[index]
+                a = world[index]
                 self.Dictionary[(b, h)] =  Field(x = 32 + b*32, y = 32 + h*32, typ = a)
                 self.fields.append(self.Dictionary[(b, h)])
                 index += 1
