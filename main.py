@@ -3,15 +3,14 @@ import reader, sidebar, topbar
 from math import ceil
 import random
 from instances import Instances
+from copy import deepcopy
 
 def create_map():
     world =  []
     probs = [5,1,2,2]
     for i in range(24):
         for j in range(24):
-            thisprobs = []
-            for k in probs:
-                thisprobs.append(k)
+            thisprobs = probs
 # TODO: here, stuff idk it wont work.
             if j != 0:
                 if world[j-1] == "grass":
@@ -24,6 +23,8 @@ def create_map():
                     thisprobs[3] = thisprobs[3]*2
             else:
                 thisprobs = []
+                print("d")
+
             if i > 1:
                 #print(str(i)+"//"+str(i*24+j))
                 if world[((i-1)*24)-24] == "grass":
@@ -218,8 +219,8 @@ class Suchspiel(arcade.View):
 
         self.Dictionary = {}
         index = 0
-        #world = create_map()
-        world = reader.getvars()
+        world = create_map()
+        #world = reader.getvars()
         for h in range(feld_h):
             for b in range(feld_b):
                 a = world[index]
@@ -585,7 +586,7 @@ class Suchspiel(arcade.View):
 
                         elif i.f == "takeover":
                             newplayer = self.players[0]
-                            playerstoremove = self.players
+                            playerstoremove = deepcopy(self.players)
                             for building in self.buildings:
                                 if isinstance(building, Village):
                                     if arcade.check_for_collision(building, self.fields[self.activefield]):
@@ -722,7 +723,7 @@ class Suchspiel(arcade.View):
 
 
     def on_draw(self):
-        # print(self.players)
+        print(self.players)
         self.clear()
         if len(self.players) <= 1:
             imgwidth = 840
