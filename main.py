@@ -5,65 +5,65 @@ import random
 from instances import Instances
 from copy import deepcopy
 
-def create_map():
-    world =  []
-    probs = [5,1,2,2]
-    for i in range(24):
-        for j in range(24):
-            thisprobs = probs
-# TODO: here, stuff idk it wont work.
-            if j != 0:
-                if world[j-1] == "grass":
-                    thisprobs[0] = thisprobs[0]*2
-                elif world[j-1] == "mountain":
-                    thisprobs[1] = thisprobs[1]*1
-                elif world[j-1] == "water":
-                    thisprobs[2] = thisprobs[2]*3
-                elif world[j-1] == "forest":
-                    thisprobs[3] = thisprobs[3]*2
-            else:
-                thisprobs = []
-                print("d")
-
-            if i > 1:
-                #print(str(i)+"//"+str(i*24+j))
-                if world[((i-1)*24)-24] == "grass":
-                    thisprobs[0] = thisprobs[0]*2
-                elif world[((i-1)*24)-24] == "mountain":
-                    thisprobs[1] = thisprobs[1]*3
-                elif world[((i-1)*24)-24] == "water":
-                    thisprobs[2] = thisprobs[2]*1
-                elif world[((i-1)*24)-24] == "forest":
-                    thisprobs[3] = thisprobs[3]*2
-            
-            
-            aka = random.choices(["grass", "mountain", "water", "forest"], weights = thisprobs)[0]
-            world.append(aka)
-            #if aka == "grass":
-            #    probs[0] = probs[0] + 1
-            #elif aka == "mountain":
-            #    probs[1] = probs[1] + 1
-            #elif aka == "water":
-            #    probs[2] = probs[2] + 1
-            #elif aka == "forest":
-            #    probs[3] = probs[3] + 1
-            #print(probs)
-    count = [0,0,0,0]
-    for element in range(len(world)):
-        if world[element] == "grass":
-            count[0] = count[0] + 1
-        elif world[element] == "mountain":
-            count[1] = count[1] + 1
-        elif world[element] == "water":
-            count[2] = count[2] + 1
-        elif world[element] == "forest":
-            count[3] = count[3] + 1
-    print("###############################")
-    print("Grass: " + str(count[0]))
-    print("Mountain: " + str(count[1]))
-    print("Water: " + str(count[2]))
-    print("Forest: " + str(count[3]))
-    return world
+#def create_map():
+#    world =  []
+#    probs = [5,1,2,2]
+#    for i in range(24):
+#        for j in range(24):
+#            thisprobs = probs
+## TODO: here, stuff idk it wont work.
+#            if j != 0:
+#                if world[j-1] == "grass":
+#                    thisprobs[0] = thisprobs[0]*2
+#                elif world[j-1] == "mountain":
+#                    thisprobs[1] = thisprobs[1]*1
+#                elif world[j-1] == "water":
+#                    thisprobs[2] = thisprobs[2]*3
+#                elif world[j-1] == "forest":
+#                    thisprobs[3] = thisprobs[3]*2
+#            else:
+#                thisprobs = []
+#                print("d")
+#
+#            if i > 1:
+#                #print(str(i)+"//"+str(i*24+j))
+#                if world[((i-1)*24)-24] == "grass":
+#                    thisprobs[0] = thisprobs[0]*2
+#                elif world[((i-1)*24)-24] == "mountain":
+#                    thisprobs[1] = thisprobs[1]*3
+#                elif world[((i-1)*24)-24] == "water":
+#                    thisprobs[2] = thisprobs[2]*1
+#                elif world[((i-1)*24)-24] == "forest":
+#                    thisprobs[3] = thisprobs[3]*2
+#            
+#            
+#            aka = random.choices(["grass", "mountain", "water", "forest"], weights = thisprobs)[0]
+#            world.append(aka)
+#            #if aka == "grass":
+#            #    probs[0] = probs[0] + 1
+#            #elif aka == "mountain":
+#            #    probs[1] = probs[1] + 1
+#            #elif aka == "water":
+#            #    probs[2] = probs[2] + 1
+#            #elif aka == "forest":
+#            #    probs[3] = probs[3] + 1
+#            #print(probs)
+#    count = [0,0,0,0]
+#    for element in range(len(world)):
+#        if world[element] == "grass":
+#            count[0] = count[0] + 1
+#        elif world[element] == "mountain":
+#            count[1] = count[1] + 1
+#        elif world[element] == "water":
+#            count[2] = count[2] + 1
+#        elif world[element] == "forest":
+#            count[3] = count[3] + 1
+#    print("###############################")
+#    print("Grass: " + str(count[0]))
+#    print("Mountain: " + str(count[1]))
+#    print("Water: " + str(count[2]))
+#    print("Forest: " + str(count[3]))
+#    return world
 def find_village(d, h, b):
     a = random.randint(0, 23)
     b = random.randint(0, 23)
@@ -219,8 +219,7 @@ class Suchspiel(arcade.View):
 
         self.Dictionary = {}
         index = 0
-        world = create_map()
-        #world = reader.getvars()
+        world = reader.getvars()
         for h in range(feld_h):
             for b in range(feld_b):
                 a = world[index]
@@ -912,7 +911,6 @@ class Field(arcade.Sprite):
         a, b = self.pos
 
 
-        print(d)
         if (a + 1, b) in d:
             if d[(a + 1, b)].buildings != []:
                 if d[(a + 1, b)].buildings[0].typ == "village":
@@ -1051,7 +1049,6 @@ class Overlay(arcade.Sprite):
                 self.entity.center_x = self.center_x
                 self.entity.center_y = self.center_y
                 self.entity.field.entities.clear()
-                print(self.entity)
                 self.field.entities.append(self.entity)
                 self.entity.field = self.field
             #else: #!wir brauchen eine lösung damit wir näher ranrücken können
