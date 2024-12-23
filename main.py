@@ -3,6 +3,74 @@ import reader, sidebar, topbar
 from math import ceil
 import random
 from instances import Instances
+from copy import deepcopy
+
+#def create_map():
+#    world =  []
+#    probs = [5,1,2,2]
+#    for i in range(24):
+#        for j in range(24):
+#            thisprobs = probs
+## TODO: here, stuff idk it wont work.
+#            if j != 0:
+#                if world[j-1] == "grass":
+#                    thisprobs[0] = thisprobs[0]*2
+#                elif world[j-1] == "mountain":
+#                    thisprobs[1] = thisprobs[1]*1
+#                elif world[j-1] == "water":
+#                    thisprobs[2] = thisprobs[2]*3
+#                elif world[j-1] == "forest":
+#                    thisprobs[3] = thisprobs[3]*2
+#            else:
+#                thisprobs = []
+#                print("d")
+#
+#            if i > 1:
+#                #print(str(i)+"//"+str(i*24+j))
+#                if world[((i-1)*24)-24] == "grass":
+#                    thisprobs[0] = thisprobs[0]*2
+#                elif world[((i-1)*24)-24] == "mountain":
+#                    thisprobs[1] = thisprobs[1]*3
+#                elif world[((i-1)*24)-24] == "water":
+#                    thisprobs[2] = thisprobs[2]*1
+#                elif world[((i-1)*24)-24] == "forest":
+#                    thisprobs[3] = thisprobs[3]*2
+#            
+#            
+#            aka = random.choices(["grass", "mountain", "water", "forest"], weights = thisprobs)[0]
+#            world.append(aka)
+#            #if aka == "grass":
+#            #    probs[0] = probs[0] + 1
+#            #elif aka == "mountain":
+#            #    probs[1] = probs[1] + 1
+#            #elif aka == "water":
+#            #    probs[2] = probs[2] + 1
+#            #elif aka == "forest":
+#            #    probs[3] = probs[3] + 1
+#            #print(probs)
+#    count = [0,0,0,0]
+#    for element in range(len(world)):
+#        if world[element] == "grass":
+#            count[0] = count[0] + 1
+#        elif world[element] == "mountain":
+#            count[1] = count[1] + 1
+#        elif world[element] == "water":
+#            count[2] = count[2] + 1
+#        elif world[element] == "forest":
+#            count[3] = count[3] + 1
+#    print("###############################")
+#    print("Grass: " + str(count[0]))
+#    print("Mountain: " + str(count[1]))
+#    print("Water: " + str(count[2]))
+#    print("Forest: " + str(count[3]))
+#    return world
+def find_village(d, h, b):
+    a = random.randint(0, 23)
+    b = random.randint(0, 23)
+    if d[a,b].typ == "grass":
+        return d[a,b]
+    else:
+        return find_village(d, h, b)
 
 def read_cities():
     file = "data/names/cities.csv"
@@ -30,46 +98,12 @@ def overlay_if_valid2(d, a, b, overlays, self, playeronturn):
         c, e = self.field.pos
         dif_a = a - c
         dif_b = b - e
-        #if dif_a == -1 and dif_b == 2:
-        #    if not overlay_if_valid(d, -1, 1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 0, 1, overlays, self, playeronturn) == True:
-        #        return False
-        #if dif_a == 0 and dif_b == 2:
-        #    if not overlay_if_valid(d, -1, 1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 0, 1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, 1, overlays, self, playeronturn) == True:
-        #        return False
-        #if dif_a == 1 and dif_b == 2:
-        #    if not overlay_if_valid(d, 0, 1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, 1, overlays, self, playeronturn) == True:
-        #        return False
-        #    
-        #if dif_a == -1 and dif_b == -2:
-        #    if not overlay_if_valid(d, -1, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 0, -1, overlays, self, playeronturn) == True:
-        #        return False
-        #if dif_a == 0 and dif_b == -2:
-        #    if not overlay_if_valid(d, -1, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 0, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, -1, overlays, self, playeronturn) == True:
-        #        return False
-        #if dif_a == 1 and dif_b == -2:
-        #    if not overlay_if_valid(d, 0, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, -1, overlays, self, playeronturn) == True:
-        #        return False
-        #
-        #if dif_a == 2 and dif_b == 1:
-        #    if not overlay_if_valid(d, 1, 1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, 0, overlays, self, playeronturn) == True:
-        #        return False
-        #if dif_a == 2 and dif_b == 0:
-        #    if not overlay_if_valid(d, 1, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 0, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, -1, overlays, self, playeronturn) == True:
-        #        return False
-        #if dif_a == 2 and dif_b == -1:
-        #    if not overlay_if_valid(d, 0, -1, overlays, self, playeronturn) == True or not overlay_if_valid(d, 1, -1, overlays, self, playeronturn) == True:
-        #        return False
-        
         if dif_a == 0 and dif_b == 2:
             print(dif_a)
             print(dif_b)
             if overlay_if_valid(d, 0, 1, overlays, self, playeronturn) == False:
                 print("Luck")
                 return False
-
-
-        
-
         if self.owner != playeronturn:
             return False
         if (a, b) not in d or d[a, b].typ not in self.feldtyp:
@@ -123,30 +157,72 @@ def add_overlays2b(d, a, b, overlays, self, playeronturn):
     add(overlay_if_valid(d, a - 2, b - 2, overlays, self, playeronturn))
 
 
-class Suchspiel(arcade.Window):
-    def __init__(self, breite, höhe, titel, feld_h, feld_b):
+def strs_to_player(strings):
+    colors = [arcade.color.BLIZZARD_BLUE, arcade.color.RED_DEVIL, arcade.color.GREEN, arcade.color.YELLOW, arcade.color.PURPLE, arcade.color.ORANGE, arcade.color.PINK, arcade.color.BROWN, arcade.color.GRAY]
+    if len(strings) > len(colors):
+        raise ValueError("Too many players")
+    return [Player(strings[i], colors[i], f"Player {i+1}") for i in range(len(strings))]
+
+
+class StartScreen(arcade.View):
+    def __init__(self, field_h, field_w):
+        super().__init__()
+        self.h = field_h
+        self.w = field_w
+
+    def startgame(self):
+        game_view = Suchspiel(self.h, self.w, strs_to_player(list(map(lambda x: x.strip(), self.players.split(",")))))
+        self.window.show_view(game_view)
+
+    def on_show(self):
+        arcade.set_background_color(arcade.color.BLACK)
+        self.players = ""
+
+    def on_draw(self):
+        arcade.start_render()
+        arcade.draw_text("NATIONWARS", SCREENWIDTH/2, SCREENHEIGHT/2 + 100,
+                         arcade.color.WHITE, font_size=50, anchor_x="center")
+        arcade.draw_text("Players: " + self.players, SCREENWIDTH/2, SCREENHEIGHT/2 + 50,
+                         arcade.color.WHITE, font_size=20, anchor_x="center")
+        arcade.draw_text("Start Game", SCREENWIDTH/2, SCREENHEIGHT/2 - 50,
+                         arcade.color.WHITE, font_size=20, anchor_x="center")
+
+    def on_key_press(self, key, modifiers):
+        if key == arcade.key.BACKSPACE:
+            self.players = self.players[:-1]
+        elif key == arcade.key.ENTER:
+            self.startgame()
+
+    def on_text(self, text):
+        self.players += text
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        if SCREENWIDTH/2 - 50 < x < SCREENWIDTH/2 + 50 and SCREENHEIGHT/2 - 75 < y < SCREENHEIGHT/2 - 25:
+            self.startgame()
+
+
+class Suchspiel(arcade.View):
+    def __init__(self, feld_h, feld_b, players):
         Instances.game = self
-        super().__init__(breite, höhe, titel)
+        super().__init__()
         arcade.set_background_color((155,155,155))
         self.activefield = 0
         self.fields = arcade.SpriteList()
         self.buildings = arcade.SpriteList()
         self.entities = arcade.SpriteList()
-        self.players = []
+        self.players = players
         self.turn = 1
         self.sbar = []
-        self.players.append(Player("Markus Söder", arcade.color.BLIZZARD_BLUE, "Conquerus"))
-        self.players.append(Player("Olaf Scholz", arcade.color.RED_DEVIL, "Uruks"))
         self.sbar = sidebar.start(self.players[0])
         self.tbar = []
         self.overlays = arcade.SpriteList()
 
         self.Dictionary = {}
         index = 0
+        world = reader.getvars()
         for h in range(feld_h):
             for b in range(feld_b):
-
-                a = reader.getvars()[index]
+                a = world[index]
                 self.Dictionary[(b, h)] =  Field(x = 32 + b*32, y = 32 + h*32, typ = a)
                 self.fields.append(self.Dictionary[(b, h)])
                 index += 1
@@ -155,8 +231,11 @@ class Suchspiel(arcade.Window):
 
         self.active = Field(x = 0, y = 0, typ = "grass")
         self.active_selector = arcade.Sprite("data/icons/active.png", center_x= -16, center_y= -16)
-        self.buildings.append(self.fields[98].add_village("München", self.players[0], invisible = True))
-        self.buildings.append(self.fields[387].add_village("Berlin", self.players[1], invisible = True))
+        for i in self.players:
+            self.buildings.append(find_village(self.Dictionary, feld_h, feld_b).add_village(random.choice(read_cities()), i, invisible = True))
+        #self.buildings.append(self.fields[98].add_village("München", self.players[0], invisible = True))
+        #self.buildings.append(self.fields[387].add_village("Berlin", self.players[1], invisible = True))
+        # !PROBLEM!: only 2 villages are added, but there can be n players => n villages (ask Fernando if he's already fixed this by adding n villages with random names from a big dataset (i thought he did))
 
 
 
@@ -307,7 +386,6 @@ class Suchspiel(arcade.Window):
             elif symbol == arcade.key.KEY_9:
                 print("9")
                 i = new[9]
-
             try:
                 if i.f == "add_village":
                     self.buildings.append(self.active.add_village("Hamburg", self.players[0]))
@@ -507,7 +585,7 @@ class Suchspiel(arcade.Window):
 
                         elif i.f == "takeover":
                             newplayer = self.players[0]
-                            playerstoremove = self.players
+                            playerstoremove = deepcopy(self.players)
                             for building in self.buildings:
                                 if isinstance(building, Village):
                                     if arcade.check_for_collision(building, self.fields[self.activefield]):
@@ -644,13 +722,13 @@ class Suchspiel(arcade.Window):
 
 
     def on_draw(self):
-        # print(self.players)
+        print(self.players)
         self.clear()
         if len(self.players) <= 1:
-            imgwidth = 32
-            imgheight = 24
+            imgwidth = 840
+            imgheight = 840
             smallest = SCREENHEIGHT if SCREENHEIGHT < SCREENWIDTH else SCREENWIDTH
-            arcade.draw_texture_rectangle(SCREENWIDTH/2, SCREENHEIGHT/2, smallest, smallest*imgheight/imgwidth,arcade.load_texture("./data/icons/victoryscreen.png", pixelated = True))
+            arcade.draw_texture_rectangle(SCREENWIDTH/2, SCREENHEIGHT/2, smallest, smallest*imgheight/imgwidth,arcade.load_texture("./data/icons/victoryscreen.png"))
         else:
             self.fields.draw()
             self.buildings.draw()
@@ -746,6 +824,9 @@ class Suchspiel(arcade.Window):
                 else:
                     raise ValueError
 
+
+
+
 class Field(arcade.Sprite):
     def __init__(self,  x, y, typ):
         super().__init__("data/fields/" + typ + ".png", center_x = x, center_y = y)
@@ -830,7 +911,6 @@ class Field(arcade.Sprite):
         a, b = self.pos
 
 
-        print(d)
         if (a + 1, b) in d:
             if d[(a + 1, b)].buildings != []:
                 if d[(a + 1, b)].buildings[0].typ == "village":
@@ -969,7 +1049,6 @@ class Overlay(arcade.Sprite):
                 self.entity.center_x = self.center_x
                 self.entity.center_y = self.center_y
                 self.entity.field.entities.clear()
-                print(self.entity)
                 self.field.entities.append(self.entity)
                 self.entity.field = self.field
             #else: #!wir brauchen eine lösung damit wir näher ranrücken können
@@ -1268,6 +1347,11 @@ class Img(arcade.Sprite):
         self.type:str = "Img"       # the type of Sprite (= Image)
 
 
+class Game(arcade.Window):
+    def __init__(self, breite, höhe, titel, field_w, field_h):
+        super().__init__(breite, höhe, titel)
+        startscreen = StartScreen(field_h=field_h, field_w=field_w)
+        self.show_view(startscreen)
 
 
 
@@ -1276,9 +1360,13 @@ SCREENHEIGHT = 840
 
 
 
-sp = Suchspiel(SCREENWIDTH, SCREENHEIGHT, "NATIONWARS", 24, 24)
+sp = Game(SCREENWIDTH, SCREENHEIGHT, "NATIONWARS", 24, 24)
 arcade.run()
 
 
 
-# IMPORTANT NOTE: #!!!!!! TODO DANIEL => FINISH  
+#!!! PROBLEMS:                                                                            Fixes:
+#     1. 2nd player gets less coins                                                       => find problem
+#     2. only 1st and 2nd player have villages and get coins, the others have/get neither => find problem (probably code was only made for 2 people)  /  make it only possible for 2 players to play in this first version of the game
+
+# look for !PROBLEM! (with cmd + f) to find where the problems are in the code
