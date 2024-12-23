@@ -4,7 +4,7 @@ from instances import Instances
 
 def entities_l():
     return [
-        buttons.Button("recruit_helicopter", 4),
+        buttons.Button("recruit_helicopter", 5),
         buttons.Button("recruit_reconsys", 6),
         buttons.Button("recruit_recon", 7),
         buttons.Button("recruit_soldier", 8),
@@ -14,8 +14,8 @@ def entities_l():
 def entities_w():
     return [
 
-        buttons.Button("recruit_corvette", 4),
-        buttons.Button("home", 9)
+        buttons.Button("recruit_corvette", 8),
+        buttons.Button("home", 1)
     ]
 
 
@@ -29,7 +29,7 @@ def start(player):
 
 def entity(entity, village):
     for building in Instances.game.buildings:
-        if entity.field == village.field:
+        if entity.field.pos[0] == village.x and entity.field.pos[1] == village.y:
             return [
                 buttons.Button("home", 1),
                 buttons.Txt(entity.typ, 800, 760, arcade.color.BLACK, 20, True),
